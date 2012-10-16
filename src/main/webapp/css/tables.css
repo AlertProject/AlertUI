@@ -44,10 +44,11 @@
 	cursor: pointer;
 }
 .item-selected .item_table {
-	background-color: #FCDFB8 !important;
+	background-color: #eee !important;
+	cursor:default !important;
 }
 .item-wrapper .item_table:HOVER {
-	background-color: #FFF0D8;
+	background-color: #ddffaa;
 }
 
 .item-wrapper.issue .item_table{
