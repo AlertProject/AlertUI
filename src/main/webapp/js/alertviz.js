@@ -4,6 +4,14 @@ var defaultDateFormat = "isoDate";
 var settingManually = false;
 var currentTab = 0;
 
+//returns the value of a CSS attribute
+function getCssValue(clazz, attribute) {
+	var $p = $("<p class='" + clazz + "'></p>").hide().appendTo("body");
+	var value = $p.css(attribute);
+	$p.remove();
+	return value;
+}
+
 /**
  * Returns an URL containing the current state of the interface.
  */
@@ -383,42 +391,6 @@ function loadState() {
 	settingManually = false;
 }
 
-// helper function for drawing lines on the people graph
-var intersect_line_box = function(p1, p2, boxTuple) {
-	var p3 = {x:boxTuple[0], y:boxTuple[1]};
-    var w = boxTuple[2];
-    var h = boxTuple[3];
-
-	var tl = {x: p3.x, y: p3.y};
-	var tr = {x: p3.x + w, y: p3.y};
-	var bl = {x: p3.x, y: p3.y + h};
-	var br = {x: p3.x + w, y: p3.y + h};
-
-	return intersect_line_line(p1, p2, tl, tr) ||
-        intersect_line_line(p1, p2, tr, br) ||
-        intersect_line_line(p1, p2, br, bl) ||
-        intersect_line_line(p1, p2, bl, tl) ||
-        false;
-};
-var intersect_line_line = function(p1, p2, p3, p4) {
-	var denom = ((p4.y - p3.y)*(p2.x - p1.x) - (p4.x - p3.x)*(p2.y - p1.y));
-	if (denom === 0) return false; // lines are parallel
-	var ua = ((p4.x - p3.x)*(p1.y - p3.y) - (p4.y - p3.y)*(p1.x - p3.x)) / denom;
-	var ub = ((p2.x - p1.x)*(p1.y - p3.y) - (p2.y - p1.y)*(p1.x - p3.x)) / denom;
-
-	if (ua < 0 || ua > 1 || ub < 0 || ub > 1)  return false;
-	return arbor.Point(p1.x + ua * (p2.x - p1.x), p1.y + ua * (p2.y - p1.y));
-};
-
-
-//returns the value of a CSS attribute
-function getCssValue(clazz, attribute) {
-	var $p = $("<p class='" + clazz + "'></p>").hide().appendTo("body");
-	var value = $p.css(attribute);
-	$p.remove();
-	return value;
-}
-
 var SocialGraph = function(options){
 	var width = $('#' + options.container).width();
 	var height = $('#' + options.container).height();
@@ -433,6 +405,33 @@ var SocialGraph = function(options){
 	if (selectedBoxClr == null) selectedBoxClr = "rgba(30, 116, 255, .6)";
 	if (neighbourTextClr == null) neighbourTextClr = "white";
 	if (neighbourBoxClr == null) selectedBoxClr = "rgba(62, 189, 255, .6)";
+	
+	// helper function for drawing lines on the people graph
+	var intersect_line_box = function(p1, p2, boxTuple) {
+		var p3 = {x:boxTuple[0], y:boxTuple[1]};
+	    var w = boxTuple[2];
+	    var h = boxTuple[3];
+
+		var tl = {x: p3.x, y: p3.y};
+		var tr = {x: p3.x + w, y: p3.y};
+		var bl = {x: p3.x, y: p3.y + h};
+		var br = {x: p3.x + w, y: p3.y + h};
+
+		return intersect_line_line(p1, p2, tl, tr) ||
+	        intersect_line_line(p1, p2, tr, br) ||
+	        intersect_line_line(p1, p2, br, bl) ||
+	        intersect_line_line(p1, p2, bl, tl) ||
+	        false;
+	};
+	var intersect_line_line = function(p1, p2, p3, p4) {
+		var denom = ((p4.y - p3.y)*(p2.x - p1.x) - (p4.x - p3.x)*(p2.y - p1.y));
+		if (denom === 0) return false; // lines are parallel
+		var ua = ((p4.x - p3.x)*(p1.y - p3.y) - (p4.y - p3.y)*(p1.x - p3.x)) / denom;
+		var ub = ((p2.x - p1.x)*(p1.y - p3.y) - (p2.y - p1.y)*(p1.x - p3.x)) / denom;
+
+		if (ua < 0 || ua > 1 || ub < 0 || ub > 1)  return false;
+		return arbor.Point(p1.x + ua * (p2.x - p1.x), p1.y + ua * (p2.y - p1.y));
+	};
 	
 	// tooltip functions
 	function showTooltip(data) {
@@ -1219,8 +1218,8 @@ var AlertViz = function(options) {
 			});
     	},
     	
-    	addCommitToSearch: function (name, uri, tooltip) {
-			var event = window.event;
+    	addCommitToSearch: function (e, name, uri, tooltip) {
+			var event = e || window.event;
 			event.stopPropagation();
 			event.preventDefault();
 			
@@ -1248,7 +1247,7 @@ var AlertViz = function(options) {
     		
     		// files
     		html += '<div class="details_section">';
-    		html += '<table class="heading"><tr>';
+    		html += '<table class="heading content_open"><tr>';
     		html += '<td class="title_comm">Files</td>';
     		html += '</tr></table>';
     		
@@ -1266,7 +1265,7 @@ var AlertViz = function(options) {
     				html += '<li class="tree_li">';
     				html += '<div class="toggle" title="' + file.fullName + '">';
     				html += '<span>' + file.name + ' (' + file.action + ')</span>';
-    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + file.name + '\',\'' + file.uri + '\',\'' + file.fullName + '\');" />';
+    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + file.name + '\',\'' + file.uri + '\',\'' + file.fullName + '\');" />';
     				html += '</div>';
     				html += '<ul class="tree_ul">';
     				for (var moduleIdx = 0; moduleIdx < modules.length; moduleIdx++) {
@@ -1278,14 +1277,14 @@ var AlertViz = function(options) {
         					html += '<li class="tree_li">';
         					html += '<div class="toggle">';
         					html += '<span>' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
-        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + module.name + '\',\'' + module.uri + '\',\'' + file.fullName + '\');" />';
+        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + module.name + '\',\'' + module.uri + '\',\'' + file.fullName + '\');" />';
         					html +='</div>';
     	    				html += '<ul class="tree_ul">';
     	    				for (var methodIdx = 0; methodIdx < methods.length; methodIdx++) {
     	    					var method = methods[methodIdx];
     	    					html += '<li class="tree_li">';
     	    					html += '<span class="leaf">' + method.methodName + ' (' + method.startLine + '-' + method.endLine + ')</span>';
-    	    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + method.methodName + '\',\'' + method.methodUri + '\',\'' + file.fullName + '\');" />';
+    	    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + method.methodName + '\',\'' + method.methodUri + '\',\'' + file.fullName + '\');" />';
     	    					html += '</li>';
     	    				}
     	    				html += '</ul>';
@@ -1293,7 +1292,7 @@ var AlertViz = function(options) {
     					} else {
         					html += '<li class="tree_li">';
         					html += '<span class="leaf">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
-        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + module.name + '\',\'' + module.uri + '\',\'' + file.fullName + '\');" />';
+        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + module.name + '\',\'' + module.uri + '\',\'' + file.fullName + '\');" />';
         					html += '</li>';
     					}
     				}
@@ -1302,7 +1301,7 @@ var AlertViz = function(options) {
     			} else {	// create leaf
     				html += '<li class="tree_li">';
     				html += '<span class="leaf">' + file.name + ' (' + file.action + ')</span>';
-    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + file.name + '\',\'' + file.uri + '\',\'' + file.fullName + '\');" />';
+    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + file.name + '\',\'' + file.uri + '\',\'' + file.fullName + '\');" />';
     				html += '</li>';
     			}
     		}
