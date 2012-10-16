@@ -106,246 +106,238 @@
      		</div>
     	</div>
     </div>
-<div id="container_main" class="container_main">
-	<div id="container" class="container_wide">
-		<div id="advanced_div">
-			<div id="tabscontent">
-				<div id="tabswrapper">
-					<div id="navigation" style="display: none;">
-						<ul>
-							<li class="selected"><a href="#">General search</a></li>
-							<li><a href="#">Duplicate issue detection</a></li>
-							<li><a href="#">Issues related to my code</a></li>
-							<li><a href="#">Suggest issues for a developer</a></li>
-						</ul>
-					</div>
-					<div id="steps">
-						<form id="formElem" action="" method="post">
-							<fieldset class="step" id="step0">
-								<table>
-									<tbody>
-										<tr>
-											<td colspan="8"><input type="text" class="text" id="keyword_text" name="keywords" placeholder="keywords..."  /></td>
-										</tr>
-										<tr>
-											<td colspan="8"><input type="text" class="text" id="other_text" name="other"/></td>
-										</tr>
-										<tr>
-											<td><label for="from_text">Between:</label>
-												<input type="text" id="from_text" class="text_date" onchange="updateUrl();" style="width:100px;"/>
-												<label for="to_text">and</label>
-												<input type="text" id="to_text" class="text_date" onchange="updateUrl();" style="width:100px;"/></td>
-											<td><input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();"/><label> Issues</label></td>
-											<td>
-												<button id="propertiesbtn" onclick="return false;">+</button>
-												<div id="propertiesdiv">
-													<div class="arrow1"></div>
-													<div class="arrow1-border"></div>
-													<table id="popuptbl">
-														<tr>
-															<td><label><span>Status:</span></label></td>
-															<td><label><span>Resolution:</span></label></td>
-														</tr>
-														<tr>
-															<td><input class="check" type="checkbox" id="gen_open_check" checked="checked" onchange="return updateUrl();" /><label> Open</label></td>
-															<td><input class="check" type="checkbox" id="gen_none_check" checked="checked" onchange="return updateUrl();" /><label> None</label></td>
-														</tr>
-														<tr>
-															<td><input class="check" type="checkbox" id="gen_verified_check" checked="checked" onchange="return updateUrl();" /><label> Verified</label></td>
-															<td><input class="check" type="checkbox" id="gen_fixed_check" checked="checked" onchange="return updateUrl();" /><label> Fixed</label></td>
-														</tr>
-														<tr>
-															<td><input class="check" type="checkbox" id="gen_assigned_check" checked="checked" onchange="return updateUrl();" /><label> Assigned</label></td>
-															<td><input class="check" type="checkbox" id="gen_wont_check" checked="checked" onchange="return updateUrl();" /><label> Wont Fix</label></td>
-														</tr>
-														<tr>
-															<td><input class="check" type="checkbox" id="gen_resolved_check" checked="checked" onchange="return updateUrl();" /><label> Resolved</label></td>
-															<td><input class="check" type="checkbox" id="gen_invalid_check" checked="checked" onchange="return updateUrl();" /><label> Invalid</label></td>
-														</tr>
-														<tr>
-															<td><input class="check" type="checkbox" id="gen_closed_check" checked="checked" onchange="return updateUrl();" /><label> Closed</label></td>
-															<td><input class="check" type="checkbox" id="gen_duplicate_check" checked="checked" onchange="return updateUrl();" /><label> Duplicate</label></td>
-														</tr>
-														<tr>
-															<td></td>
-															<td><input class="check" type="checkbox" id="gen_works_check" checked="checked" onchange="return updateUrl();" /><label> WorksForMe</label></td>
-														</tr>
-														<tr>
-															<td></td>
-															<td><input class="check" type="checkbox" id="gen_unknown_check" checked="checked" onchange="return updateUrl();" /><label> Unknown</label></td>
-														</tr>
-													</table>
-												</div>
-												<script type="application/javascript">
-													<!--
-													$('#propertiesdiv').popup({trigger: '#propertiesbtn', align: 'center', duration: 'fast', top: 10, event: 'click'});
-													-->
-												</script>
-											</td>
-											<td><input class="check" type="checkbox" id="commits_check" checked="checked" onchange="updateUrl();"/><label> Commits</label></td>
-											<td><input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();"/><label> Forums</label></td>
-											<td><input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();"/><label> Mailing lists</label></td>
-											<td><input class="check" type="checkbox" id="wikis_check" checked="checked" onchange="updateUrl();"/><label> Wiki</label></td>
-											<td style="float:right;">
-												<table id="searchbtntbl" class="searchbtntbl">
-													<tr>
-														<td id="searchbtnlefttd" class="searchbtntd">
-															<button id="searchbtnleft" class="searchbtnleft" onclick="return viz.searchGeneral();">Search</button>
-														</td>	
-														<td id="searchbtnrighttd" class="searchbtntd">
-															<button id="searchbtnright" class="searchbtnright" onclick="return false;">+</button>
-														</td>
-													</tr>
-												</table>	
-											</td>						
-										</tr>
-									</tbody>
-								</table>
-								<div id="sort_div">
+	<div id="container_main" class="container_main">
+		<div id="container" class="container_wide">
+			<div id="advanced_div">
+				<div id="tabscontent">
+					<div id="tabswrapper">
+						<div id="navigation" style="display: none;">
+							<ul>
+								<li class="selected"><a href="#">General search</a></li>
+								<li><a href="#">Duplicate issue detection</a></li>
+								<li><a href="#">Issues related to my code</a></li>
+								<li><a href="#">Suggest issues for a developer</a></li>
+							</ul>
+						</div>
+						<div id="steps">
+							<form id="formElem" action="" method="post">
+								<fieldset class="step" id="step0">
 									<table>
-										<tr>
-											<td>
-												Sort by: 
-												<input type="radio" id="relevance_sort" name="sort_radio" value="relevence" onchange="updateUrl(window.event);" checked="checked" /><label> Relevance</label>
-												<input type="radio" id="date_sort" name="sort_radio" value="date" onchange="updateUrl(window.event);" /><label> Date</label>
-											</td>
-										</tr>
-										<tr>
-											<td><input class="checkbox" type="checkbox" id="use_or_check" onchange="updateUrl(window.event);" >&nbsp; Keywords are optional</input></td>
-										</tr>
+										<tbody>
+											<tr>
+												<td colspan="8"><input type="text" class="text" id="keyword_text" name="keywords" placeholder="keywords..."  /></td>
+											</tr>
+											<tr>
+												<td colspan="8"><input type="text" class="text" id="other_text" name="other"/></td>
+											</tr>
+											<tr>
+												<td><label for="from_text">Between:</label>
+													<input type="text" id="from_text" class="text_date" onchange="updateUrl();" style="width:100px;"/>
+													<label for="to_text">and</label>
+													<input type="text" id="to_text" class="text_date" onchange="updateUrl();" style="width:100px;"/></td>
+												<td><input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();"/><label> Issues</label></td>
+												<td>
+													<button id="propertiesbtn" onclick="return false;">+</button>
+													<div id="propertiesdiv">
+														<div class="arrow1"></div>
+														<div class="arrow1-border"></div>
+														<table id="popuptbl">
+															<tr>
+																<td><label><span>Status:</span></label></td>
+																<td><label><span>Resolution:</span></label></td>
+															</tr>
+															<tr>
+																<td><input class="check" type="checkbox" id="gen_open_check" checked="checked" onchange="return updateUrl();" /><label> Open</label></td>
+																<td><input class="check" type="checkbox" id="gen_none_check" checked="checked" onchange="return updateUrl();" /><label> None</label></td>
+															</tr>
+															<tr>
+																<td><input class="check" type="checkbox" id="gen_verified_check" checked="checked" onchange="return updateUrl();" /><label> Verified</label></td>
+																<td><input class="check" type="checkbox" id="gen_fixed_check" checked="checked" onchange="return updateUrl();" /><label> Fixed</label></td>
+															</tr>
+															<tr>
+																<td><input class="check" type="checkbox" id="gen_assigned_check" checked="checked" onchange="return updateUrl();" /><label> Assigned</label></td>
+																<td><input class="check" type="checkbox" id="gen_wont_check" checked="checked" onchange="return updateUrl();" /><label> Wont Fix</label></td>
+															</tr>
+															<tr>
+																<td><input class="check" type="checkbox" id="gen_resolved_check" checked="checked" onchange="return updateUrl();" /><label> Resolved</label></td>
+																<td><input class="check" type="checkbox" id="gen_invalid_check" checked="checked" onchange="return updateUrl();" /><label> Invalid</label></td>
+															</tr>
+															<tr>
+																<td><input class="check" type="checkbox" id="gen_closed_check" checked="checked" onchange="return updateUrl();" /><label> Closed</label></td>
+																<td><input class="check" type="checkbox" id="gen_duplicate_check" checked="checked" onchange="return updateUrl();" /><label> Duplicate</label></td>
+															</tr>
+															<tr>
+																<td></td>
+																<td><input class="check" type="checkbox" id="gen_works_check" checked="checked" onchange="return updateUrl();" /><label> WorksForMe</label></td>
+															</tr>
+															<tr>
+																<td></td>
+																<td><input class="check" type="checkbox" id="gen_unknown_check" checked="checked" onchange="return updateUrl();" /><label> Unknown</label></td>
+															</tr>
+														</table>
+													</div>
+													<script type="application/javascript">
+														<!--
+														$('#propertiesdiv').popup({trigger: '#propertiesbtn', align: 'center', duration: 'fast', top: 10, event: 'click'});
+														-->
+													</script>
+												</td>
+												<td><input class="check" type="checkbox" id="commits_check" checked="checked" onchange="updateUrl();"/><label> Commits</label></td>
+												<td><input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();"/><label> Forums</label></td>
+												<td><input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();"/><label> Mailing lists</label></td>
+												<td><input class="check" type="checkbox" id="wikis_check" checked="checked" onchange="updateUrl();"/><label> Wiki</label></td>
+												<td style="float:right;">
+													<table id="searchbtntbl" class="searchbtntbl">
+														<tr>
+															<td id="searchbtnlefttd" class="searchbtntd">
+																<button id="searchbtnleft" class="searchbtnleft" onclick="return viz.searchGeneral();">Search</button>
+															</td>	
+															<td id="searchbtnrighttd" class="searchbtntd">
+																<button id="searchbtnright" class="searchbtnright" onclick="return false;">+</button>
+															</td>
+														</tr>
+													</table>	
+												</td>						
+											</tr>
+										</tbody>
 									</table>
-								</div>
-								<script type="application/javascript">
-								<!--
-								$('#sort_div').popup({trigger: '#searchbtnrighttd', align: 'right', duration: 'fast', top: 0, event: 'click'});
-								-->
-								</script>
-							</fieldset>
-							<fieldset class="step" id="step1">
-								<table>
-									<tbody>
-										<tr>
-											<td colspan="8"><input type="text" id="issue_id_text" class="text_issue"/></td>
-										</tr>
-										<tr>
-											<td><span>Resolution:</span></td>
-											<td><input class="check" type="checkbox" id="dup_none_check" checked="checked" onchange="updateUrl();" /><label> None</label></td>
-											<td><input class="check" type="checkbox" id="dup_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
-											<td><input class="check" type="checkbox" id="dup_wont_check" checked="checked" onchange="updateUrl();" /><label> WontFix</label></td>
-											<td><input class="check" type="checkbox" id="dup_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
-											<td><input class="check" type="checkbox" id="dup_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
-											<td><input class="check" type="checkbox" id="dup_works_check" checked="checked" onchange="updateUrl();" /><label> WorksForMe</label></td>
-											<td><input class="check" type="checkbox" id="dup_unknown_check" checked="checked" onchange="updateUrl();" /><label> Unknown</label></td>
-										</tr>
-										<tr>
-											<td><span>Status:</span></td>
-											<td><input class="check" type="checkbox" id="dup_open_check" checked="checked" onchange="updateUrl();" /><label> Open</label></td>
-											<td><input class="check" type="checkbox" id="dup_veririfed_check" checked="checked" onchange="updateUrl();" /><label> Verified</label></td>
-											<td><input class="check" type="checkbox" id="dup_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
-											<td><input class="check" type="checkbox" id="dup_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>
-											<td><input class="check" type="checkbox" id="dup_closed_check" checked="checked" onchange="updateUrl();" /><label> Closed</label></td>
-											<td></td>
-											<td style="padding: 10px;"><button id="issue_search" onclick="return viz.searchIssueId();">Search</button></td>
-										</tr>
-									</tbody>
-								</table>
-							</fieldset>
-							<fieldset class="step" id="step2">
-								<table>
-									<tbody>
-										<tr>
-											<td><span>Resolution:</span></td>
-											<td><input class="check" type="checkbox" id="my_none_check" checked="checked" onchange="updateUrl();" /><label>None</label></td>
-											<td><input class="check" type="checkbox" id="my_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
-											<td><input class="check" type="checkbox" id="my_wont_check" checked="checked" onchange="updateUrl();" /><label> WontFix</label></td>
-											<td><input class="check" type="checkbox" id="my_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
-											<td><input class="check" type="checkbox" id="my_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
-											<td><input class="check" type="checkbox" id="my_works_check" checked="checked" onchange="updateUrl();" /><label> WorksForMe</label></td>
-											<td><input class="check" type="checkbox" id="my_unknown_check" checked="checked" onchange="updateUrl();" /><label> Unknown</label></td>
-										</tr>
-										<tr>
-											<td><span>Status:</span></td>
-											<td><input class="check" type="checkbox" id="my_open_check" checked="checked" onchange="updateUrl();" /><label>Open</label></td>
-											<td><input class="check" type="checkbox" id="my_veririfed_check" checked="checked" onchange="updateUrl();" /><label> Verified</label></td>
-											<td><input class="check" type="checkbox" id="my_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
-											<td><input class="check" type="checkbox" id="my_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>
-											<td><input class="check" type="checkbox" id="my_closed_check" checked="checked" onchange="updateUrl();" /><label> Closed</label></td>
-											<td></td>
-											<td style="padding: 10px;"><button id="issue_search" onclick="return viz.search();">Search</button></td>
-										</tr>
-									</tbody>
-								</table>
-							</fieldset>
-							<fieldset class="step" id="step3">
-								<table>
-									<tbody>
-										<tr style="line-hight:12px;">
-											<td style="width:100%;"><input id="person_text" name="other"/></td>
-											<td style="padding: 10px;"><button onclick="return viz.search();">Search</button></td>
-										</tr>
-									</tbody>
-								</table>
-							</fieldset>
-						</form>
+									<div id="sort_div">
+										<table>
+											<tr>
+												<td>
+													Sort by: 
+													<input type="radio" id="relevance_sort" name="sort_radio" value="relevence" onchange="updateUrl(window.event);" checked="checked" /><label> Relevance</label>
+													<input type="radio" id="date_sort" name="sort_radio" value="date" onchange="updateUrl(window.event);" /><label> Date</label>
+												</td>
+											</tr>
+											<tr>
+												<td><input class="checkbox" type="checkbox" id="use_or_check" onchange="updateUrl(window.event);" >&nbsp; Keywords are optional</input></td>
+											</tr>
+										</table>
+									</div>
+									<script type="application/javascript">
+									<!--
+									$('#sort_div').popup({trigger: '#searchbtnrighttd', align: 'right', duration: 'fast', top: 0, event: 'click'});
+									-->
+									</script>
+								</fieldset>
+								<fieldset class="step" id="step1">
+									<table>
+										<tbody>
+											<tr>
+												<td colspan="8"><input type="text" id="issue_id_text" class="text_issue"/></td>
+											</tr>
+											<tr>
+												<td><span>Resolution:</span></td>
+												<td><input class="check" type="checkbox" id="dup_none_check" checked="checked" onchange="updateUrl();" /><label> None</label></td>
+												<td><input class="check" type="checkbox" id="dup_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
+												<td><input class="check" type="checkbox" id="dup_wont_check" checked="checked" onchange="updateUrl();" /><label> WontFix</label></td>
+												<td><input class="check" type="checkbox" id="dup_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
+												<td><input class="check" type="checkbox" id="dup_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
+												<td><input class="check" type="checkbox" id="dup_works_check" checked="checked" onchange="updateUrl();" /><label> WorksForMe</label></td>
+												<td><input class="check" type="checkbox" id="dup_unknown_check" checked="checked" onchange="updateUrl();" /><label> Unknown</label></td>
+											</tr>
+											<tr>
+												<td><span>Status:</span></td>
+												<td><input class="check" type="checkbox" id="dup_open_check" checked="checked" onchange="updateUrl();" /><label> Open</label></td>
+												<td><input class="check" type="checkbox" id="dup_veririfed_check" checked="checked" onchange="updateUrl();" /><label> Verified</label></td>
+												<td><input class="check" type="checkbox" id="dup_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
+												<td><input class="check" type="checkbox" id="dup_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>
+												<td><input class="check" type="checkbox" id="dup_closed_check" checked="checked" onchange="updateUrl();" /><label> Closed</label></td>
+												<td></td>
+												<td style="padding: 10px;"><button id="issue_search" onclick="return viz.searchIssueId();">Search</button></td>
+											</tr>
+										</tbody>
+									</table>
+								</fieldset>
+								<fieldset class="step" id="step2">
+									<table>
+										<tbody>
+											<tr>
+												<td><span>Resolution:</span></td>
+												<td><input class="check" type="checkbox" id="my_none_check" checked="checked" onchange="updateUrl();" /><label>None</label></td>
+												<td><input class="check" type="checkbox" id="my_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
+												<td><input class="check" type="checkbox" id="my_wont_check" checked="checked" onchange="updateUrl();" /><label> WontFix</label></td>
+												<td><input class="check" type="checkbox" id="my_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
+												<td><input class="check" type="checkbox" id="my_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
+												<td><input class="check" type="checkbox" id="my_works_check" checked="checked" onchange="updateUrl();" /><label> WorksForMe</label></td>
+												<td><input class="check" type="checkbox" id="my_unknown_check" checked="checked" onchange="updateUrl();" /><label> Unknown</label></td>
+											</tr>
+											<tr>
+												<td><span>Status:</span></td>
+												<td><input class="check" type="checkbox" id="my_open_check" checked="checked" onchange="updateUrl();" /><label>Open</label></td>
+												<td><input class="check" type="checkbox" id="my_veririfed_check" checked="checked" onchange="updateUrl();" /><label> Verified</label></td>
+												<td><input class="check" type="checkbox" id="my_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
+												<td><input class="check" type="checkbox" id="my_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>
+												<td><input class="check" type="checkbox" id="my_closed_check" checked="checked" onchange="updateUrl();" /><label> Closed</label></td>
+												<td></td>
+												<td style="padding: 10px;"><button id="issue_search" onclick="return viz.search();">Search</button></td>
+											</tr>
+										</tbody>
+									</table>
+								</fieldset>
+								<fieldset class="step" id="step3">
+									<table>
+										<tbody>
+											<tr style="line-hight:12px;">
+												<td style="width:100%;"><input id="person_text" name="other"/></td>
+												<td style="padding: 10px;"><button onclick="return viz.search();">Search</button></td>
+											</tr>
+										</tbody>
+									</table>
+								</fieldset>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-<div id="container" class="container_wide">
-	<div id="container" class="item_left">
-		<div>
-			<div class="items"><div class="items-div" id="items-div"></div></div>
-			<div class="pages" id="item_nav">
-				<table class="pages_table">
-					<tbody>
-						<tr>
-							<td class="pages" id="page_td"><a href="#"></a> page 1 of 100 <a href="#"></a></td>
-						</tr>
-					</tbody>
-				</table>
+		<div id="container" class="container_wide">
+			<div class="tabber">
+				<div class="tabbertab">
+					<h2>Items</h2>
+					<div id="container" class="item_left">
+						<div>
+							<div class="items"><div class="items-div" id="items-div"></div></div>
+							<div class="pages" id="item_nav">
+								<table class="pages_table">
+									<tbody>
+										<tr>
+											<td class="pages" id="page_td"><a href="#"></a> page 1 of 100 <a href="#"></a></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div id="separator" onselectstart="return false;"></div>
+					<div id="item-div">
+				  		<div id="details_wrapper" class="layer1"></div>
+					</div>
+				</div>
+				<div class="tabbertab">
+					<h2>Visualization</h2>
+					<div id="socialgraph_container" class="viz_container">
+						<div id="graph-controls-div">
+							<button class="zoom_btns" id="btnShowMore">+</button>
+							<button class="zoom_btns" id="btnShowLess">-</button>
+						</div>
+						<div id="graph-div" onselectstart="return false;"></div>
+					</div>
+					<div id="wordcloud_container" class="viz_container">
+						<div id="wordcloud-div"></div>
+					</div>
+					<div id="timeline_container" class="viz_container">
+						<div id="chart-div"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="footer-wrapper">
+			<div id="footer-content">
+		Copyleft...
 			</div>
 		</div>
 	</div>
-	<div id="separator" onselectstart="return false;"></div>
-	<div id="container" class="item_right">
-	<div class="tabber">
- 	<div class="tabbertab">
-	 <h2>Item details</h2>
-	  	<div id="item-div">
-	  		<div id="details_wrapper" class="layer1"></div>
-		</div>
-     </div>
-     <div class="tabbertab">
-	  <h2>Social graph</h2>
-		<div id="graph-controls-div">
-			<button class="zoom_btns" id="btnShowMore">+</button>
-			<button class="zoom_btns" id="btnShowLess">-</button>
-		</div>
-			<div id="graph-div" onselectstart="return false;"></div>
-    	</div>
-     <div class="tabbertab">
-	  <h2>Word cloud</h2>
-		<div id="wordcloud-div">
-		</div>
-     </div>
-</div>
-</div>
-
-<div id="container" class="container_wide">
-	<div id="container" class="timeline">
-		<div id="chart-div">
-		</div>
-	</div>
-</div>
-<div id="footer-wrapper">
-	<div id="footer-content">
-Copyleft...
-	</div>
-</div>
-</div>
-</div>
-
-
 </body>
 </html>
