@@ -47,12 +47,7 @@ ul.as-selections {
 	background-color: white;
 	height: 33px;
 	width: 906px;
-	border-radius: 4px;
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	box-shadow: 0px 1px 1px #ccc;
-	-webkit-box-shadow: 0px 1px 1px #ccc;
-	-moz-box-shadow: 0px 1px 1px #ccc;
+
 }
 ul.as-selections.loading {
 	background-color: #fff;
@@ -123,10 +118,6 @@ ul.as-selections li.as-selection-item.blur a.as-close {
 
 }
 ul.as-selections li:hover.as-selection-item a.as-close {
-	color: #fff;
-	text-shadow: 0 1px 1px #666;
-}
-ul.as-selections li.as-selection-item.selected {
 	color: #fff;
 	text-shadow: 0 1px 1px #666;
 }

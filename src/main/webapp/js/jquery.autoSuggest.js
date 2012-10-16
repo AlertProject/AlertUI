@@ -124,7 +124,7 @@
 					var lastChar = prefill_value.substring(prefill_value.length-1);
 					if(lastChar != ","){ prefill_value = prefill_value+","; }
 					values_input.val(","+prefill_value);
-					$("li.as-selection-item", selections_holder).addClass("blur").removeClass("selected");
+					$("li.as-selection-item", selections_holder).addClass("blur");
 				}
 				input.after(values_input);
 				selections_holder.click(function(){
@@ -151,7 +151,7 @@
 					return true;
 				}).blur(function(){
 					if(input_focus){
-						$("li.as-selection-item", selections_holder).addClass("blur").removeClass("selected");
+						$("li.as-selection-item", selections_holder).addClass("blur");
 						results_holder.hide();
 					}				
 				}).keydown(function(e) {
@@ -171,7 +171,7 @@
 							if(input.val() == ""){							
 								var last = values_input.val().split(",");
 								last = last[last.length - 2];
-								selections_holder.children().not(org_li.prev()).removeClass("selected");
+								selections_holder.children().not(org_li.prev());
 								
 								values_input.val(values_input.val().replace(last+",",""));
 								opts.selectionRemoved.call(this, org_li.prev(), {label: $('<div/>').text(org_li.prev().text().substring(1)).html(), value: last});
@@ -405,8 +405,8 @@
 					values_input.val(values_input.val()+data[opts.selectedValuesProp]+",");
 					var item = $('<li class="as-selection-item ' + data.type + '" id="as-selection-'+num+'"></li>').click(function(){
 							opts.selectionClick.call(this, $(this), input);
-							selections_holder.children().removeClass("selected");
-							$(this).addClass("selected");
+							selections_holder.children();
+							$(this);
 						}).mousedown(function(){ input_focus = false; });
 					var close = $('<a class="as-close">&times;</a>').click(function(){
 							values_input.val(values_input.val().replace(data[opts.selectedValuesProp]+",",""));

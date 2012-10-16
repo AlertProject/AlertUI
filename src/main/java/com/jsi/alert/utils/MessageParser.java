@@ -857,7 +857,7 @@ public class MessageParser {
 		long time = Long.parseLong(node.getAttribute("time")) - 11644473600000L;
 		String[] tags = node.getAttribute("tags").split(",");
 		String entryId = node.getAttribute("entryId");
-		String content = Utils.escapeHtml(node.getElementsByTagName("shortContent").item(0).getTextContent());
+		String content = Utils.escapeHtml(Utils.removeMultLineBreaks(node.getElementsByTagName("shortContent").item(0).getTextContent()));
 		
 		JSONArray tagsArr = new JSONArray();
 		tagsArr.addAll(Arrays.asList(tags));

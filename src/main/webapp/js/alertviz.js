@@ -4,6 +4,14 @@ var defaultDateFormat = "isoDate";
 var settingManually = false;
 var currentTab = 0;
 
+//returns the value of a CSS attribute
+function getCssValue(clazz, attribute) {
+	var $p = $("<p class='" + clazz + "'></p>").hide().appendTo("body");
+	var value = $p.css(attribute);
+	$p.remove();
+	return value;
+}
+
 /**
  * Returns an URL containing the current state of the interface.
  */
@@ -29,6 +37,7 @@ function genCurrentUrl() {
  */
 function getCurrentState() {
 	var searchGeneral = viz.searchStateGeneral;
+	var issueIdSearch = viz.searchStateIssueId;
 	var searchPerson = viz.searchStatePerson;	// TODO
 	
 	var result = {};
@@ -109,8 +118,8 @@ function getCurrentState() {
 		general.or = true;
 	
 	// duplicate issue
-	var issueId = $('#issue_id_text').val();
-	if (issueId.length > 0) duplicate.iid = issueId;
+	var issue = issueIdSearch.getTypeV('issue');
+	if (issue.length > 0) duplicate.iid = issue[0];
 	
 	var duplNoneChk = $('#dup_none_check').attr('checked') == 'checked';
 	var duplFixedChk = $('#dup_fixed_check').attr('checked') == 'checked';
@@ -350,8 +359,10 @@ function loadState() {
 	// duplicate issue
 	if (duplicate != null) {
 		for (var attribute in duplicate) {
-			if (attribute == 'iid')
-				$('#issue_id_text').val(duplicate.iid);
+			if (attribute == 'iid') {
+				var issue = duplicate[attribute];
+				viz.addToSearchField('issue_id_text', issue);
+			}
 			else if (issueChks[attribute])
 				uncheckByAttr(attribute, 'dup_');
 		}
@@ -383,42 +394,6 @@ function loadState() {
 	settingManually = false;
 }
 
-// helper function for drawing lines on the people graph
-var intersect_line_box = function(p1, p2, boxTuple) {
-	var p3 = {x:boxTuple[0], y:boxTuple[1]};
-    var w = boxTuple[2];
-    var h = boxTuple[3];
-
-	var tl = {x: p3.x, y: p3.y};
-	var tr = {x: p3.x + w, y: p3.y};
-	var bl = {x: p3.x, y: p3.y + h};
-	var br = {x: p3.x + w, y: p3.y + h};
-
-	return intersect_line_line(p1, p2, tl, tr) ||
-        intersect_line_line(p1, p2, tr, br) ||
-        intersect_line_line(p1, p2, br, bl) ||
-        intersect_line_line(p1, p2, bl, tl) ||
-        false;
-};
-var intersect_line_line = function(p1, p2, p3, p4) {
-	var denom = ((p4.y - p3.y)*(p2.x - p1.x) - (p4.x - p3.x)*(p2.y - p1.y));
-	if (denom === 0) return false; // lines are parallel
-	var ua = ((p4.x - p3.x)*(p1.y - p3.y) - (p4.y - p3.y)*(p1.x - p3.x)) / denom;
-	var ub = ((p2.x - p1.x)*(p1.y - p3.y) - (p2.y - p1.y)*(p1.x - p3.x)) / denom;
-
-	if (ua < 0 || ua > 1 || ub < 0 || ub > 1)  return false;
-	return arbor.Point(p1.x + ua * (p2.x - p1.x), p1.y + ua * (p2.y - p1.y));
-};
-
-
-//returns the value of a CSS attribute
-function getCssValue(clazz, attribute) {
-	var $p = $("<p class='" + clazz + "'></p>").hide().appendTo("body");
-	var value = $p.css(attribute);
-	$p.remove();
-	return value;
-}
-
 var SocialGraph = function(options){
 	var width = $('#' + options.container).width();
 	var height = $('#' + options.container).height();
@@ -433,6 +408,33 @@ var SocialGraph = function(options){
 	if (selectedBoxClr == null) selectedBoxClr = "rgba(30, 116, 255, .6)";
 	if (neighbourTextClr == null) neighbourTextClr = "white";
 	if (neighbourBoxClr == null) selectedBoxClr = "rgba(62, 189, 255, .6)";
+	
+	// helper function for drawing lines on the people graph
+	var intersect_line_box = function(p1, p2, boxTuple) {
+		var p3 = {x:boxTuple[0], y:boxTuple[1]};
+	    var w = boxTuple[2];
+	    var h = boxTuple[3];
+
+		var tl = {x: p3.x, y: p3.y};
+		var tr = {x: p3.x + w, y: p3.y};
+		var bl = {x: p3.x, y: p3.y + h};
+		var br = {x: p3.x + w, y: p3.y + h};
+
+		return intersect_line_line(p1, p2, tl, tr) ||
+	        intersect_line_line(p1, p2, tr, br) ||
+	        intersect_line_line(p1, p2, br, bl) ||
+	        intersect_line_line(p1, p2, bl, tl) ||
+	        false;
+	};
+	var intersect_line_line = function(p1, p2, p3, p4) {
+		var denom = ((p4.y - p3.y)*(p2.x - p1.x) - (p4.x - p3.x)*(p2.y - p1.y));
+		if (denom === 0) return false; // lines are parallel
+		var ua = ((p4.x - p3.x)*(p1.y - p3.y) - (p4.y - p3.y)*(p1.x - p3.x)) / denom;
+		var ub = ((p2.x - p1.x)*(p1.y - p3.y) - (p2.y - p1.y)*(p1.x - p3.x)) / denom;
+
+		if (ua < 0 || ua > 1 || ub < 0 || ub > 1)  return false;
+		return arbor.Point(p1.x + ua * (p2.x - p1.x), p1.y + ua * (p2.y - p1.y));
+	};
 	
 	// tooltip functions
 	function showTooltip(data) {
@@ -797,6 +799,7 @@ var Search = function (opts) {
 
 var AlertViz = function(options) { 
     var generalSearch = Search();
+    var issueIdSearch = Search();
     var personSearch = Search();
     
     var itemsPerPage = 100;
@@ -810,6 +813,7 @@ var AlertViz = function(options) {
     
     var that = {
     	searchStateGeneral: generalSearch,
+    	searchStateIssueId: issueIdSearch,
     	searchStatePerson: personSearch,
     	
     	addToSearchField: function (fieldId, data) {
@@ -817,11 +821,14 @@ var AlertViz = function(options) {
     		var selector = '#' + fieldId;
     		
     		if (fieldId == 'keyword_text') {
-    			generalSearch.addToSearch(data);
-
     			var value = data.value;
     			
     			$(selector).val($(selector).val() + ' ' + value);
+    		} else if(fieldId == 'issue_id_text') {
+    			issueIdSearch.addToSearch(data);
+    			
+    			var label = data.label;
+    			$(selector).val(label + ':' + data.type + '|');
     		} else {
     			generalSearch.addToSearch(data);
             	
@@ -1093,11 +1100,11 @@ var AlertViz = function(options) {
     	},
     	
     	searchIssueId: function () {
-    		var issues = $('#issue_id_text').val();
+    		var issue = issueIdSearch.getSearchStr('issue');
     		
     		return that.searchIssueByQueryOpts({
 				type: 'duplicateIssue',
-    			issues: issues,
+    			issues: issue,
     			NoneChk: $('#dup_none_check').attr('checked') == 'checked',
     			FixedChk: $('#dup_fixed_check').attr('checked') == 'checked',
     			WontFixChk: $('#dup_wont_check').attr('checked') == 'checked',
@@ -1174,7 +1181,7 @@ var AlertViz = function(options) {
     		// generate accordion
     		// item description
     		var html = '<div class="details_section">';
-    		html += '<table class="heading"><tr>';
+    		html += '<table class="heading' + (data.url == selectedUri ? ' content_open' : '') + '"><tr>';
     		html += '<td class="title_desc">Issue created by ';
     		html += '<span class="headings_author">' + (data.author == null ? 'Unknown' : data.author.name) + '</span>';
     		html += '<span class="headings_date">' + (data.dateOpened == null ? '' : new Date(data.dateOpened).format(defaultDateFormat)) + '</span>';
@@ -1191,7 +1198,8 @@ var AlertViz = function(options) {
     			var comment = comments[i];
     			
     			html += '<div class="details_section">';
-    			html += '<table class="heading"><tr>';
+    			html += '<table class="heading' + (comment.commentUri == selectedUri ? ' content_open' : '')  + '"><tr>';
+
     			html += '<td class="title_comm">Comment by <span class="headings_author">' + comment.person.name + '</span><span class="headings_date">' + new Date(comment.commentDate).format(defaultDateFormat) + '</span></td>';
     			html += '</tr></table>';
     			// content
@@ -1218,8 +1226,8 @@ var AlertViz = function(options) {
 			});
     	},
     	
-    	addCommitToSearch: function (name, uri, tooltip) {
-			var event = window.event;
+    	addCommitToSearch: function (e, name, uri, tooltip) {
+			var event = e || window.event;
 			event.stopPropagation();
 			event.preventDefault();
 			
@@ -1247,7 +1255,7 @@ var AlertViz = function(options) {
     		
     		// files
     		html += '<div class="details_section">';
-    		html += '<table class="heading"><tr>';
+    		html += '<table class="heading content_open"><tr>';
     		html += '<td class="title_comm">Files</td>';
     		html += '</tr></table>';
     		
@@ -1265,7 +1273,7 @@ var AlertViz = function(options) {
     				html += '<li class="tree_li">';
     				html += '<div class="toggle" title="' + file.fullName + '">';
     				html += '<span>' + file.name + ' (' + file.action + ')</span>';
-    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + file.name + '\',\'' + file.uri + '\',\'' + file.fullName + '\');" />';
+    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + file.name + '\',\'' + file.uri + '\',\'' + file.fullName + '\');" />';
     				html += '</div>';
     				html += '<ul class="tree_ul">';
     				for (var moduleIdx = 0; moduleIdx < modules.length; moduleIdx++) {
@@ -1277,14 +1285,14 @@ var AlertViz = function(options) {
         					html += '<li class="tree_li">';
         					html += '<div class="toggle">';
         					html += '<span>' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
-        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + module.name + '\',\'' + module.uri + '\',\'' + file.fullName + '\');" />';
+        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + module.name + '\',\'' + module.uri + '\',\'' + file.fullName + '\');" />';
         					html +='</div>';
     	    				html += '<ul class="tree_ul">';
     	    				for (var methodIdx = 0; methodIdx < methods.length; methodIdx++) {
     	    					var method = methods[methodIdx];
     	    					html += '<li class="tree_li">';
     	    					html += '<span class="leaf">' + method.methodName + ' (' + method.startLine + '-' + method.endLine + ')</span>';
-    	    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + method.methodName + '\',\'' + method.methodUri + '\',\'' + file.fullName + '\');" />';
+    	    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + method.methodName + '\',\'' + method.methodUri + '\',\'' + file.fullName + '\');" />';
     	    					html += '</li>';
     	    				}
     	    				html += '</ul>';
@@ -1292,7 +1300,7 @@ var AlertViz = function(options) {
     					} else {
         					html += '<li class="tree_li">';
         					html += '<span class="leaf">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
-        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + module.name + '\',\'' + module.uri + '\',\'' + file.fullName + '\');" />';
+        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + module.name + '\',\'' + module.uri + '\',\'' + file.fullName + '\');" />';
         					html += '</li>';
     					}
     				}
@@ -1301,7 +1309,7 @@ var AlertViz = function(options) {
     			} else {	// create leaf
     				html += '<li class="tree_li">';
     				html += '<span class="leaf">' + file.name + ' (' + file.action + ')</span>';
-    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + file.name + '\',\'' + file.uri + '\',\'' + file.fullName + '\');" />';
+    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + file.name + '\',\'' + file.uri + '\',\'' + file.fullName + '\');" />';
     				html += '</li>';
     			}
     		}
@@ -1576,10 +1584,13 @@ var AlertViz = function(options) {
     		var Type = {"email": 10, "post": 11, "bugDescription": 12, "bugComment": 13, "commit": 14, "wikiPost": 15};
     		
     		$('#items-div').html('');
-    		var html = '<ul>';
-			
-			var peopleH = data.persons;
+    		var peopleH = data.persons;
 			var items = data.items;
+			if (items.length == 0) {
+				$('#items-div').html('<span class="no_results">No results!</span>');
+				return;
+			}
+    		var html = '<ul>';
     		
 			// generate HTML
 			for(var i = 0; i < data.items.length; i++){
@@ -1738,6 +1749,8 @@ var AlertViz = function(options) {
     			// then add selected class to the item clicked
     			$(event.currentTarget).addClass('item-selected');
     		});
+    		
+    		$('.item-wrapper')[0].click();
     	},
 
     	createGraph: function(data) {
@@ -1825,31 +1838,30 @@ var AlertViz = function(options) {
 	});
     
     // issue id search
-    $('#issue_id_text').autocomplete({
-    	source: function (request, response) {
-    		$.ajax({
-				url: "suggest",
-				dataType: "json",
-				data: {
-					Issues: request.term
-				},
-				success: function(data) {
-					response(data);
-				}
-			});
+    $('#issue_id_text').autoSuggest('suggest', {
+    	selectionLimit: 1,
+    	selectedItemProp: 'label',
+    	searchObjProps: 'label',
+    	selectedValuesProp: 'value',
+    	queryParam: 'Issues',
+    	retrieveLimit: false,
+    	neverSubmit: true,
+    	startText: 'issue ID,...',
+    	asHtmlID: 'issue_id_text',
+    	addByWrite: false,
+    	selectionAdded: function(elem, data) {
+    		if (!settingManually) {
+	    		issueIdSearch.addToSearch(data);
+	    		updateUrl();
+    		}
     	},
-    	response: function (event, ui) {
-    		alert('works');
-    	}
-    }).data('autocomplete')._renderItem = function (ul, item) {
-    	var term = this.term.split(' ').join('|');
-		var re = new RegExp("(" + term + ")", "gi") ;
-		var t = item.label.replace(re,"<em>$1</em>");
-		return $( "<li></li>" )
-		.data( "item.autocomplete", item )
-		.append( "<a>" + t + "</a>" )
-		.appendTo( ul );
-    };
+	  	selectionRemoved: function(elem, data) {
+	  		issueIdSearch.removeFromSearch(elem, data);
+	  		updateUrl();
+	  		
+	  		elem.remove();
+	  	}
+    });
     
     $('#issue_id_text').blur(function (event) {
     	updateUrl();
@@ -1857,6 +1869,7 @@ var AlertViz = function(options) {
     
     // suggest people search
     $('#person_text').autoSuggest('suggest', {
+    	selectionLimit: 1,
     	selectedItemProp: 'label',
     	searchObjProps: 'label',
     	selectedValuesProp: 'value',
