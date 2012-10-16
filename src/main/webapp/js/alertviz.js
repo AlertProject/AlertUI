@@ -1874,12 +1874,12 @@ var AlertViz = function(options) {
 			$('.item_right').width(rightItemWidth - ui.position.left);
 		},
 		start: function (event, ui) {
-			$(document).css('cursor', 'pointer !important');
+			$('.item_left, .item_right').css('cursor', 'e-resize');
 			leftItemWidth = $('.item_left').width();
 			rightItemWidth = $('.item_right').width();
 		},
 		stop: function () {
-			document.body.style.cursor = 'auto';
+			$('.item_left, .item_right').css('cursor', 'auto');
 		}
 	});
     
