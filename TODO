@@ -14,13 +14,11 @@
 	
 	
 -ko enega izberes naj ne isce
--tagi pri Duplicate issue (max 1 in tudi max 1 pri suggest issues for a developer)
 -issue details po datumu sortirano
 -pri searchu izberi 1. item
 -pri search prvo clear
 - ce ni rezultatov => kazi no results
--na timeline cursor naj ne bo roka
-- remove selected class from suggestion tagsj
+- na timeline cursor naj ne bo roka
 - scroll pri suggestions se vedno ne dela!!
 sile tree pri kliku na search odpri v novem oknu z default stanjem
 - pri item snoppetih odstrani multople line breaks
