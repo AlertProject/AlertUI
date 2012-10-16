@@ -1,5 +1,3 @@
-
-
 .tabberlive .tabbertabhide {
  visibility:hidden;
  position: absolute;
@@ -36,10 +34,17 @@ ul.tabbernav
     background:
         -moz-linear-gradient(
         center bottom,
-        rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
-        rgb(240,240,240) 78%
+        rgb(150,200,100) 9%,
+        rgb(150,200,100) 55%,
+        rgb(182,222,143) 78%
         );
+    background-image: 
+    	-o-linear-gradient(
+    	90deg,
+    	rgb(150,200,100)  9%,
+    	rgb(150,200,100)  55%,
+    	rgb(182,222,143)  78%
+    	);
 }
 ul.tabbernav li
 {
@@ -57,10 +62,17 @@ ul.tabbernav li
     background:
         -moz-linear-gradient(
         center bottom,
-        rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
-        rgb(240,240,240) 78%
+        rgb(150,200,100) 9%,
+        rgb(150,200,100) 55%,
+        rgb(182,222,143) 78%
         );
+    background-image: 
+    	-o-linear-gradient(
+    	90deg,
+    	rgb(150,200,100)  9%,
+    	rgb(150,200,100)  55%,
+    	rgb(182,222,143)  78%
+    	);
 }
 ul.tabbernav li a
 {
@@ -81,10 +93,17 @@ ul.tabbernav li a
     background:
         -moz-linear-gradient(
         center bottom,
-        rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
-        rgb(240,240,240) 78%
+        rgb(150,200,100) 9%,
+        rgb(150,200,100) 55%,
+        rgb(182,222,143) 78%
         );
+    background-image: 
+    	-o-linear-gradient(
+    	90deg,
+    	rgb(150,200,100)  9%,
+    	rgb(150,200,100)  55%,
+    	rgb(182,222,143)  78%
+    	);
 }
 ul.tabbernav li a:link { 
 	color: #fff; 
@@ -110,10 +129,17 @@ ul.tabbernav li a:hover
     background:
         -moz-linear-gradient(
         center bottom,
-        rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
-        rgb(240,240,240) 78%
+        rgb(150,150,150) 9%,
+        rgb(150,150,150) 55%,
+        rgb(200,200,200) 78%
         );
+    background-image: 
+    	-o-linear-gradient(
+    	90deg,
+    	rgb(150,150,150)  9%,
+    	rgb(150,150,150)  55%,
+    	rgb(200,200,200)  78%
+    	);
 }
 ul.tabbernav li.tabberactive a
 {
@@ -131,10 +157,17 @@ ul.tabbernav li.tabberactive a
     background:
         -moz-linear-gradient(
         center bottom,
-        rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
-        rgb(240,240,240) 78%
+        rgb(150,150,150) 9%,
+        rgb(150,150,150) 55%,
+        rgb(200,200,200) 78%
         );
+    background-image: 
+    	-o-linear-gradient(
+    	90deg,
+    	rgb(150,150,150)  9%,
+    	rgb(150,150,150)  55%,
+    	rgb(200,200,200)  78%
+    	);
 }
 ul.tabbernav li.tabberactive a:hover
 {
@@ -153,10 +186,17 @@ ul.tabbernav li.tabberactive a:hover
     background:
         -moz-linear-gradient(
         center bottom,
-        rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
-        rgb(240,240,240) 78%
+        rgb(150,150,150) 9%,
+        rgb(150,150,150) 55%,
+        rgb(200,200,200) 78%
         );
+    background-image: 
+    	-o-linear-gradient(
+    	90deg,
+    	rgb(150,150,150)  9%,
+    	rgb(150,150,150)  55%,
+    	rgb(200,200,200)  78%
+    	);
 }
 .tabberlive .tabbertab h2 {
  display:none;

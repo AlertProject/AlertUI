@@ -141,10 +141,17 @@
     background:
         -moz-linear-gradient(
         center bottom,
-        rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
+        rgb(220,220,220) 9%,
+        rgb(220,220,220) 55%,
         rgb(240,240,240) 78%
         );
+    background-image: 
+    	-o-linear-gradient(
+    	90deg,
+    	rgb(220,220,220)  9%,
+    	rgb(220,220,220)  55%,
+    	rgb(240,240,240)  78%
+    	);
 }
 .tooltip_id{
 	text-align:right;
@@ -168,10 +175,17 @@
     background:
         -moz-linear-gradient(
         center bottom,
-        rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
+        rgb(220,220,220) 9%,
+        rgb(220,220,220) 55%,
         rgb(240,240,240) 78%
         );
+    background-image: 
+    	-o-linear-gradient(
+    	90deg,
+    	rgb(220,220,220)  9%,
+    	rgb(220,220,220)  55%,
+    	rgb(240,240,240)  78%
+    	);
 }
 .tooltip_mail{
 	padding-left:20px;
@@ -193,9 +207,16 @@
         -moz-linear-gradient(
         center bottom,
         rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
-        rgb(240,240,240) 78%
+        rgb(255,255,255) 55%,
+        rgb(255,255,255) 78%
         );
+    background-image: 
+    	-o-linear-gradient(
+    	90deg,
+    	rgb(240,240,240)  9%,
+    	rgb(255,255,255)  55%,
+    	rgb(255,255,255)  78%
+    	);
 }
 .tooltip_expertise{
 	text-align:right;
@@ -218,9 +239,16 @@
         -moz-linear-gradient(
         center bottom,
         rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
-        rgb(240,240,240) 78%
+        rgb(255,255,255) 55%,
+        rgb(255,255,255) 78%
         );
+    background-image: 
+    	-o-linear-gradient(
+    	90deg,
+    	rgb(240,240,240)  9%,
+    	rgb(255,255,255)  55%,
+    	rgb(255,255,255)  78%
+    	);
 }
 .pages{
 	font-size:10px;

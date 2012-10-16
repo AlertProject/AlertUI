@@ -131,10 +131,17 @@ input.button {
     background:
         -moz-linear-gradient(
         center bottom,
-        rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
-        rgb(240,240,240) 78%
+        rgb(150,200,100) 9%,
+        rgb(150,200,100) 55%,
+        rgb(182,222,143) 78%
         );
+    background-image: 
+    	-o-linear-gradient(
+    	90deg,
+    	rgb(150,200,100)  9%,
+    	rgb(150,200,100)  55%,
+    	rgb(182,222,143)  78%
+    	);
 }
 #content-outer {
 	background: #fff;
