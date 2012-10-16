@@ -21,6 +21,9 @@ width:100%;
     -webkit-border-radius: 8px;
     background-color: #ddffaa;
 }
+.content_open{
+	background-color:#eee !important;
+}
 .headings_date {
 	float: right;
 	font-weight:normal;
