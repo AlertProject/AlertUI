@@ -1709,11 +1709,12 @@ var AlertViz = function(options) {
     		var info = data.info;
     		var offset = info.offset;
     		var total = info.totalCount == null ? Number.POSITIVE_INFINITY : info.totalCount;
-    		
     		var nPages = Math.ceil(total/itemsPerPage);
     		var currentPage = Math.floor(offset/itemsPerPage) + 1;
     		
-    		var navHtml = (nPages == Number.POSITIVE_INFINITY) ? 'page ' + currentPage : 'page ' + currentPage + ' of ' + nPages;	// TODO
+    		var navHtml = (offset + 1) + ' to ' + (offset + info.limit);
+    		if (total != Number.POSITIVE_INFINITY)
+    			navHtml += ' of ' + total;
     		if (currentPage > 1)
     			navHtml = '<a onclick="viz.jumpPage(' + (info.offset - info.limit) + ', ' + info.limit + ')">&lt;&lt;</a> ' + navHtml;
     		if (currentPage < nPages)

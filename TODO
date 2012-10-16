@@ -12,8 +12,6 @@
 		○  button with suggest developers to fix the issue. call recommender
 		○  show related posts (the info that you get in the metadata content)
 	
-	•  reorganize layout of components. first tab shows results + item details. second tab shows social graph, timeline, words
-	
 	
 -ko enega izberes naj ne isce
 -exception pri items parsing (Angela Rumpl)
