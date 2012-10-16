@@ -73,7 +73,7 @@
 				}
 				opts.start.call(this);
 				var input = $(this);
-				input.attr("autocomplete","off").addClass("as-input").attr("id",x_id).val(opts.startText);
+				input.attr("autocomplete","off").addClass("as-input").attr("id",x_id).attr('placeholder', opts.startText);
 				var input_focus = false;
 				
 				// Setup basic elements and render them to the DOM
@@ -85,7 +85,7 @@
 				var values_input = $('<input type="hidden" class="as-values" name="as_values_'+x+'" id="as-values-'+x+'" />');
 				var prefill_value = "";
 				
-				$(results_ul).mousedown(function (event) { // fix for the scroll bar
+				$(results_ul).mousedown(function (event) { // TODO doesn't work, fix for the scroll bar
 					event.stopPropagation();
 					event.preventDefault();
 					return false;
@@ -137,31 +137,20 @@
 				var totalSelections = 0;
 				var tab_press = false;
 				
-				var blurWidth = '320px';
-				
-				$(input).css('width', blurWidth);
+				var blurWidth = '200px', normalWidth = '325px';
+				$(input).css('width', normalWidth);
 				
 				// Handle input field events
 				input.focus(function(){	
-					input_focus = true;
-					if($(this).val() == opts.startText && values_input.val() == ""){
-						$(this).val("");
-						$(this).css("width", "200px");
-					} else if(input_focus){
-						$("li.as-selection-item", selections_holder).removeClass("blur");
-						if($(this).val() != ""){
-							results_ul.css("width",selections_holder.outerWidth());
-							results_holder.show();
-						}
+					$("li.as-selection-item", selections_holder).removeClass("blur");
+					if($(this).val() != ""){
+						results_ul.css("width",selections_holder.outerWidth());
+						results_holder.show();
 					}
 					input_focus = true;
 					return true;
 				}).blur(function(){
-					$(this).css("width", blurWidth);
-					if($(this).val() == "" && values_input.val() == "" && prefill_value == ""){
-						$(this).val(opts.startText);
-						$(this).css('width', blurWidth);
-					} else if(input_focus){
+					if(input_focus){
 						$("li.as-selection-item", selections_holder).addClass("blur").removeClass("selected");
 						results_holder.hide();
 					}				
@@ -186,6 +175,11 @@
 								
 								values_input.val(values_input.val().replace(last+",",""));
 								opts.selectionRemoved.call(this, org_li.prev(), {label: $('<div/>').text(org_li.prev().text().substring(1)).html(), value: last});
+								
+								if (values_input.val() == '') {
+									$(input).attr('placeholder', opts.startText);
+									$(input).css('width', normalWidth);
+								}
 							}
 							if(input.val().length == 1){
 								results_holder.hide();
@@ -264,6 +258,10 @@
 							add_selected_item(n_data, "00"+(lis+1));
 							input.val("");
 						}
+					}
+					
+					if ($(this).val() != '') {
+						$(this).removeAttr('placeholder');
 					}
 					
 					if (lastCh == ',' || lastCh == '\t') {
@@ -398,6 +396,9 @@
 				}
 				
 				function add_selected_item(data, num){
+					$(input).removeAttr('placeholder');
+					$(input).css('width', blurWidth);
+					
 					if (data.type == null)
 						data.type = 'keyword';
 					
@@ -410,6 +411,12 @@
 					var close = $('<a class="as-close">&times;</a>').click(function(){
 							values_input.val(values_input.val().replace(data[opts.selectedValuesProp]+",",""));
 							opts.selectionRemoved.call(this, item, data);
+							
+							if (values_input.val() == '') {
+								$(input).attr('placeholder', opts.startText);
+								$(input).css('width', normalWidth);
+							}
+							
 							input_focus = true;
 							input.focus();
 							return false;

@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jsi.alert.model.UserPrincipal;
+import com.jsi.alert.beans.UserPrincipal;
 import com.jsi.alert.service.AuthenticatorService;
 import com.jsi.alert.utils.Configuration;
 import com.jsi.alert.utils.MessageParser;
@@ -249,7 +249,7 @@ public class QueryServlet extends MQServlet {
 		// first check if the user is authenticated
 		HttpSession session = request.getSession();
 		
-		boolean isAuthenticated = AuthenticatorService.authenticateUser(session);
+		boolean isAuthenticated = AuthenticatorService.authenticateUser(session.getAttribute(Configuration.USER_PRINCIPAL) != null ? (UserPrincipal) session.getAttribute(Configuration.USER_PRINCIPAL) : null);
 		
 		if (isAuthenticated) {
 			UserPrincipal user = (UserPrincipal) session.getAttribute(Configuration.USER_PRINCIPAL);

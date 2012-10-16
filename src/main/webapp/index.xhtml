@@ -3,7 +3,9 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:c="http://java.sun.com/jsp/jstl/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 <head>
 	<title>Alert</title>
 	<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
@@ -66,15 +68,14 @@
 					 			<li><a href="admin.html">Administration</a></li>
 					 		</c:if>
 					 		<li>
-					 			<input type="button" id="notification_btn" class="notifications_open" value="#{index.user.email} (#{index.getNNotifications()})" />
-					 			<div id="notification_div">
+				 				<div id="notification_div">
 					 				<div class='arrow'></div>
      		 		 				<div class='arrow-border'></div>
        				 				<p>
 										<a href="#{index.getLogoutUrl()}" style="float:right;text-transform:normalcase;">Logout</a>
 	 								</p>
      			    				<ul id="notification_list">
-	     			    				<c:forEach items="#{index.notifications}" var="notification">
+	     			    				<c:forEach items="#{index.user.notifications}" var="notification">
 	     			    					<li>
 	     			    						<table class="notification event">
 													<tr>
@@ -89,11 +90,12 @@
 	     			    				</c:forEach>
      			    				</ul>
 					 			</div>
-					 			<script type="application/javascript">
-					 				<!--
-					 				$('#notification_div').popup({trigger: '#notification_btn', align: 'center', duration: 'fast', top: 20, event: 'click'});
-					 				-->
-					 			</script>
+				 			<input type="button" id="notification_btn" class="notifications_open" value="#{index.user.email} (#{fn:length(index.user.notifications)})" />
+			 				<script type="application/javascript">
+				 				<!--
+				 				$('#notification_div').popup({trigger: '#notification_btn', align: 'center', duration: 'fast', top: 20, event: 'click'});
+				 				-->
+			 				</script>
 		     			     </li>
 					 	</c:when>
 					 	<c:otherwise>

@@ -471,13 +471,8 @@ public class MessageUtils {
 			if (props.containsKey("people")) {
 				String[] people = props.getProperty("people").split(",");
 				
-				for (String personOrV : people) {
-					String[] personV = personOrV.split("\\|");
-					SOAPElement accounts = conditions.addChildElement("accounts");
-					
-					for (String person : personV)
-						accounts.addChildElement("account").setAttribute("name", person);
-				}
+				for (String person : people)
+					conditions.addChildElement("person").setTextContent(person);
 			}
 			
 			if (props.containsKey("issues")) {

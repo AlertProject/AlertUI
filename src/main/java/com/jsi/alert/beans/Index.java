@@ -1,20 +1,17 @@
 package com.jsi.alert.beans;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jsi.alert.model.UserPrincipal;
-import com.jsi.alert.model.notification.Notification;
+import com.jsi.alert.model.Notification;
 import com.jsi.alert.service.AuthenticatorService;
 import com.jsi.alert.service.NotificationService;
 import com.jsi.alert.utils.Configuration;
@@ -24,41 +21,21 @@ import com.jsi.alert.utils.Configuration;
  */
 @ManagedBean
 @RequestScoped
-public class Index {
-	
+public class Index implements Serializable {
+
+	private static final long serialVersionUID = 4046642011714896099L;
 	private static final Logger log = LoggerFactory.getLogger(Index.class);
 	
-	private HttpSession session;
-	private UserPrincipal user;
-	
-	private List<Notification> notifications;
+	@ManagedProperty(value="#{userPrincipal}") private UserPrincipal user;
 	
 	/**
 	 * Fetches the session and checks if the user is authenticated.
 	 */
+	@SuppressWarnings("unused")
 	@PostConstruct
-	public void init() {
-		notifications = new ArrayList<>();
-		
-		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-		session = request.getSession();
-		
-		if (authenticateUser()) {
+	private void init() {
+		if (AuthenticatorService.authenticateUser(user))
 			fetchNotifications();
-		}
-	}
-	
-	
-	/**
-	 * Authenticates the user and saves their credentials into the session.
-	 * 
-	 * @return
-	 */
-	private boolean authenticateUser() {
-		boolean authenticated = AuthenticatorService.authenticateUser(session);
-		setUser(authenticated ? (UserPrincipal) session.getAttribute(Configuration.USER_PRINCIPAL) : null);
-		
-		return authenticated;
 	}
 	
 	/**
@@ -67,12 +44,14 @@ public class Index {
 	public void fetchNotifications() {
 		if (user == null || user.getUuid() == null) {
 			log.warn("Tried to fetch notifications for an invalid user...");
+			if (user != null)
+				user.getNotifications().clear();
 			return;
 		}
 		
 		String uuid = Configuration.NOTIFICATION_DEFAULT_USER == null ? user.getUuid() : Configuration.NOTIFICATION_DEFAULT_USER;
 		List<Notification> newNotifications = NotificationService.fetchNotifications(uuid);
-		notifications.addAll(newNotifications);
+		user.getNotifications().addAll(newNotifications);
 	}
 	
 	public boolean isUserLoggedIn() {
@@ -93,19 +72,5 @@ public class Index {
 
 	public void setUser(UserPrincipal user) {
 		this.user = user;
-	}
-
-
-	public List<Notification> getNotifications() {
-		return notifications;
-	}
-
-
-	public void setNotifications(List<Notification> notifications) {
-		this.notifications = notifications;
-	}
-	
-	public int getNNotifications() {
-		return notifications == null ? 0 : notifications.size();
 	}
 }

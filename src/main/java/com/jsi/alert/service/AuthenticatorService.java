@@ -3,7 +3,6 @@ package com.jsi.alert.service;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONObject;
@@ -11,7 +10,7 @@ import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jsi.alert.model.UserPrincipal;
+import com.jsi.alert.beans.UserPrincipal;
 import com.jsi.alert.service.UniversalService.RequestType;
 import com.jsi.alert.utils.Configuration;
 
@@ -69,17 +68,19 @@ public class AuthenticatorService {
 	 * @param session
 	 * @return
 	 */
-	public static boolean authenticateUser(HttpSession session) {
-		UserPrincipal user = session.getAttribute(Configuration.USER_PRINCIPAL) != null ? (UserPrincipal) session.getAttribute(Configuration.USER_PRINCIPAL) : null;
-		if (user == null) return false;
+	public static boolean authenticateUser(UserPrincipal user) {
+		if (user == null || user.getEmail() == null) return false;
 		
 		String email = user.getEmail();
 		if (log.isDebugEnabled()) log.debug("Authenticating user: " + email + "...");
 		UserPrincipal userInfo = getUserInfo(email);
 		
-		if (userInfo == null) session.removeAttribute(Configuration.USER_PRINCIPAL);
-		else session.setAttribute(Configuration.USER_PRINCIPAL, userInfo);
-		
-		return userInfo != null;
+		if (userInfo != null) {
+			user.setAdmin(userInfo.getAdmin());
+			user.setEmail(userInfo.getEmail());
+			user.setUuid(userInfo.getUuid());
+			
+			return true;
+		} else return false;
 	}
 }

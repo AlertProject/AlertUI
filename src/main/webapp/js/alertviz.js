@@ -955,6 +955,7 @@ var AlertViz = function(options) {
     		return that.searchItemsByQueryOpts({
     			type: 'itemData',
             	keywords: queryOpts.keywords,
+            	issues: queryOpts.issues,
     			people: queryOpts.people,
     			sources: queryOpts.sources,
     			products: queryOpts.products,

@@ -10,7 +10,7 @@ public class Configuration {
 	
 	private static final Logger log = LoggerFactory.getLogger(Configuration.class);
 	
-	public static final String USER_PRINCIPAL = "user";
+	public static final String USER_PRINCIPAL = "userPrincipal";
 	
 	public static String ACTIVEMQ_URL;
 	public static String KEUI_REQUEST_TOPIC, KEUI_RESPONSE_TOPIC;
