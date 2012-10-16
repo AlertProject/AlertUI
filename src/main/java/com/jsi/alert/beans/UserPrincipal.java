@@ -48,7 +48,7 @@ public class UserPrincipal implements Serializable {
 	}
 	
 	public boolean isAuthenticated() {
-		return false;
+		return authenticated;
 	}
 	
 	public void setAuthenticated(boolean authenticated) {
