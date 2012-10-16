@@ -1870,28 +1870,8 @@ var AlertViz = function(options) {
 		containment: [$('#separator').offset().left - 100, 0, $('#separator').offset().left + 200, 10000],
 		drag: function (event, ui) {
 			event.stopPropagation();
-			var prevWidth = $('.item_right').width();
-			
 			$('.item_left').width(leftItemWidth + ui.position.left);
 			$('.item_right').width(rightItemWidth - ui.position.left);
-			
-			// resize the social graph and wordcloud
-			var width = $('.item_right').width();
-	    	
-			if (width != prevWidth) {
-		    	// social graph
-		    	if (socialGraph != null) socialGraph.resize(width, socialGraph.getHeight());
-		    	
-		    	// wordcloud
-		    	var prevCenter = prevWidth/2;
-		    	var newCenter = width/2;
-		    	
-		    	var dx = newCenter - prevCenter;
-		    	$.each($('#wordcloud-div').children('span'), function (idx, el) {
-		    		var left = $(el).position().left;
-		    		$(el).css('left', (left + dx) + 'px');
-		    	});
-			}
 		},
 		start: function (event, ui) {
 			leftItemWidth = $('.item_left').width();

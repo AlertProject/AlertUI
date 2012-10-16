@@ -481,7 +481,8 @@ public class MessageParser {
 			List<JSONObject> edgeV = new ArrayList<>();
 			Map<Long, JSONObject> nodeH = new HashMap<>();
 			
-			NodeList personNodeList = doc.getElementsByTagName("person");
+			Element results = (Element) doc.getElementsByTagName("results").item(0);
+			NodeList personNodeList = results.getElementsByTagName("person");
 			for (int i = 0; i < personNodeList.getLength(); i++) {
 				Element personNode = (Element) personNodeList.item(i);
 				JSONObject personJSon = new JSONObject();
@@ -730,9 +731,10 @@ public class MessageParser {
 			JSONArray items = new JSONArray();
 			
 			// parse people
-			Map<Long, JSONObject> peopleH = parsePeopleH(doc.getElementsByTagName("person"));
+			Element results = (Element) doc.getElementsByTagName("results").item(0);
+			Map<Long, JSONObject> peopleH = parsePeopleH(results.getElementsByTagName("person"));
 			
-			Element infoEl = (Element) doc.getElementsByTagName("info").item(0);
+			Element infoEl = (Element) results.getElementsByTagName("info").item(0);
 			int totalCount = Integer.parseInt(infoEl.getAttribute("totalCount"));
 			int offset = Integer.parseInt(infoEl.getAttribute("offset"));
 			int limit = Integer.parseInt(infoEl.getAttribute("maxCount"));
@@ -748,7 +750,7 @@ public class MessageParser {
 				keywords.addAll(Arrays.asList(keywordsEl.getTextContent().replaceAll("[\\+-]", "").split("[\\s+,-]")));
 			
 			
-			NodeList itemNodes = doc.getElementsByTagName("item");
+			NodeList itemNodes = results.getElementsByTagName("item");
 			for (int i = 0; i < itemNodes.getLength(); i++) {
 				Element itemNode = (Element) itemNodes.item(i);
 				JSONObject itemJSon = parseKEUIItem(itemNode);
