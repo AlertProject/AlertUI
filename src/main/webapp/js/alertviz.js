@@ -1746,6 +1746,8 @@ var AlertViz = function(options) {
     			// then add selected class to the item clicked
     			$(event.currentTarget).addClass('item-selected');
     		});
+    		
+    		$('.item-wrapper')[0].click();
     	},
 
     	createGraph: function(data) {
