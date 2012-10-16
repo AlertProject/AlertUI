@@ -390,6 +390,12 @@ public class MessageParser {
 		}
 	}
 	
+	/**
+	 * Parses item details message received from the KEUI component.
+	 * 
+	 * @param responseMsg
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static String parseKEUIItemDetailsMsg(String responseMsg) {
 		try {
