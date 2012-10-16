@@ -1584,10 +1584,13 @@ var AlertViz = function(options) {
     		var Type = {"email": 10, "post": 11, "bugDescription": 12, "bugComment": 13, "commit": 14, "wikiPost": 15};
     		
     		$('#items-div').html('');
-    		var html = '<ul>';
-			
-			var peopleH = data.persons;
+    		var peopleH = data.persons;
 			var items = data.items;
+			if (items.length == 0) {
+				$('#items-div').html('<span class="no_results">No results!</span>');
+				return;
+			}
+    		var html = '<ul>';
     		
 			// generate HTML
 			for(var i = 0; i < data.items.length; i++){

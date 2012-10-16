@@ -15,19 +15,22 @@
 	
 -ko enega izberes naj ne isce
 -issue details po datumu sortirano
--pri search prvo clear
-- ce ni rezultatov => kazi no results
 - na timeline cursor naj ne bo roka
 - scroll pri suggestions se vedno ne dela!!
 sile tree pri kliku na search odpri v novem oknu z default stanjem
-- pri item snoppetih odstrani multople line breaks
+
 - horizontal resize forum post
 sprememba strani naj lepse zgleda
 - poglej ce je mozno videt cas v tooltipu v timeline-u
-- textfield overflow problem
 
 fetchNotifications called twice	
 
 RESOLVED??
 • Social graph
 	○ Tooltip sometimes doesn't go away
+	
+	
+
+=============================================================
+- pri item snippetih odstrani multople line breaks
+	*Leave one in the middle?

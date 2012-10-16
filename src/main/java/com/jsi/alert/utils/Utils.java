@@ -123,4 +123,8 @@ public class Utils {
 		format.setTimeZone(TimeZone.getTimeZone("UTC"));
 		return format;
 	}
+
+	public static String removeMultLineBreaks(String text) {
+		return text.replaceAll("\n{3,}|[\n\\s+]{4,}", "\n\n");
+	}
 }
