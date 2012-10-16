@@ -59,31 +59,30 @@
 			<div id="nav">
 				<ul>
 				     <li><img src="img/logo.png" style="float:left;width:60px;hight:60px;margin-right:10px;"></img></li>
-					 <li id="current"><a href="index.xhtml">Browse</a></li>
-					 <li><a href="subscribe.xhtml">Subscribe</a></li>
-					 <li><a href="overview.xhtml">Project overview</a></li>
+					 <li id="current"><a href="index.xhtml">BROWSE</a></li>
+					 <li><a href="subscribe.xhtml">SUBSCRIBE</a></li>
+					 <li><a href="overview.xhtml">PROJECT OVERVIEW</a></li>
 					 <c:choose>
 					 	<c:when test="#{index.isUserLoggedIn()}">
 					 		<c:if test="#{index.user.admin}">
-					 			<li><a href="admin.html">Administration</a></li>
+					 			<li><a href="admin.html">ADMINISTRATION</a></li>
 					 		</c:if>
 					 		<li>
 				 				<div id="notification_div">
 					 				<div class='arrow'></div>
      		 		 				<div class='arrow-border'></div>
        				 				<p>
-										<a href="#{index.getLogoutUrl()}" style="float:right;text-transform:normalcase;">Logout</a>
+										<a href="#{index.getLogoutUrl()}" style="float:right;font-size:12px;">Logout</a>
 	 								</p>
      			    				<ul id="notification_list">
 	     			    				<c:forEach items="#{index.user.notifications}" var="notification">
 	     			    					<li>
-	     			    						<table class="notification event">
+	     			    						<table class="notification">
 													<tr>
-		     			    							<td><a href="${notification.link}">${notification.title}</a></td>
-		     			    							<td>${notification.publishDate}</td>
+		     			    							<td><a href="${notification.link}">${notification.title}</a><span class="notification_date">${notification.publishDate}</span></td>
 		     			    						</tr>
 	     			    							<tr>
-	     			    								<td colspan="2">#{notification.content}</td>
+	     			    								<td>#{notification.content}</td>
 	     			    							</tr>
      			    							</table>
 	     			    					</li>
@@ -99,7 +98,7 @@
 		     			     </li>
 					 	</c:when>
 					 	<c:otherwise>
-					 		<li><a href="#{index.getLoginUrl()}">Login</a></li>
+					 		<li><a href="#{index.getLoginUrl()}">LOGIN</a></li>
 					 	</c:otherwise>
 					 </c:choose>
      			 </ul>
