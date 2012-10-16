@@ -70,6 +70,11 @@
     	rgb(150,200,100)  55%,
     	rgb(182,222,143)  78%
     	);
+    filter:progid:DXImageTransform.Microsoft.gradient(
+    	GradientType=0,
+   		startColorstr=rgb(150,200,100),
+    	endColorstr=rgb(182,222,143)
+    	);
 }
 #navigation ul{
     list-style:none;
@@ -116,6 +121,11 @@
     	rgb(150,200,100)  55%,
     	rgb(182,222,143)  78%
     	);
+    filter:progid:DXImageTransform.Microsoft.gradient(
+    	GradientType=0,
+   		startColorstr=rgb(150,200,100),
+    	endColorstr=rgb(182,222,143)
+    	);
 }
 #navigation ul li a:hover,
 #navigation ul li.selected a{
@@ -144,6 +154,11 @@
     	rgb(180,180,180)  9%,
     	rgb(180,180,180)  55%,
     	rgb(220,220,220)  78%
+    	);
+    filter:progid:DXImageTransform.Microsoft.gradient(
+    	GradientType=0,
+   		startColorstr=rgb(180,180,180),
+    	endColorstr=rgb(220,220,220)
     	);
 }
 #steps form fieldset{
@@ -219,6 +234,11 @@
     	rgb(150,200,100)  55%,
     	rgb(182,222,143)  78%
     	);
+    filter:progid:DXImageTransform.Microsoft.gradient(
+    	GradientType=0,
+   		startColorstr=rgb(150,200,100),
+    	endColorstr=rgb(182,222,143)
+    	);
 }
 #propertiesbtn{
 	height:25px !important;
@@ -251,6 +271,11 @@
     	rgb(150,200,100)  9%,
     	rgb(150,200,100)  55%,
     	rgb(182,222,143)  78%
+    	);
+    filter:progid:DXImageTransform.Microsoft.gradient(
+    	GradientType=0,
+   		startColorstr=rgb(150,200,100),
+    	endColorstr=rgb(182,222,143)
     	);
 }
 #searchbtnlefttd{
@@ -306,6 +331,11 @@
     	rgb(150,200,100)  55%,
     	rgb(182,222,143)  78%
     	);
+    filter:progid:DXImageTransform.Microsoft.gradient(
+    	GradientType=0,
+   		startColorstr=rgb(150,200,100),
+    	endColorstr=rgb(182,222,143)
+    	);
 }
 #steps form button:hover {
     color:#fff;
@@ -332,5 +362,10 @@
     	rgb(150,150,150)  9%,
     	rgb(150,150,150)  55%,
     	rgb(200,200,200)  78%
+    	);
+    filter:progid:DXImageTransform.Microsoft.gradient(
+    	GradientType=0,
+   		startColorstr=rgb(150,150,150),
+    	endColorstr=rgb(200,200,200)
     	);
 }
