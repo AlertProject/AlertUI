@@ -812,13 +812,6 @@ var AlertViz = function(options) {
     	searchStateGeneral: generalSearch,
     	searchStatePerson: personSearch,
     	
-    	cleanData: function () {
-    		$('#details_wrapper').html('');
-    		$('#wordcloud-div').html('');
-    		if (socialGraph != null)
-    			socialGraph.clear();
-    	},
-    	
     	addToSearchField: function (fieldId, data) {
     		generalSearch.addToSearch(data);
     		var selector = '#' + fieldId;
@@ -842,6 +835,15 @@ var AlertViz = function(options) {
     		$(selector).change();
     	},
     	
+    	cleanData: function () {
+    		$('#details_wrapper').html('');
+    		$('#wordcloud-div').html('');
+    		$('#chart-div').html('');
+    		$('#page_td').html('');
+    		if (socialGraph != null)
+    			socialGraph.clear();
+    	},
+    	
     	searchRelated: function () {
     		$.ajax({
     			type: 'POST',
@@ -858,6 +860,8 @@ var AlertViz = function(options) {
     	},
     	
     	searchItemDetails: function (itemId) {
+    		$('#details_wrapper').addClass('loading');
+    		
     		$.ajax({
     			type: 'POST',
     			url: 'query',
@@ -865,12 +869,15 @@ var AlertViz = function(options) {
     			dataType: 'json',
     			async: true,
     			success: function (data, textStatus, jqXHR) {
+    				$('#details_wrapper').addClass('loading');
     				that.setItemDetails(data);
     			}
     		});
     	},
     	
     	searchIssueDetails: function (itemId, itemUri) {
+    		$('#details_wrapper').addClass('loading');
+    		
     		$.ajax({
     			type: 'POST',
     			url: 'query',
@@ -878,17 +885,21 @@ var AlertViz = function(options) {
     			dataType: 'json',
     			async: true,
     			success: function (data, textStatus, jqXHR) {
+    				$('#details_wrapper').removeClass('loading');
     				that.setIssueDetails(data, itemUri);
     			}
     		});
     	},
     	
     	searchCommitDetails: function (itemUri) {
+    		$('#details_wrapper').addClass('loading');
+    		
     		$.ajax({
     			type: 'POST',
     			url: 'query',
     			data: {type: 'commitDetails', query: itemUri},
     			success: function (data, textStatus, jqXHR) {
+    				$('#details_wrapper').removeClass('loading');
     				that.setCommitDetails(data);
     			}
     		});
@@ -896,17 +907,33 @@ var AlertViz = function(options) {
     	
     	setQueryResults: function (data) {
     		if (data.type == 'peopleData') {
+    			$('#graph-div').removeClass('loading');
         		that.createGraph(data);
         	} else if (data.type == 'timelineData') {
+        		$('#chart-div').removeClass('loading');
         		that.createTimeline(data);
+        		$('#wordcloud-div').removeClass('loading');
         	} else if (data.type == 'keywordData') {
         		that.createWordCloud(data.data);
         	} else if (data.type == 'itemData') {
+        		$('#items-div').removeClass('loading');
         		that.createItems(data);
         	}
     	},
     	
     	searchQueryGeneral: function (queryType, queryOpts) {
+    		switch (queryType) {
+    		case 'keywordData':
+    			$('#wordcloud-div').addClass('loading');
+    			break;
+    		case 'timelineData':
+    			$('#chart-div').addClass('loading');
+    			break;
+    		case 'peopleData':
+    			$('#graph-div').addClass('loading');
+    			break;
+    		}
+    		
     		$.ajax({
                 type: "POST",
                 url: "query",
@@ -986,6 +1013,8 @@ var AlertViz = function(options) {
     	},
     	
     	searchItemsByQueryOpts: function (queryOpts) {
+    		$('#items-div').addClass('loading');
+    		
     		$.ajax({
                 type: "POST",
                 url: "query",
@@ -1051,13 +1080,15 @@ var AlertViz = function(options) {
     			unknownChk: $('#gen_unknown_check').attr('checked') == 'checked',
     			duplicateChk: $('#gen_duplicate_check').attr('checked') == 'checked'
     		};
+    		
+    		// clear the current data
+    		that.cleanData();
 			
+    		// search
 			that.searchKeywordsGeneral(queryOpts);
 			that.searchTimelineGeneral(queryOpts);
 			that.searchItemsGeneral(queryOpts, 0, itemsPerPage);
 			that.searchPeopleGeneral(queryOpts);
-			
-			that.cleanData();
 			return false;
     	},
     	
@@ -1085,6 +1116,8 @@ var AlertViz = function(options) {
     	},
     	
     	searchIssueByQueryOpts: function (queryOpts) {
+    		that.cleanData();
+    		$('#items-div').addClass('loading');
     		try {
 	    		$.ajax({
 	                type: "GET",
@@ -1101,7 +1134,6 @@ var AlertViz = function(options) {
     		} catch (e) {
     			alert(e);
     		}
-    		that.cleanData();
     		return false;
     	},
     	
@@ -1387,8 +1419,6 @@ var AlertViz = function(options) {
     			
     			return color;
     	    }
-    		
-			$('#inner-south').html('<div id="chart-div" ></div>');
 			
 			chart = new Highcharts.Chart({
 				chart: {
