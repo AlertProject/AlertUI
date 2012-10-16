@@ -1174,7 +1174,7 @@ var AlertViz = function(options) {
     		// generate accordion
     		// item description
     		var html = '<div class="details_section">';
-    		html += '<table class="heading"><tr>';
+    		html += '<table class="heading' + (data.url == selectedUri ? ' content_open' : '') + '"><tr>';
     		html += '<td class="title_desc">Issue created by ';
     		html += '<span class="headings_author">' + (data.author == null ? 'Unknown' : data.author.name) + '</span>';
     		html += '<span class="headings_date">' + (data.dateOpened == null ? '' : new Date(data.dateOpened).format(defaultDateFormat)) + '</span>';
@@ -1191,7 +1191,8 @@ var AlertViz = function(options) {
     			var comment = comments[i];
     			
     			html += '<div class="details_section">';
-    			html += '<table class="heading"><tr>';
+    			html += '<table class="heading' + (comment.commentUri == selectedUri ? ' content_open' : '')  + '"><tr>';
+
     			html += '<td class="title_comm">Comment by <span class="headings_author">' + comment.person.name + '</span><span class="headings_date">' + new Date(comment.commentDate).format(defaultDateFormat) + '</span></td>';
     			html += '</tr></table>';
     			// content
