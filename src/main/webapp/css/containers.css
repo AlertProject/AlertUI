@@ -42,16 +42,15 @@
     background-color:#fff;
     margin: 9px;
     float:center;
-    min-height:600px;
+    min-height:730px;
 }
-
 .tabbertab {
-	height: 600px;
+	height: 700px;
 }
 .item_left
 {
 	width: 318px;
-	height: 97.6%;
+	height: 98%;
 	float: left;
 	-moz-box-shadow:0px 0px 3px #aaa;
     -webkit-box-shadow:0px 0px 3px #aaa;
@@ -67,13 +66,14 @@
 .items{
 	overflow-y:scroll;
     overflow-x:hidden;
+    height:97%;
 }
 .item_right
 {
 	margin-left: auto;
 	margin-right: auto;
 	width: 596px;
-	height: 97.6%;
+	height: 98%;
 	float: right;
 	-moz-box-shadow:0px 0px 3px #aaa;
     -webkit-box-shadow:0px 0px 3px #aaa;

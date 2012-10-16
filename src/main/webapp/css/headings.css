@@ -6,7 +6,7 @@ text-shadow:1px 1px 1px #fff;
 text-align:left;
 overflow-y:scroll;
 overflow-x:hidden;
-height:450px;
+height:100%;
 }
 .heading{
 color: #fff;
@@ -19,32 +19,11 @@ margin-bottom:5px;
 width:100%;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
-	background:
-        -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-		color-stop(0.09, rgb(220,220,220)),
-        color-stop(0.55, rgb(220,220,220)),
-        color-stop(0.78, rgb(240,240,240))
-        );
-    background:
-        -moz-linear-gradient(
-        center bottom,
-        rgb(220,220,220) 9%,
-        rgb(220,220,220) 55%,
-        rgb(240,240,240) 78%
-        );
-    background-image: 
-    	-o-linear-gradient(
-    	90deg,
-    	rgb(220,220,220) 9%,
-        rgb(220,220,220) 55%,
-        rgb(240,240,240) 78%
-    	);
 }
 .headings_date {
 	float: right;
+	font-weight:normal;
+	text-shadow:1px 1px 1px #ccc;
 }
 .content {
 	color:#333;
