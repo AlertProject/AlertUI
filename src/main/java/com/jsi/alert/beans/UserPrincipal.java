@@ -1,7 +1,16 @@
-package com.jsi.alert.model;
+package com.jsi.alert.beans;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+
+import com.jsi.alert.model.Notification;
+
+@ManagedBean
+@SessionScoped
 public class UserPrincipal implements Serializable {
 
 	private static final long serialVersionUID = -6511117109181574707L;
@@ -9,6 +18,7 @@ public class UserPrincipal implements Serializable {
 	private String email;
 	private String uuid;
 	private Boolean admin;
+	private List<Notification> notifications;
 	
 	public String getEmail() {
 		return email;
@@ -27,5 +37,12 @@ public class UserPrincipal implements Serializable {
 	}
 	public void setAdmin(Boolean admin) {
 		this.admin = admin;
+	}
+	public List<Notification> getNotifications() {
+		if (notifications == null) notifications = new ArrayList<>();
+		return notifications;
+	}
+	public void setNotifications(List<Notification> notifications) {
+		this.notifications = notifications;
 	}
 }

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jsi.alert.model.UserPrincipal;
+import com.jsi.alert.beans.UserPrincipal;
 import com.jsi.alert.utils.Configuration;
 
 /**

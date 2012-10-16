@@ -3,15 +3,37 @@
 	• notifications
 		○  use xml to show some items
 		○  fix the layout of the popup
-	•  Check if mail items show recipients
 	•  fix logging in. currently you have to go to localhost:8080/AlertUI/login?email=gleban@gmail.com
 	•  notify the user when the search is in progress/completed
 	•  suggestion list
-		○  scrollbar doesn't work. clicking the scrollbar hides it. pressing the down key doesn't scroll the suggestion list
+		○  pressing the down key doesn't scroll the suggestion list
 	•  issue details
 		○  bug: text overflow pri commentih in descriptionu
 		○  button with suggest developers to fix the issue. call recommender
 		○  show related posts (the info that you get in the metadata content)
-	• Social graph
-		○ Tooltip sometimes doesn't go away
+	
 	•  reorganize layout of components. first tab shows results + item details. second tab shows social graph, timeline, words
+	
+	
+-ko enega izberes naj ne isce
+-exception pri items parsing (Angela Rumpl)
+-tagi pri Duplicate issue (max 1 in tudi max 1 pri suggest issues for a developer)
+-issue details po datumu sortirano
+-pri searchu izberi 1. item
+-pri search prvo clear
+- ce ni rezultatov => kazi no results
+-na timeline cursor naj ne bo roka
+- remove selected class from suggestion tagsj
+- scroll pri suggestions se vedno ne dela!!
+sile tree pri kliku na search odpri v novem oknu z default stanjem
+- pri item snoppetih odstrani multople line breaks
+- horizontal resize forum post
+sprememba strani naj lepse zgleda
+-poglej ce je mozno videt cas v tooltipu v timeline-u
+- textfield overflow problem
+
+fetchNotifications called twice	
+
+RESOLVED??
+• Social graph
+	○ Tooltip sometimes doesn't go away
