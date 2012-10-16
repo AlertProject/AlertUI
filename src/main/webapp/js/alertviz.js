@@ -1874,8 +1874,12 @@ var AlertViz = function(options) {
 			$('.item_right').width(rightItemWidth - ui.position.left);
 		},
 		start: function (event, ui) {
+			$(document).css('cursor', 'pointer !important');
 			leftItemWidth = $('.item_left').width();
 			rightItemWidth = $('.item_right').width();
+		},
+		stop: function () {
+			document.body.style.cursor = 'auto';
 		}
 	});
     
