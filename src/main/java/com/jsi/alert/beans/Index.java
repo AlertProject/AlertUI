@@ -55,7 +55,7 @@ public class Index implements Serializable {
 	}
 	
 	public boolean isUserLoggedIn() {
-		return user != null;
+		return user != null && user.isAuthenticated();
 	}
 	
 	public String getLoginUrl() {

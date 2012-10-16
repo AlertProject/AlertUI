@@ -51,6 +51,7 @@ public class AuthenticatorService {
 				user.setEmail((String) userJson.get("email"));
 				user.setUuid((String) userJson.get("uuid"));
 				user.setAdmin((Boolean) userJson.get("admin"));
+				user.setAuthenticated(true);
 				
 				return user;
 			}
@@ -79,6 +80,7 @@ public class AuthenticatorService {
 			user.setAdmin(userInfo.getAdmin());
 			user.setEmail(userInfo.getEmail());
 			user.setUuid(userInfo.getUuid());
+			user.setAuthenticated(userInfo.isAuthenticated());
 			
 			return true;
 		} else return false;

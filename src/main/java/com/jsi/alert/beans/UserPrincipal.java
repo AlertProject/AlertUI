@@ -18,6 +18,7 @@ public class UserPrincipal implements Serializable {
 	private String email;
 	private String uuid;
 	private Boolean admin;
+	private boolean authenticated;
 	private List<Notification> notifications;
 	
 	public String getEmail() {
@@ -44,5 +45,13 @@ public class UserPrincipal implements Serializable {
 	}
 	public void setNotifications(List<Notification> notifications) {
 		this.notifications = notifications;
+	}
+	
+	public boolean isAuthenticated() {
+		return false;
+	}
+	
+	public void setAuthenticated(boolean authenticated) {
+		this.authenticated = authenticated;
 	}
 }
