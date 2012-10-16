@@ -37,6 +37,7 @@ function genCurrentUrl() {
  */
 function getCurrentState() {
 	var searchGeneral = viz.searchStateGeneral;
+	var issueIdSearch = viz.searchStateIssueId;
 	var searchPerson = viz.searchStatePerson;	// TODO
 	
 	var result = {};
@@ -117,8 +118,8 @@ function getCurrentState() {
 		general.or = true;
 	
 	// duplicate issue
-	var issueId = $('#issue_id_text').val();
-	if (issueId.length > 0) duplicate.iid = issueId;
+	var issue = issueIdSearch.getTypeV('issue');
+	if (issue.length > 0) duplicate.iid = issue[0];
 	
 	var duplNoneChk = $('#dup_none_check').attr('checked') == 'checked';
 	var duplFixedChk = $('#dup_fixed_check').attr('checked') == 'checked';
@@ -358,8 +359,10 @@ function loadState() {
 	// duplicate issue
 	if (duplicate != null) {
 		for (var attribute in duplicate) {
-			if (attribute == 'iid')
-				$('#issue_id_text').val(duplicate.iid);
+			if (attribute == 'iid') {
+				var issue = duplicate[attribute];
+				viz.addToSearchField('issue_id_text', issue);
+			}
 			else if (issueChks[attribute])
 				uncheckByAttr(attribute, 'dup_');
 		}
@@ -796,6 +799,7 @@ var Search = function (opts) {
 
 var AlertViz = function(options) { 
     var generalSearch = Search();
+    var issueIdSearch = Search();
     var personSearch = Search();
     
     var itemsPerPage = 100;
@@ -809,6 +813,7 @@ var AlertViz = function(options) {
     
     var that = {
     	searchStateGeneral: generalSearch,
+    	searchStateIssueId: issueIdSearch,
     	searchStatePerson: personSearch,
     	
     	addToSearchField: function (fieldId, data) {
@@ -816,11 +821,14 @@ var AlertViz = function(options) {
     		var selector = '#' + fieldId;
     		
     		if (fieldId == 'keyword_text') {
-    			generalSearch.addToSearch(data);
-
     			var value = data.value;
     			
     			$(selector).val($(selector).val() + ' ' + value);
+    		} else if(fieldId == 'issue_id_text') {
+    			issueIdSearch.addToSearch(data);
+    			
+    			var label = data.label;
+    			$(selector).val(label + ':' + data.type + '|');
     		} else {
     			generalSearch.addToSearch(data);
             	
@@ -1092,11 +1100,11 @@ var AlertViz = function(options) {
     	},
     	
     	searchIssueId: function () {
-    		var issues = $('#issue_id_text').val();
+    		var issue = issueIdSearch.getSearchStr('issue');
     		
     		return that.searchIssueByQueryOpts({
 				type: 'duplicateIssue',
-    			issues: issues,
+    			issues: issue,
     			NoneChk: $('#dup_none_check').attr('checked') == 'checked',
     			FixedChk: $('#dup_fixed_check').attr('checked') == 'checked',
     			WontFixChk: $('#dup_wont_check').attr('checked') == 'checked',
@@ -1825,31 +1833,30 @@ var AlertViz = function(options) {
 	});
     
     // issue id search
-    $('#issue_id_text').autocomplete({
-    	source: function (request, response) {
-    		$.ajax({
-				url: "suggest",
-				dataType: "json",
-				data: {
-					Issues: request.term
-				},
-				success: function(data) {
-					response(data);
-				}
-			});
+    $('#issue_id_text').autoSuggest('suggest', {
+    	selectionLimit: 1,
+    	selectedItemProp: 'label',
+    	searchObjProps: 'label',
+    	selectedValuesProp: 'value',
+    	queryParam: 'Issues',
+    	retrieveLimit: false,
+    	neverSubmit: true,
+    	startText: 'issue ID,...',
+    	asHtmlID: 'issue_id_text',
+    	addByWrite: false,
+    	selectionAdded: function(elem, data) {
+    		if (!settingManually) {
+	    		issueIdSearch.addToSearch(data);
+	    		updateUrl();
+    		}
     	},
-    	response: function (event, ui) {
-    		alert('works');
-    	}
-    }).data('autocomplete')._renderItem = function (ul, item) {
-    	var term = this.term.split(' ').join('|');
-		var re = new RegExp("(" + term + ")", "gi") ;
-		var t = item.label.replace(re,"<em>$1</em>");
-		return $( "<li></li>" )
-		.data( "item.autocomplete", item )
-		.append( "<a>" + t + "</a>" )
-		.appendTo( ul );
-    };
+	  	selectionRemoved: function(elem, data) {
+	  		issueIdSearch.removeFromSearch(elem, data);
+	  		updateUrl();
+	  		
+	  		elem.remove();
+	  	}
+    });
     
     $('#issue_id_text').blur(function (event) {
     	updateUrl();
@@ -1857,6 +1864,7 @@ var AlertViz = function(options) {
     
     // suggest people search
     $('#person_text').autoSuggest('suggest', {
+    	selectionLimit: 1,
     	selectedItemProp: 'label',
     	searchObjProps: 'label',
     	selectedValuesProp: 'value',
