@@ -290,6 +290,9 @@
 .searchbtnright{
 	padding:8px !important;
 }
+#customtr1{
+	height:42px;
+}
 #steps form button {
 	border:none;
 	outline:none;
