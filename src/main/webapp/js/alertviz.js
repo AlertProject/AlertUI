@@ -1211,6 +1211,10 @@ var AlertViz = function(options) {
     		jQuery(".selected_issue").show();
     		jQuery(".heading").click(function() {
 			    jQuery(this).next(".content").slideToggle(500);
+			    if ($(this).hasClass('content_open'))
+			    	$(this).removeClass('content_open');
+			    else
+			    	$(this).addClass('content_open');
 			});
     	},
     	
@@ -1312,6 +1316,10 @@ var AlertViz = function(options) {
     		jQuery('.content[id != "files_content"]').hide();
     		jQuery('.heading').click(function() {
 			    jQuery(this).next('.content').slideToggle(500);
+			    if ($(this).hasClass('content_open'))
+			    	$(this).removeClass('content_open');
+			    else
+			    	$(this).addClass('content_open');
 			});
     	},
     	
