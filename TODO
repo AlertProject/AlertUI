@@ -25,12 +25,14 @@ sprememba strani naj lepse zgleda
 
 fetchNotifications called twice	
 
-RESOLVED??
-• Social graph
-	○ Tooltip sometimes doesn't go away
+
 	
 	
 
 =============================================================
 - pri item snippetih odstrani multople line breaks
 	*Leave one in the middle?
+	
+RESOLVED??
+• Social graph
+	○ Tooltip sometimes doesn't go away
