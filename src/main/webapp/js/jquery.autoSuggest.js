@@ -213,6 +213,9 @@
 							if(active.length > 0){
 								active.click();
 								results_holder.hide();
+								e.preventDefault();
+								e.stopPropagation();
+								return false;
 							}
 							if(opts.neverSubmit || active.length > 0){
 								e.preventDefault();
