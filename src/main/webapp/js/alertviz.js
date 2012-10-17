@@ -762,7 +762,7 @@ var Search = function (opts) {
 	  		if (type == 'source' || type == 'product' || type == 'person' || type == 'issue') {
 	  			var idx = that.indexOfLabel(type, label);
 	  			if (idx >= 0)
-	  				array.splice(idx);
+	  				array.splice(idx, 1);
 	  		}
 		},
 		
