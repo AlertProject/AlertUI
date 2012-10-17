@@ -54,8 +54,6 @@ function getCurrentState() {
 	var products = searchGeneral.getTypeV('product');
 	var issues = searchGeneral.getTypeV('issue');
 	
-	
-	
 	if (people.length > 0) general.people = people;
 	if (keywords.length > 0) general.keywords = keywords;
 	if (sources.length > 0) general.sources = sources;
@@ -267,7 +265,7 @@ function loadState() {
 	settingManually = true;
 	
 	// general search
-	var searchTerms = {people: true, concepts: true, sources: true, products: true, issues: true};
+	var searchTerms = {people: true, concepts: true, sources: true, products: true, issues: true, commits: true};
 	var filterChks = {is: true, c: true, fi: true, m: true, wo: true};
 	var issueChks = {n: true, f: true, w: true, i: true, d: true, wo: true, u: true, o: true, v: true, a: true, r: true, c: true};
 	var issueChksGen = {go: true, gn: true, gv: true, gf: true, ga: true, gw: true, gr: true, gi: true, gc: true, gwo: true, gu: true, gd: true};
@@ -810,6 +808,14 @@ var AlertViz = function(options) {
     
     var normalBarColor = getCssValue('bar-normal', 'background-color');
 	var selectedBarColor = getCssValue('bar-selected', 'background-color');
+	
+	
+	function openInNewTab(config) {
+		if (config == null)
+			return;
+		
+		window.open('index.xhtml?' + $.param(config));
+	}
     
     var that = {
     	searchStateGeneral: generalSearch,
@@ -1226,15 +1232,22 @@ var AlertViz = function(options) {
 			});
     	},
     	
-    	addCommitToSearch: function (e, name, uri, tooltip) {
-			var event = e || window.event;
+    	openCommitTab: function (e, commit) {
+    		var event = e || window.event;
 			event.stopPropagation();
 			event.preventDefault();
-			
-			viz.addToSearchField('other_text', {type: 'source', label: name, value: uri, tooltip: tooltip});
-			
-			return false;
-		},
+    		
+    		if (commit != null) {
+	    		var config = {};
+	    		
+	    		var general = {};
+	    		general.commits = [commit];
+	    		
+	    		config.gen = general;
+	    		openInNewTab(config);
+    		}
+    		return false;
+    	},
     	
     	setCommitDetails: function (data) {
     		// header
@@ -1273,7 +1286,7 @@ var AlertViz = function(options) {
     				html += '<li class="tree_li">';
     				html += '<div class="toggle" title="' + file.fullName + '">';
     				html += '<span>' + file.name + ' (' + file.action + ')</span>';
-    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + file.name + '\',\'' + file.uri + '\',\'' + file.fullName + '\');" />';
+    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openCommitTab(event,{type: \'source\', label: \'' + file.name + '\', value: \'' + file.uri + '\', tooltip: \'' + file.fullName + '\'});" />';
     				html += '</div>';
     				html += '<ul class="tree_ul">';
     				for (var moduleIdx = 0; moduleIdx < modules.length; moduleIdx++) {
@@ -1285,14 +1298,14 @@ var AlertViz = function(options) {
         					html += '<li class="tree_li">';
         					html += '<div class="toggle">';
         					html += '<span>' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
-        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + module.name + '\',\'' + module.uri + '\',\'' + file.fullName + '\');" />';
+        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openCommitTab(event, {type: \'source\', label: \'' + module.name + '\', value: \'' + module.uri + '\', tooltip: \'' + file.fullName + '\'});" />';
         					html +='</div>';
     	    				html += '<ul class="tree_ul">';
     	    				for (var methodIdx = 0; methodIdx < methods.length; methodIdx++) {
     	    					var method = methods[methodIdx];
     	    					html += '<li class="tree_li">';
     	    					html += '<span class="leaf">' + method.methodName + ' (' + method.startLine + '-' + method.endLine + ')</span>';
-    	    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + method.methodName + '\',\'' + method.methodUri + '\',\'' + file.fullName + '\');" />';
+    	    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openCommitTab(event,{type: \'source\', label: \'' + method.methodName + '\', value: \'' + method.methodUri + '\', tooltip: \'' + file.fullName + '\'});" />';
     	    					html += '</li>';
     	    				}
     	    				html += '</ul>';
@@ -1300,7 +1313,7 @@ var AlertViz = function(options) {
     					} else {
         					html += '<li class="tree_li">';
         					html += '<span class="leaf">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
-        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + module.name + '\',\'' + module.uri + '\',\'' + file.fullName + '\');" />';
+        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openCommitTab(event, {type: \'source\', label: \'' + module.name + '\', value: \'' + module.uri + '\', tooltip: \'' + file.fullName + '\'});" />';
         					html += '</li>';
     					}
     				}
@@ -1309,7 +1322,7 @@ var AlertViz = function(options) {
     			} else {	// create leaf
     				html += '<li class="tree_li">';
     				html += '<span class="leaf">' + file.name + ' (' + file.action + ')</span>';
-    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(event,\'' + file.name + '\',\'' + file.uri + '\',\'' + file.fullName + '\');" />';
+    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openCommitTab(event,{type: \'source\', label: \'' + file.name + '\', value: \'' + file.uri + '\', tooltip: \'' + file.fullName + '\'});" />';
     				html += '</li>';
     			}
     		}
