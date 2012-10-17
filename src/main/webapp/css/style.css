@@ -200,7 +200,6 @@ input.button {
 	padding: 0 20px 0 20px;
 	color: #666666;
 	font: bold 14px/40px Arial, Helvetica, sans-serif;
-	text-transform: uppercase;	
 }
 #header #nav ul li a:hover, 
 #header #nav ul li a:active {
