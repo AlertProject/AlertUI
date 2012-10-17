@@ -1743,7 +1743,7 @@ var AlertViz = function(options) {
     		var nPages = Math.ceil(total/itemsPerPage);
     		var currentPage = Math.floor(offset/itemsPerPage) + 1;
     		
-    		var navHtml = (offset + 1) + ' to ' + (offset + info.limit);
+    		var navHtml = (offset + 1) + ' to ' + Math.min(offset + data.items.length, total);
     		if (total != Number.POSITIVE_INFINITY)
     			navHtml += ' of ' + total;
     		if (currentPage > 1)

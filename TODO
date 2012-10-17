@@ -13,9 +13,16 @@
 		○  show related posts (the info that you get in the metadata content)
 	
 	
-- issue details po datumu sortirano
 - scroll s tipko ne dela
-- sprememba strani naj lepse zgleda
+- gumbi za spremembo strani naj lepse zgledajo
+
+/////////////////////////////////////////////////////////////////////////
+Bug, ki sem ga nasel v UIju pa je, da next vedno
+da offset=100 (nikoli 200,300, ...), ne glede kolikokrat pritisnem na
+gumb >>.
+
+- ne dobim info <info totalCount="826" offset="0" maxCount="100"></info>
+/////////////////////////////////////////////////////////////////////////
 
 fetchNotifications called twice	
 

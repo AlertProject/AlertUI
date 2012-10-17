@@ -234,7 +234,7 @@ public class MessageParser {
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
-			JSONArray commentsJSon = new JSONArray();
+			List<JSONObject> comments = new ArrayList<>();
 			JSONArray activitiesJSon = new JSONArray();
 			
 			SimpleDateFormat dateFormat = Utils.getMessageDateFormat();
@@ -377,9 +377,25 @@ public class MessageParser {
 						}
 					}
 					
-					commentsJSon.add(commentJSon);
+					comments.add(commentJSon);
 				}
 			}
+			
+			// sort the comments on date
+			Collections.sort(comments, new Comparator<JSONObject>() {
+				@Override
+				public int compare(JSONObject o1, JSONObject o2) {
+					Long t1 = o1.containsKey("commentDate") ? (Long) o1.get("commentDate") : null;
+					Long t2 = o2.containsKey("commentDate") ? (Long) o2.get("commentDate") : null;
+					
+					if (t1 == null) return 1;
+					else if (t2 == null) return -1;
+					else return (int) (t1 - t2);
+				}
+			});
+			
+			JSONArray commentsJSon = new JSONArray();
+			commentsJSon.addAll(comments);
 			
 			result.put("activities", activitiesJSon);
 			result.put("comments", commentsJSon);		
