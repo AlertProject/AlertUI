@@ -1409,7 +1409,7 @@ var AlertViz = function(options) {
     					nPosts += days[dayIdxGlob++][1];
     				}
     				
-    				result.push({x: currentTime, y: nPosts, color: (currentTime >= selectedRange[0] && currentTime <= selectedRange[1]) ? selectedBarColor : normalBarColor});
+    				result.push({x: currentTime + barTimeInterval/2, y: nPosts, color: (currentTime >= selectedRange[0] && currentTime <= selectedRange[1]) ? selectedBarColor : normalBarColor, range: [currentTime, currentTime + barTimeInterval]});
     				currentTime += barTimeInterval;
     			}
     			
@@ -1532,15 +1532,14 @@ var AlertViz = function(options) {
 				},
 				tooltip: {
 					formatter: function() {
-						return 'Number of posts: ' + Highcharts.numberFormat(this.y, 0);
-							 
+						return 'Number of posts: ' + Highcharts.numberFormat(this.y, 0) + '<br />' + new Date(this.point.range[0]).format(defaultDateFormat) + ' to ' + new Date(this.point.range[1]).format(defaultDateFormat); 
 					}
 				},
-				plotOptions: {
-					column: {
-						cursor: 'pointer'
-					}
-				},
+//				plotOptions: {
+//					column: {
+//						cursor: 'pointer'
+//					}
+//				},
 				series: [
 					{
 						name: 'Posts',

@@ -13,14 +13,10 @@
 		○  show related posts (the info that you get in the metadata content)
 	
 	
--issue details po datumu sortirano
-- na timeline cursor naj ne bo roka
-- scroll pri suggestions se vedno ne dela!!
-sile tree pri kliku na search odpri v novem oknu z default stanjem
-
-- horizontal resize forum post
-sprememba strani naj lepse zgleda
-- poglej ce je mozno videt cas v tooltipu v timeline-u
+- issue details po datumu sortirano
+- file tree pri kliku na search odpri v novem oknu z default stanjem
+- scroll s tipko ne dela
+- sprememba strani naj lepse zgleda
 
 fetchNotifications called twice	
 

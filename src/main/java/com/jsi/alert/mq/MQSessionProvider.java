@@ -37,6 +37,13 @@ public class MQSessionProvider {
 	private Session mqSession;
 	private Map<ComponentKey, Topic> requestTopics, responseTopics;
 	
+	/**
+	 * Returns this classes instance.
+	 * 
+	 * @return
+	 * @throws JMSException
+	 * @throws IOException
+	 */
 	public static synchronized MQSessionProvider getInstance() throws JMSException, IOException {
 		if (instance == null)
 			instance = new MQSessionProvider();
@@ -77,6 +84,8 @@ public class MQSessionProvider {
 		
 		log.info("Initialization finished!");
 	}
+	
+
 	
 	/**
 	 * Creates and returns a <code>MessageProducer</code> posting on the KEUI request topic.
