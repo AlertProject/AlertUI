@@ -430,11 +430,6 @@
 					
 					org_li.before(item.html(data[opts.selectedItemProp]).prepend(close));
 					opts.selectionAdded.call(this, org_li.prev(), data);
-				
-					var inputSelector = '#as-selections-'+x;
-					var parentHeight = $(inputSelector).parent().height();
-					var parentPadding = 3;	// TODO quick fix
-					$(inputSelector).css('height', (parentHeight - parentPadding) + 'px');
 				}
 				
 				function moveSelection(direction){

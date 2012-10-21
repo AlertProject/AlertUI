@@ -42,18 +42,15 @@ ul.as-selections {
 }
 .text_issue{
 	list-style-type: none;
-	padding: 2px 2px 2px 10px !important;
-	margin: 0 !important;
 	background-color: white;
 	height: 33px;
 	width: 906px;
-
 }
 ul.as-selections.loading {
 	background-color: #fff;
 }
 ul.as-selections li {
-	float: left;
+	display: inline-block;
 	margin: 4px !important;
 }
 ul.as-selections li.as-selection-item {
