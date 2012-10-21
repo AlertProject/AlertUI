@@ -4,6 +4,10 @@ var defaultDateFormat = "isoDate";
 var settingManually = false;
 var currentTab = 0;
 
+function loginSuccess(email) {
+	alert('works, email: ' + email);		// TODO
+}
+
 //returns the value of a CSS attribute
 function getCssValue(clazz, attribute) {
 	var $p = $("<p class='" + clazz + "'></p>").hide().appendTo("body");
@@ -253,7 +257,7 @@ function uncheckByAttr(attribute, prefix) {
  */
 function loadState() {
 	var state = decodeUrl();
-	if (state == null) return;
+	if (state == null || state.params == null) return;
 	
 	var params = state.params;
 	var tab = state.tab;
@@ -384,8 +388,10 @@ function loadState() {
 		viz.searchIssueId();
 		break;
 	case 2:
+		viz.searchRelated();
 		break;
 	case 3:
+		viz.searchForDeveloper();
 		break;
 	}
 	
@@ -857,19 +863,56 @@ var AlertViz = function(options) {
     			socialGraph.clear();
     	},
     	
-    	searchRelated: function () {
+    	searchRelatedByQueryOpts: function (queryOpts, offset, limit) {
     		$.ajax({
     			type: 'POST',
     			url: 'query',
-    			data: {type: 'suggestMyCode'},
+    			data: {
+    				type: 'suggestMyCode',
+    				NoneChk: queryOpts.NoneChk,
+        			FixedChk: queryOpts.FixedChk,
+        			WontFixChk: queryOpts.WontFixChk,
+        			InvalidChk: queryOpts.InvalidChk,
+        			DuplicateChk: queryOpts.DuplicateChk,
+        			WorksForMeChk: queryOpts.WorksForMeChk,
+        			UnknownChk: queryOpts.UnknownChk,
+        			OpenChk: queryOpts.OpenChk,
+        			VerifiedChk: queryOpts.VerifiedChk,
+        			AssignedChk: queryOpts.AssignedChk,
+        			ResolvedChk: queryOpts.ResolvedChk,
+        			ClosedChk: queryOpts.ClosedChk,
+        			offset: offset == null ? 0 : offset,
+        			limit: limit == null ? itemsPerPage : limit
+    			},
     			dataType: 'json',
     			async: true,
     			success: function (data, textStatus, jqXHR) {
+    				currentQueryOpts = queryOpts;
     				that.setQueryResults(data);
     			}
     		});
     		
     		return false;
+    	},
+    	
+    	searchRelated: function (offset) {
+    		var queryOpts = {
+    			type: 'suggestMyCode',
+				NoneChk: $('#my_none_check').attr('checked') == 'checked',
+    			FixedChk: $('#my_fixed_check').attr('checked') == 'checked',
+    			WontFixChk: $('#my_wont_check').attr('checked') == 'checked',
+    			InvalidChk: $('#my_invalid_check').attr('checked') == 'checked',
+    			DuplicateChk: $('#my_duplicate_check').attr('checked') == 'checked',
+    			WorksForMeChk: $('#my_works_check').attr('checked') == 'checked',
+    			UnknownChk: $('#my_unknown_check').attr('checked') == 'checked',
+    			OpenChk: $('#my_open_check').attr('checked') == 'checked',
+    			VerifiedChk: $('#my_veririfed_check').attr('checked') == 'checked',
+    			AssignedChk: $('#my_assigned_check').attr('checked') == 'checked',
+    			ResolvedChk: $('#my_resolved_check').attr('checked') == 'checked',
+    			ClosedChk: $('#my_closed_check').attr('checked') == 'checked'
+    		};
+    		
+    		return that.searchRelatedByQueryOpts(queryOpts, offset, itemsPerPage);
     	},
     	
     	searchItemDetails: function (itemId) {
@@ -1133,7 +1176,7 @@ var AlertViz = function(options) {
     		$('#items-div').addClass('loading');
     		try {
 	    		$.ajax({
-	                type: "GET",
+	                type: "POST",
 	                url: "query",
 	                data: queryOpts,
 	                dataType: "json",
@@ -1150,24 +1193,36 @@ var AlertViz = function(options) {
     		return false;
     	},
     	
-    	searchPeople: function () {
-    		var people = personSearch.getSearchStr('person');
+    	searchForDeveloperByQueryOpts: function (queryOpts) {
+    		that.cleanData();
+    		$('#items-div').addClass('loading');
     		
     		$.ajax({
-    			type: "GET",
+    			type: "POST",
                 url: "query",
-                dataType: "xml",
+                dataType: "json",
                 async: true,
                 data: {
                 	type: 'suggestPeople',
-                	people: people
+                	people: queryOpts.person
                 },
-                success: function (xml, textStatus, jqXHR) {
-                	// TODO not implemented
+                success: function (data, textStatus, jqXHR) {
+                	currentQueryOpts = queryOpts;
+                	that.setQueryResults(data);
                 }
     		});
     		
     		return false;
+    	},
+    	
+    	searchForDeveloper: function () {
+    		var people = personSearch.getSearchStr('person');
+    		
+    		var queryOpts = {
+    			person: people
+    		};
+    		
+    		return that.searchForDeveloperByQueryOpts(queryOpts);
     	},
     	
     	jumpPage: function (offset, limit) {
@@ -1598,11 +1653,29 @@ var AlertViz = function(options) {
     		$('#items-div').html('');
     		var peopleH = data.persons;
 			var items = data.items;
-			if (items.length == 0) {
+			if (items.length == 0 && (data.modules == null || data.modules.length == 0)) {
 				$('#items-div').html('<span class="no_results">No results!</span>');
 				return;
 			}
     		var html = '<ul>';
+    		
+    		// first create the modules
+    		if (data.modules != null && data.modules.length > 0) {
+    			html += '<li>';
+    			html += '<div class="item-wrapper modules">';
+    			
+    			html += '<ul class="module_ul">';
+    			html += '<li class="modules_heading">Recommended modules:</li>';
+    			
+    			$.each(data.modules, function (idx, module) {
+    				html += '<li>' + module + '</li>';
+    			});
+    			
+    			html += '</ul>';
+    			
+    			html += '</div>';
+    			html += '</li>';
+    		}
     		
 			// generate HTML
 			for(var i = 0; i < data.items.length; i++){

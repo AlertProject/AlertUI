@@ -1,7 +1,7 @@
 package com.jsi.alert.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.simple.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +45,7 @@ public class SuggestServlet extends MQServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	public void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		try {
 			Map<String, String[]> parameters = request.getParameterMap();
@@ -73,12 +73,13 @@ public class SuggestServlet extends MQServlet {
 			
 			String requestMsg = MessageUtils.genKEUISuggestionMessage(currInput, "Other".equals(suggType) ? "People,Products,Sources,Issues" : suggType, requestId);
 			String responseMsg = getKEUIResponse(requestMsg, requestId);
-			String responseJSon = MessageParser.parseKEUISuggestMessage(responseMsg);
+			JSONArray responseJSon = MessageParser.parseKEUISuggestMessage(responseMsg);
 			
-			PrintWriter writer = new PrintWriter(response.getOutputStream());
-			writer.write(responseJSon);
-			writer.flush();
-			writer.close();
+			Writer out = response.getWriter();
+			responseJSon.writeJSONString(out);
+			
+			out.flush();
+			out.close();
 		} catch (Throwable t) {
 			log.error("An unexpected exception occurred!", t);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

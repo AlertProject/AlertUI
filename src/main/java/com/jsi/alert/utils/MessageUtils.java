@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -31,6 +32,11 @@ import org.w3c.dom.DOMException;
  *
  */
 public class MessageUtils {
+	
+	private enum IdType {
+		ID,
+		URI
+	}
 	
 	private static final Logger log = LoggerFactory.getLogger(MessageUtils.class);
 	
@@ -72,15 +78,7 @@ public class MessageUtils {
 		}
 	}
 	
-	
-	/**
-	 * Generates a SOAPMessage with the envelope prefix set to 's' and 2 new namespaces added. The last child element
-	 * added is 'eventData'
-	 * 
-	 * @throws SOAPException 
-	 * @throws DOMException 
-	 */
-	private static SOAPMessage getMsgTemplate(String address, String eventName, String requestId) throws DOMException, SOAPException {
+	private static SOAPMessage getMsgTemplate(String address, String eventName, String requestId, String envelopePrefix) throws SOAPException {
 		// set the namespaces
 		SOAPMessage soapMsg = msgFactory.createMessage();
 		soapMsg.setProperty(SOAPMessage.WRITE_XML_DECLARATION, "true");
@@ -90,9 +88,9 @@ public class MessageUtils {
 		SOAPEnvelope envelope = soapPart.getEnvelope();
 		
 		envelope.removeNamespaceDeclaration("env");
-		envelope.setPrefix("s");
-		envelope.getHeader().setPrefix("s");
-		envelope.getBody().setPrefix("s");
+		envelope.setPrefix(envelopePrefix);
+		envelope.getHeader().setPrefix(envelopePrefix);
+		envelope.getBody().setPrefix(envelopePrefix);
 		
 		envelope.addNamespaceDeclaration("wsnt", "http://docs.oasis-open.org/wsn/b-2");
 		envelope.addNamespaceDeclaration("wsa", "http://www.w3.org/2005/08/addressing");
@@ -138,8 +136,20 @@ public class MessageUtils {
 		return soapMsg;
 	}
 	
+	
+	/**
+	 * Generates a SOAPMessage with the envelope prefix set to 's' and 2 new namespaces added. The last child element
+	 * added is 'eventData'
+	 * 
+	 * @throws SOAPException 
+	 * @throws DOMException 
+	 */
+	private static SOAPMessage getMsgTemplate(String address, String eventName, String requestId) throws DOMException, SOAPException {
+		return getMsgTemplate(address, eventName, requestId, "s");
+	}
+	
 	private static SOAPMessage getAPITemplate(String apiCall, String requestId) throws DOMException, SOAPException {
-		SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/search", "ALERT.Search.APICallRequest", requestId);
+		SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/search", Configuration.API_REQUEST_TOPIC, requestId);
 		
 		SOAPBody body = msg.getSOAPBody();
 		SOAPElement eventData = (SOAPElement) body.getElementsByTagName("ns1:eventData").item(0);
@@ -403,7 +413,7 @@ public class MessageUtils {
 	}
 	
 	private static SOAPMessage getKEUITemplate(String requestType, String requestId) throws DOMException, SOAPException {
-		SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/keui", "KEUIRequest", requestId);
+		SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/keui", Configuration.KEUI_REQUEST_TOPIC, requestId);
 		
 		SOAPBody body = msg.getSOAPBody();
 		SOAPElement eventData = (SOAPElement) body.getElementsByTagName("ns1:eventData").item(0);
@@ -549,6 +559,87 @@ public class MessageUtils {
 		}
 	}
 	
+	private static String genKEUIIssueListMsg(List<?> identifiers, String requestId, IdType idType) throws DOMException, SOAPException, IOException {
+		SOAPMessage msg = getKEUIQueryTemplate("Query", "generalQuery", requestId);
+		SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
+		SOAPElement query = (SOAPElement) msg.getSOAPBody().getElementsByTagName("query").item(0);
+		
+		SOAPElement args = query.addChildElement("queryArgs");
+		SOAPElement conditions = args.addChildElement("conditions");
+		SOAPElement postTypes = conditions.addChildElement("postTypes");
+		
+		switch (idType) {
+		case ID:
+			SOAPElement bugIds = conditions.addChildElement("bugIds");
+			
+			// set the conditions
+			// generate a String of issueIDs
+			StringBuilder idBuilder = new StringBuilder();
+			for (Iterator<?> it = identifiers.iterator(); it.hasNext();) {
+				idBuilder.append(it.next());
+				if (it.hasNext())
+					idBuilder.append(",");
+			}
+			
+			bugIds.setTextContent(idBuilder.toString());
+			break;
+		case URI:
+			SOAPElement bugUris = conditions.addChildElement("bugUris");
+			
+			for (Iterator<?> it = identifiers.iterator(); it.hasNext();)
+				bugUris.addChildElement("bugUri").setTextContent(it.next().toString());
+			break;
+		}
+		
+		postTypes.setTextContent("issueDescriptions");
+		
+		// set the parameters
+		SOAPElement params = query.addChildElement("params");
+		params.addAttribute(envelope.createName("resultData"), "itemData");
+		params.addAttribute(envelope.createName("offset"), "0");	// TODO get offset from client
+		params.addAttribute(envelope.createName("maxCount"), "100");	// TODO get limit from client
+		params.addAttribute(envelope.createName("includeAttachments"), "True");
+		params.addAttribute(envelope.createName("sortBy"), "dateDesc");
+		params.addAttribute(envelope.createName("itemDataSnipLen"), KEUI_ITEM_SNIP_LEN);
+		params.addAttribute(envelope.createName("snipMatchKeywords"), "True");
+		params.addAttribute(envelope.createName("keywordMatchOffset"), "25");
+		params.addAttribute(envelope.createName("includePeopleData"), "True");
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		msg.writeTo(out);
+		return new String(out.toByteArray());
+	}
+	
+	/**
+	 * Generates a KEUI message to request issue short content from issueIDs.
+	 * 
+	 * @param issueIds
+	 * @param requestId
+	 * @return
+	 */
+	public static String genKEUIIssueListByIdMsg(List<Long> issueIds, String requestId) {
+		try {
+			return genKEUIIssueListMsg(issueIds, requestId, IdType.ID);
+		} catch (Throwable t) {
+			throw new IllegalArgumentException("An unecpected exception occurred while generating KEUI get issues from IDs message!", t);
+		}
+	}
+	
+	/**
+	 * Generates a KEUI message to request issue short content from issue URIs.
+	 * 
+	 * @param issueIds
+	 * @param requestId
+	 * @return
+	 */
+	public static String genKEUIIssueListByUriMsg(List<String> issueUris, String requestId) {
+		try {
+			return genKEUIIssueListMsg(issueUris, requestId, IdType.URI);
+		} catch (Throwable t) {
+			throw new IllegalArgumentException("An unecpected exception occurred while generating KEUI get issues from URIs message!", t);
+		}
+	}
+	
 	/**
 	 * Generates a commit details request which can be sent to the API component.
 	 * 
@@ -557,7 +648,7 @@ public class MessageUtils {
 	 * @throws SOAPException 
 	 * @throws IOException 
 	 */
-	public static String getCommitDetailsMsg(String commitURI, String requestId) throws SOAPException, IOException {
+	public static String genAPICommitDetailsMsg(String commitURI, String requestId) throws SOAPException, IOException {
 		SOAPMessage msg = getAPITemplate("commit.getInfo", requestId);
 		
 		SOAPElement inputEl = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s2:inputParameter").item(0);
@@ -578,7 +669,7 @@ public class MessageUtils {
 	 * @throws SOAPException
 	 * @throws IOException
 	 */
-	public static String genIssueDetailsMsg(String issueId, String requestId) throws SOAPException, IOException {
+	public static String genAPIIssueDetailsMsg(String issueId, String requestId) throws SOAPException, IOException {
 		SOAPMessage msg = getAPITemplate("issue.getInfo", requestId);
 		
 		SOAPElement inputEl = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s2:inputParameter").item(0);
@@ -592,19 +683,64 @@ public class MessageUtils {
 	}
 	
 	/**
-	 * Generates a Recommender 'issues for identities' message, which can be sent over the MQ.
+	 * Generates a issue.getAllForIdentity.xml message which can be sent to the API component.
+	 * 
+	 * @param uuid
+	 * @param requestId
+	 * @return
+	 * @throws SOAPException
+	 * @throws IOException
+	 */
+	public static String genAPIIssuesForUserMsg(String uuid, String requestId) throws SOAPException, IOException {
+		SOAPMessage msg = getAPITemplate("issue.getAllForIdentity", requestId);
+		
+		SOAPElement inputEl = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s2:inputParameter").item(0);
+	
+		inputEl.addChildElement("name", "s2").setTextContent("uuid");
+		inputEl.addChildElement("value", "s2").setTextContent(uuid);
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		msg.writeTo(out);
+		return new String(out.toByteArray());
+	}
+	
+	/**
+	 * Returns the basic message template, but adds another namespace declaration to the 
+	 * event tag.
+	 * 
+	 * @param address
+	 * @param eventName
+	 * @param requestId
+	 * @return
+	 * @throws DOMException
+	 * @throws SOAPException
+	 */
+	private static SOAPMessage getRecommenderMsg(String address, String eventName, String requestId) throws DOMException, SOAPException {
+		SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/metadata", eventName, requestId, "soap");
+		SOAPElement event = (SOAPElement) msg.getSOAPBody().getElementsByTagName("ns1:event").item(0);
+		
+		event.addNamespaceDeclaration("sc", "http://www.alert-project.eu/socrates");
+		
+		return msg;
+	}
+	
+	/**
+	 * Generates a general Recommender 'something' for people message, which can be sent over the MQ.
 	 * 
 	 * @param userIds
+	 * @param requestId
+	 * @param eventName Name of the event, it will be inserted into the 'eventName' tag
 	 * @return
 	 */
-	public static String genRecommenderIssuesMsg(Collection<String> userIds, String requestId) {
+	private static String genRecommenderItemsForPeopleMsg(Collection<String> uuids, String requestId, double ranking, String eventName) {
 		try {
-			SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/metadata", "ALERT.*.Recommender.IssueRecommendationRequest", requestId);
+			SOAPMessage msg = getRecommenderMsg("http://www.alert-project.eu/metadata", eventName, requestId);
 			SOAPElement eventData = (SOAPElement) msg.getSOAPBody().getElementsByTagName("ns1:eventData").item(0);
 			
+			eventData.addChildElement("ranking", "sc").setTextContent(ranking + "");
 			SOAPElement identities = eventData.addChildElement("identities", "sc");
 			
-			for (String userId : userIds)
+			for (String userId : uuids)
 				identities.addChildElement("identity", "sc").addChildElement("uuid", "sc").setTextContent(userId);
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -614,54 +750,52 @@ public class MessageUtils {
 			throw new IllegalArgumentException("An unecpected exception occurred while generating Recommender suggest issues message!", t);
 		}
 	}
-
+	
 	/**
-	 * Generates a KEUI message to request issue short content from issueIDs.
+	 * Generates a Recommender 'issues for identities' message, which can be sent over the MQ.
 	 * 
-	 * @param issueIds
-	 * @param requestId
+	 * @param userIds
 	 * @return
 	 */
-	public static String genKEUIIssueListMsg(List<Long> issueIds, String requestId) {
+	public static String genRecommenderIssuesMsg(Collection<String> uuids, String requestId) {
+		return genRecommenderItemsForPeopleMsg(uuids, requestId, Configuration.RECOMMENDER_RANKING_ISSUE, Configuration.RECOMMENDER_REQUEST_TOPIC_ISSUE);	// TODO ranking is set to 0
+	}
+	
+	/**
+	 * Generates a Recommender 'modules for identities' message, which can be sent over the MQ.
+	 * 
+	 * @param userIds
+	 * @return
+	 */
+	public static String genRecommenderModulesMsg(List<String> uuids, String requestId) {
+		return genRecommenderItemsForPeopleMsg(uuids, requestId, Configuration.RECOMMENDER_RANKING_MODULE, Configuration.RECOMMENDER_REQUEST_TOPIC_MODULE);		// TODO ranking is set to 0
+	}
+
+	/**
+	 * Generates a Recommender 'identities for issues' message, which can be sent over the MQ.
+	 * 
+	 * @param userIds
+	 * @return
+	 */
+	public static String genRecommenderIdentityMsg(List<Long> issueIds, String requestId) {
 		try {
-			SOAPMessage msg = getKEUIQueryTemplate("Query", "generalQuery", requestId);
-			SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
-			SOAPElement query = (SOAPElement) msg.getSOAPBody().getElementsByTagName("query").item(0);
+			SOAPMessage msg = getRecommenderMsg("http://www.alert-project.eu/metadata", Configuration.RECOMMENDER_REQUEST_TOPIC_IDENTITY, requestId);
+			SOAPElement eventData = (SOAPElement) msg.getSOAPBody().getElementsByTagName("ns1:eventData").item(0);
 			
-			SOAPElement args = query.addChildElement("queryArgs");
-			SOAPElement conditions = args.addChildElement("conditions");
-			SOAPElement bugIds = conditions.addChildElement("bugIds");
-			SOAPElement postTypes = conditions.addChildElement("postTypes");
+			eventData.addChildElement("ranking", "sc").setTextContent(Configuration.RECOMMENDER_RANKING_IDENTITY + "");		// TODO
+			SOAPElement issues = eventData.addChildElement("issues", "sc");
 			
-			// set the conditions
-			// generate a String of issueIDs
-			StringBuilder idBuilder = new StringBuilder();
-			for (int i = 0; i < issueIds.size(); i++) {
-				idBuilder.append(issueIds.get(i));
-				if (i < issueIds.size() - 1)
-					idBuilder.append(",");
-			}
+			for (Long id : issueIds) {
+				SOAPElement issue = issues.addChildElement("issue", "sc");
 				
-			bugIds.setTextContent(idBuilder.toString());
-			postTypes.setTextContent("issueDescriptions");
-			
-			// set the parameters
-			SOAPElement params = query.addChildElement("params");
-			params.addAttribute(envelope.createName("resultData"), "itemData");
-			params.addAttribute(envelope.createName("offset"), "0");	// TODO get offset from client
-			params.addAttribute(envelope.createName("maxCount"), "100");	// TODO get limit from client
-			params.addAttribute(envelope.createName("includeAttachments"), "True");
-			params.addAttribute(envelope.createName("sortBy"), "dateDesc");
-			params.addAttribute(envelope.createName("itemDataSnipLen"), KEUI_ITEM_SNIP_LEN);
-			params.addAttribute(envelope.createName("snipMatchKeywords"), "True");
-			params.addAttribute(envelope.createName("keywordMatchOffset"), "25");
-			params.addAttribute(envelope.createName("includePeopleData"), "True");
+				issue.addChildElement("id", "sc").setTextContent(id.toString());
+			}
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			msg.writeTo(out);
 			return new String(out.toByteArray());
 		} catch (Throwable t) {
-			throw new IllegalArgumentException("An unecpected exception occurred while generating KEUI get issues from IDs message!", t);
+			throw new IllegalArgumentException(t);
 		}
 	}
 }

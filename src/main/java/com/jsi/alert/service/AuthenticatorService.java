@@ -70,19 +70,30 @@ public class AuthenticatorService {
 	 * @return
 	 */
 	public static boolean authenticateUser(UserPrincipal user) {
-		if (user == null || user.getEmail() == null) return false;
-		
-		String email = user.getEmail();
-		if (log.isDebugEnabled()) log.debug("Authenticating user: " + email + "...");
-		UserPrincipal userInfo = getUserInfo(email);
-		
-		if (userInfo != null) {
-			user.setAdmin(userInfo.getAdmin());
-			user.setEmail(userInfo.getEmail());
-			user.setUuid(userInfo.getUuid());
-			user.setAuthenticated(userInfo.isAuthenticated());
-			
+		// for testing
+		if (Configuration.USE_DEFAULT_USER) {
+			user.setAdmin(true);
+			user.setUuid(Configuration.DEFAULT_USER_UUID);
+			user.setEmail(Configuration.DEFAULT_USER_EMAIL);
+			user.setAuthenticated(true);
 			return true;
-		} else return false;
+		}
+		
+		// real authentication
+		if (user != null && user.getEmail() != null) {
+			String email = user.getEmail();
+			if (log.isDebugEnabled()) log.debug("Authenticating user: " + email + "...");
+			UserPrincipal userInfo = getUserInfo(email);
+			
+			if (userInfo != null) {
+				user.setAdmin(userInfo.getAdmin());
+				user.setEmail(userInfo.getEmail());
+				user.setUuid(userInfo.getUuid());
+				user.setAuthenticated(userInfo.isAuthenticated());
+				
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -13,8 +13,10 @@
 		○  show related posts (the info that you get in the metadata content)
 	
 	
-- scroll s tipko ne dela
+- suggestions scroll s tipko ne dela
 - gumbi za spremembo strani naj lepse zgledajo
+- logout
+- tab not switched when loading page
 
 /////////////////////////////////////////////////////////////////////////
 Bug, ki sem ga nasel v UIju pa je, da next vedno
@@ -24,16 +26,12 @@ gumb >>.
 - ne dobim info <info totalCount="826" offset="0" maxCount="100"></info>
 /////////////////////////////////////////////////////////////////////////
 
-fetchNotifications called twice	
+
+ASK FOTIS:
+- I don't get any data when sending suggest issues for: 86ff2a2b-4d05-40bf-8e2b-550e100ee380
+1) where to send suggest issues related to my code, is it the same topic as issues for a developer??? If not which is which?
+2) where do I get person details message?
+	
 
 
 	
-	
-
-=============================================================
-- pri item snippetih odstrani multople line breaks
-	*Leave one in the middle?
-	
-RESOLVED??
-• Social graph
-	○ Tooltip sometimes doesn't go away

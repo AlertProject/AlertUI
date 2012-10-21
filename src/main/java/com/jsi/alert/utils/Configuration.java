@@ -15,14 +15,24 @@ public class Configuration {
 	public static String ACTIVEMQ_URL;
 	public static String KEUI_REQUEST_TOPIC, KEUI_RESPONSE_TOPIC;
 	public static String API_REQUEST_TOPIC, API_RESPONSE_TOPIC;
+	public static String RECOMMENDER_REQUEST_TOPIC_ISSUE, RECOMMENDER_RESPONSE_TOPIC_ISSUE;
+	public static String RECOMMENDER_REQUEST_TOPIC_IDENTITY, RECOMMENDER_RESPONSE_TOPIC_IDENTITY;
+	public static String RECOMMENDER_REQUEST_TOPIC_MODULE, RECOMMENDER_RESPONSE_TOPIC_MODULE;
+	
+	public static double RECOMMENDER_RANKING_ISSUE, RECOMMENDER_RANKING_MODULE, RECOMMENDER_RANKING_IDENTITY;
 	
 	public static boolean LOG_EVENTS;
 	
 	public static String LOGIN_URL, LOGOUT_URL, AUTHENTICATE_URL;
-	public static String NOTIFICATION_URL, NOTIFICATION_PARAMETER, NOTIFICATION_DEFAULT_USER;
+	public static String NOTIFICATION_URL, NOTIFICATION_PARAMETER;
 	
 	public static long REQUEST_TIMEOUT;
-
+	
+	public static boolean USE_DEFAULT_USER;
+	public static String DEFAULT_USER_UUID, DEFAULT_USER_EMAIL, DEFAULT_USER_NOTIFICATION_ID;
+	
+	public static String SUBSCRIBE_URL, OVERVIEW_URL, ADMINISTRATION_URL;
+	
 	static {
 		// read the properties
 		if (log.isDebugEnabled()) log.debug("Reading properties file...");
@@ -32,22 +42,47 @@ public class Configuration {
 			props.load(Configuration.class.getClassLoader().getResourceAsStream("alert.properties"));
 
 			ACTIVEMQ_URL = props.getProperty("activemq.url");
+			
+			// topics
 			KEUI_REQUEST_TOPIC = props.getProperty("topic.keui.request");
 			KEUI_RESPONSE_TOPIC = props.getProperty("topic.keui.response");
 			API_REQUEST_TOPIC = props.getProperty("topic.api.request");
 			API_RESPONSE_TOPIC = props.getProperty("topic.api.response");
 			
+			RECOMMENDER_REQUEST_TOPIC_ISSUE = props.getProperty("topic.recommender.request.issue");
+			RECOMMENDER_RESPONSE_TOPIC_ISSUE = props.getProperty("topic.recommender.response.issue");
+			RECOMMENDER_REQUEST_TOPIC_IDENTITY = props.getProperty("topic.recommender.request.identity");
+			RECOMMENDER_RESPONSE_TOPIC_IDENTITY = props.getProperty("topic.recommender.response.identity");
+			RECOMMENDER_REQUEST_TOPIC_MODULE = props.getProperty("topic.recommender.request.module");
+			RECOMMENDER_RESPONSE_TOPIC_MODULE = props.getProperty("topic.recommender.response.module");
+			
 			LOG_EVENTS = Boolean.parseBoolean(props.getProperty("log_events"));
 			
+			// urls
 			LOGIN_URL = props.getProperty("login.form.url");
 			LOGOUT_URL = props.getProperty("logout.form.url");
 			AUTHENTICATE_URL = props.getProperty("login.authenticate.url");
 			
+			// iframes
+			SUBSCRIBE_URL = props.getProperty("iframe.subscribe");
+			OVERVIEW_URL = props.getProperty("iframe.overview");
+			ADMINISTRATION_URL = props.getProperty("iframe.administration");
+			
 			NOTIFICATION_URL = props.getProperty("notifications.url");
 			NOTIFICATION_PARAMETER = props.getProperty("notifications.param");
-			NOTIFICATION_DEFAULT_USER = props.containsKey("notifications.param.value") ? props.getProperty("notifications.param.value") : null;
 		
 			REQUEST_TIMEOUT = props.containsKey("request.timeout") ? Long.parseLong((String) props.get("request.timeout")) : 10000;
+		
+			// recommender settings
+			RECOMMENDER_RANKING_ISSUE = Double.parseDouble(props.getProperty("recommender.ranking.issue"));
+			RECOMMENDER_RANKING_MODULE = Double.parseDouble(props.getProperty("recommender.ranking.module"));
+			RECOMMENDER_RANKING_IDENTITY = Double.parseDouble(props.getProperty("recommender.ranking.identity"));
+			
+			// default user
+			USE_DEFAULT_USER = Utils.parseBoolean(props.getProperty("use_default_user"));
+			DEFAULT_USER_UUID = props.getProperty("user.loggedid.uuid");
+			DEFAULT_USER_NOTIFICATION_ID = props.containsKey("user.notification.id") ? props.getProperty("notifications.param.value") : null;
+			DEFAULT_USER_EMAIL = props.getProperty("user.loggedin.email");
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			throw new RuntimeException(e);

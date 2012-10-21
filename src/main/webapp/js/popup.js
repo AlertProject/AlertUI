@@ -16,29 +16,26 @@
 			event.stopPropagation();
 			event.preventDefault();
 			
-			var triggerPos = $(trigger).position();	// relative to the parent
-			var trigerBottom = triggerPos.top + $(trigger).height();
-			
-			var left = horizontalOffset;
-			var top = trigerBottom + verticalOffset;;
-			if (align == 'center')
-				left += triggerPos.left + ($(trigger).outerWidth() - $(popup).outerWidth())/2;
-			else if (align == 'right')
-				left += triggerPos.left + $(trigger).outerWidth() - $(popup).outerWidth();
-			else
-				left += triggerPos.left;
-
-			$(popup).css('left', left);
-			$(popup).css('top', top);
-			if ($(popup).css('display') == 'none')
-				$(popup).fadeToggle(fadeDuration);
-			
+			if ($(popup).css('display') == 'none') {
+				var triggerPos = $(trigger).position();	// relative to the parent
+				var trigerBottom = triggerPos.top + $(trigger).height();
+				
+				var left = horizontalOffset;
+				var top = trigerBottom + verticalOffset;;
+				if (align == 'center')
+					left += triggerPos.left + ($(trigger).outerWidth() - $(popup).outerWidth())/2;
+				else if (align == 'right')
+					left += triggerPos.left + $(trigger).outerWidth() - $(popup).outerWidth();
+				else
+					left += triggerPos.left;
+	
+				$(popup).css('left', left);
+				$(popup).css('top', top);
+			}
+			$(popup).fadeToggle(fadeDuration);
 			return false;
 		});
-		/*$(popup).mouseleave(function (event) {
-			if ($(popup).css('display') != 'none')
-				$(popup).fadeToggle(fadeDuration);
-		});*/
+
 		$(document).click(function (event) {
 			if (event.target != $(popup) && event.target != $(trigger) && $(popup).css('display') != 'none' && $.inArray(event.target, $(popup).find('*')) < 0)
 				$(popup).fadeToggle(fadeDuration);

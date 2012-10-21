@@ -72,7 +72,7 @@ public class MessageParser {
 	private static final int[] MONTH_LENGTHS = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 	@SuppressWarnings("unchecked")
-	public static String parseAPICommitDetailsMessage(String responseMsg) {
+	public static JSONObject parseAPICommitDetailsMessage(String responseMsg) {
 		try {
 			JSONObject result = new JSONObject();
 			
@@ -212,8 +212,9 @@ public class MessageParser {
 				result.put("files", filesArr);
 			}
 			
-			return result.toJSONString();
+			return result;
 		} catch (Throwable t) {
+			log.error("Failed to parse commit details response!", t);
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing commit details response message!", t);
 		}
 	}
@@ -227,7 +228,7 @@ public class MessageParser {
 	 * @throws SAXException 
 	 */
 	@SuppressWarnings("unchecked")
-	public static String parseAPIIssueDetailsMsg(String responseMsg) throws ParserConfigurationException, SAXException, IOException {
+	public static JSONObject parseAPIIssueDetailsMsg(String responseMsg) throws ParserConfigurationException, SAXException, IOException {
 		try {
 			JSONObject result = new JSONObject();
 			
@@ -400,9 +401,38 @@ public class MessageParser {
 			result.put("activities", activitiesJSon);
 			result.put("comments", commentsJSon);		
 			
-			return result.toJSONString();
+			return result;
 		} catch (Throwable t) {
+			log.error("Failed to parse issue details response!", t);
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing issue details response message!", t);
+		}
+	}
+	
+	/**
+	 * Parses API component's issue.getAllForIdentity.xml response and returns a list of URIs.
+	 * 
+	 * @param apiResponse
+	 * @return
+	 */
+	public static List<String> parseAPIIssuesResponse(String responseMsg) {
+		try {
+			List<String> result = new ArrayList<>();
+			
+			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
+			
+			Element apiResponse = (Element) doc.getElementsByTagName("ns1:apiResponse").item(0);
+			NodeList issueURIs = apiResponse.getElementsByTagName("s3:issueUri");
+			for (int i = 0; i < issueURIs.getLength(); i++) {
+				Element node = (Element) issueURIs.item(i);
+				
+				result.add(node.getTextContent());
+			}
+			
+			return result;
+		} catch (Throwable t) {
+			log.error("Failed to parse API list of issues response!!", t);
+			throw new IllegalArgumentException("An unexpected exception occurred while parsing API list of issues response message!", t);
 		}
 	}
 	
@@ -413,7 +443,7 @@ public class MessageParser {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static String parseKEUIItemDetailsMsg(String responseMsg) {
+	public static JSONObject parseKEUIItemDetailsMsg(String responseMsg) {
 		try {
 			JSONObject result = new JSONObject();
 			
@@ -475,8 +505,9 @@ public class MessageParser {
 			result.put("subject", subject);
 			result.put("tags", tags);
 			
-			return result.toJSONString();
+			return result;
 		} catch (Throwable t) {
+			log.error("Failed to parse item details response!", t);
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing item details response message!", t);
 		}
 	}
@@ -488,7 +519,7 @@ public class MessageParser {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static String parseKEUIPeopleResponse(String responseMsg) {
+	public static JSONObject parseKEUIPeopleResponse(String responseMsg) {
 		int minSize = 9;
 		int maxSize = 22;
 		
@@ -587,8 +618,9 @@ public class MessageParser {
 			result.put("nodeH", new JSONObject(nodeH));
 			result.put("edges", edgesJSon);
 			
-			return result.toJSONString();
+			return result;
 		} catch (Throwable t) {
+			log.error("Failed to parse KEUI people response!", t);
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing KEUI people response!!", t);
 		}
 	}
@@ -600,7 +632,7 @@ public class MessageParser {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static String parseKEUITimelineResponse(String responseMsg) {
+	public static JSONObject parseKEUITimelineResponse(String responseMsg) {
 		try {
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
@@ -692,8 +724,9 @@ public class MessageParser {
 			result.put("type", "timelineData");
 			result.put("days", allDays);
 			
-			return result.toJSONString();
+			return result;
 		} catch (Throwable t) {
+			log.error("Failed to parse KEUI timeline response!", t);
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing KEUI timeline response!!", t);
 		}
 	}
@@ -705,7 +738,7 @@ public class MessageParser {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static String parseKEUIKeywordsResponse(String responseMsg) {
+	public static JSONObject parseKEUIKeywordsResponse(String responseMsg) {
 		try {
 			JSONArray kwsJSon = new JSONArray();
 			
@@ -732,8 +765,9 @@ public class MessageParser {
 			result.put("type", "keywordData");
 			result.put("data", kwsJSon);
 			
-			return result.toJSONString();
+			return result;
 		} catch (Throwable t) {
+			log.error("Failed to parse KEUI keywords response!", t);
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing KEUI keyword response!!", t);
 		}
 	}
@@ -745,7 +779,7 @@ public class MessageParser {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static String parseKEUIItemsResponse(String responseMsg) {
+	public static JSONObject parseKEUIItemsResponse(String responseMsg) {
 		try {
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
@@ -803,8 +837,9 @@ public class MessageParser {
 			result.put("items", items);
 			result.put("info", info);
 			
-			return result.toJSONString();
+			return result;
 		} catch (Throwable t) {
+			log.error("Failed to parse KEUI items response!", t);
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing KEUI items response!!", t);
 		}
 	}
@@ -816,7 +851,7 @@ public class MessageParser {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static String parseKEUIDuplicateResponse(String responseMsg) {
+	public static JSONObject parseKEUIDuplicateResponse(String responseMsg) {
 		try {
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
@@ -846,8 +881,9 @@ public class MessageParser {
 			result.put("items", items);
 			result.put("info", info);
 			
-			return result.toJSONString();
+			return result;
 		} catch(Throwable t) {
+			log.error("Failed to parse KEUI duplicate issue response!", t);
 			throw new IllegalArgumentException("An exception occurred while parsing duplicate issue response!", t);
 		}
 	}
@@ -976,10 +1012,10 @@ public class MessageParser {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static String parseKEUISuggestMessage(String responseMsg) {
+	public static JSONArray parseKEUISuggestMessage(String responseMsg) {
 		try {
 			// parse the suggestions and return JSON
-			JSONArray jsonArray = new JSONArray();
+			JSONArray result = new JSONArray();
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			Document xmlDoc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
@@ -1059,11 +1095,12 @@ public class MessageParser {
 				jsonObj.put("value", Utils.escapeHtml(value));
 				jsonObj.put("type", type);
 				
-				jsonArray.add(jsonObj);
+				result.add(jsonObj);
 			}
 			
-			return jsonArray.toJSONString();
+			return result;
 		} catch (Throwable t) {
+			log.error("Failed to parse KEUI suggestions response!", t);
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing KEUI suggestion response!!", t);
 		}
 	}
@@ -1094,7 +1131,84 @@ public class MessageParser {
 			
 			return result;
 		} catch (Throwable t) {
+			log.error("Failed to parse Recommender IssueRecommendation.xml response!", t);
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing Recommender IssueRecommendation.xml message!", t);
+		}
+	}
+	
+	/**
+	 * Parses Recommenders ALERT.Recommender.ModuleRecommendation.xml message to extract module IDs.
+	 * 
+	 * @param msg
+	 * @return
+	 */
+	public static List<String> parseRecommenderModuleIdsMsg(String msg) {
+		try {
+			List<String> result = new ArrayList<>();
+			
+			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+			Document xmlDoc = builder.parse(new ByteArrayInputStream(msg.getBytes("UTF-8")));
+			
+			Element eventData = (Element) xmlDoc.getElementsByTagName("ns1:eventData").item(0);
+			NodeList modules = eventData.getElementsByTagName("sc:module");
+			
+			for (int i = 0; i < modules.getLength(); i++) {
+				Element module = (Element) modules.item(i);
+				
+				Element idEl = (Element) module.getElementsByTagName("sc:id").item(0);
+				result.add(idEl.getTextContent());
+			}
+			
+			return result;
+		} catch (Throwable t) {
+			log.error("Failed to parse Recommender IssueRecommendation.xml response!", t);
+			throw new IllegalArgumentException("An unexpected exception occurred while parsing Recommender IssueRecommendation.xml message!", t);
+		}
+	}
+	
+	/**
+	 * Parses Recommenders ALERT.Recommender.IdentityRecommendation.xml response and returns a JSon representation.
+	 * 
+	 * @param responseMsg
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static JSONObject parseRecommenderIdentitiesMsg(String responseMsg) {
+		try {
+			JSONObject result = new JSONObject();
+			
+			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+			Document xmlDoc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
+			
+			Element eventData = (Element) xmlDoc.getElementsByTagName("ns1:eventData").item(0);
+			
+			// get the issue
+			Element issue = (Element) eventData.getElementsByTagName("sc:issue").item(0);
+			JSONObject issueJSon = new JSONObject();
+			issueJSon.put("id", Long.parseLong(issue.getElementsByTagName("sc:id").item(0).getTextContent()));
+			issueJSon.put("bug", issue.getElementsByTagName("o:bug").item(0).getTextContent());
+			issueJSon.put("subject", issue.getElementsByTagName("sc:subject").item(0).getTextContent());
+			
+			// parse the identities
+			JSONArray identitiesJSon = new JSONArray();
+			
+			NodeList identities = eventData.getElementsByTagName("sc:identity");
+			for (int i = 0; i < identities.getLength(); i++) {
+				Element identity = (Element) identities.item(i);
+				
+				JSONObject identityJSon = new JSONObject();
+				identityJSon.put("uuid", identity.getElementsByTagName("sc:uuid").item(0).getTextContent());
+				identityJSon.put("name", identity.getElementsByTagName("sc:name").item(0).getTextContent());
+				identitiesJSon.add(identityJSon);
+			}
+			
+			result.put("issue", issueJSon);
+			result.put("people", identitiesJSon);
+			
+			return result;
+		} catch (Throwable t) {
+			log.error("Failed to parse Recommender IdentityRecommendation.xml response!", t);
+			throw new IllegalArgumentException("An unexpected exception occurred while parsing Recommender IdentityRecommendation.xml message!", t);
 		}
 	}
 

@@ -49,7 +49,7 @@ public class Index implements Serializable {
 			return;
 		}
 		
-		String uuid = Configuration.NOTIFICATION_DEFAULT_USER == null ? user.getUuid() : Configuration.NOTIFICATION_DEFAULT_USER;
+		String uuid = Configuration.USE_DEFAULT_USER ? Configuration.DEFAULT_USER_NOTIFICATION_ID : user.getUuid();
 		List<Notification> newNotifications = NotificationService.fetchNotifications(uuid);
 		user.getNotifications().addAll(newNotifications);
 	}
@@ -72,5 +72,17 @@ public class Index implements Serializable {
 
 	public void setUser(UserPrincipal user) {
 		this.user = user;
+	}
+	
+	public String getSubscribeUrl() {
+		return Configuration.SUBSCRIBE_URL;
+	}
+	
+	public String getOverviewUrl() {
+		return Configuration.OVERVIEW_URL;
+	}
+	
+	public String getAdminUrl() {
+		return Configuration.ADMINISTRATION_URL;
 	}
 }

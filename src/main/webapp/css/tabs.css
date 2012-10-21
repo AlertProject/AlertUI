@@ -372,3 +372,9 @@
     	endColorstr=rgb(200,200,200)
     	);
 }
+
+.hidden {
+	visibility: hidden;
+	position: absolute;
+	left: -10000px;
+}

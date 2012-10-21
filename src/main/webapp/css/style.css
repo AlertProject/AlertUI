@@ -200,6 +200,7 @@ input.button {
 	padding: 0 20px 0 20px;
 	color: #666666;
 	font: bold 14px/40px Arial, Helvetica, sans-serif;
+	cursor: pointer;
 }
 #header #nav ul li a:hover, 
 #header #nav ul li a:active {
@@ -207,10 +208,10 @@ input.button {
 	color: #111;
 	background: transparent;
 }
-#header #nav ul li#current {
+#header #nav ul li.current {
 	background: transparent url(../img/left-tab.gif) no-repeat;
 }
-#header #nav ul li#current a {	
+#header #nav ul li.current a {	
 	color: #444;
 	background: transparent url(../img/right-tab.gif) no-repeat right top;	
 }

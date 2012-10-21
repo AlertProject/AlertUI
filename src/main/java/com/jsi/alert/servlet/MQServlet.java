@@ -72,9 +72,15 @@ public abstract class MQServlet extends HttpServlet {
     	
     	producerH.put(ComponentKey.KEUI, provider.getKEUIProducer());
     	producerH.put(ComponentKey.API, provider.getAPIProducer());
+    	producerH.put(ComponentKey.RECOMMENDER_ISSUE, provider.getRecommenderIssueProducer());
+    	producerH.put(ComponentKey.RECOMMENDER_IDENTITY, provider.getRecommenderIdentityProducer());
+    	producerH.put(ComponentKey.RECOMMENDER_MODULE, provider.getRecommenderModuleProducer());
     	
     	consumerH.put(ComponentKey.KEUI, provider.getKEUIConsumer());
     	consumerH.put(ComponentKey.API, provider.getAPIConsumer());
+    	consumerH.put(ComponentKey.RECOMMENDER_ISSUE, provider.getRecommenderIssueConsumer());
+    	consumerH.put(ComponentKey.RECOMMENDER_IDENTITY, provider.getRecommenderIdentityConsumer());
+    	consumerH.put(ComponentKey.RECOMMENDER_MODULE, provider.getRecommenderModuleConsumer());
     }
     
     private void sendMessage(String requestMsg, ComponentKey componentKey) throws JMSException {
@@ -156,6 +162,27 @@ public abstract class MQServlet extends HttpServlet {
 	 */
 	protected String getAPIResponse(String requestMsg, String requestId) throws JMSException, ServletException {
 		return getMqResponse(requestMsg, requestId, ComponentKey.API);
+	}
+	
+	/**
+	 * Sends an issue recommendation message to the Recommender component and receives the response.
+	 */
+	protected String getRecommenderIssueResponse(String requestMsg, String requestId) throws JMSException, ServletException {
+		return getMqResponse(requestMsg, requestId, ComponentKey.RECOMMENDER_ISSUE);
+	}
+	
+	/**
+	 * Sends an identity recommendation message to the Recommender component and receives the response.
+	 */
+	protected String getRecommenderIdentityResponse(String requestMsg, String requestId) throws JMSException, ServletException {
+		return getMqResponse(requestMsg, requestId, ComponentKey.RECOMMENDER_IDENTITY);
+	}
+	
+	/**
+	 * Sends an module recommendation message to the Recommender component and receives the response.
+	 */
+	protected String getRecommenderModuleResponse(String requestMsg, String requestId) throws JMSException, ServletException {
+		return getMqResponse(requestMsg, requestId, ComponentKey.RECOMMENDER_MODULE);
 	}
 	
 	/*

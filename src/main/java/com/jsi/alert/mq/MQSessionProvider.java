@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
@@ -27,7 +28,10 @@ public class MQSessionProvider {
 	
 	public enum ComponentKey {
 		KEUI,
-		API
+		API,
+		RECOMMENDER_ISSUE,
+		RECOMMENDER_IDENTITY,
+		RECOMMENDER_MODULE
 	}
 	
 	private static final Logger log = LoggerFactory.getLogger(MQSessionProvider.class);
@@ -50,6 +54,12 @@ public class MQSessionProvider {
 		return instance;
 	}
 	
+	/**
+	 * Default constructor
+	 * 
+	 * @throws JMSException
+	 * @throws IOException
+	 */
 	private MQSessionProvider() throws JMSException, IOException {
 		initMQ();
 	}
@@ -66,7 +76,7 @@ public class MQSessionProvider {
 		// init MQ
 		if (log.isDebugEnabled()) log.debug("Creating connections...");
 		ConnectionFactory factory = new ActiveMQConnectionFactory(Configuration.ACTIVEMQ_URL);
-		javax.jms.Connection mqConnection = factory.createConnection();
+		Connection mqConnection = factory.createConnection();
 		mqConnection.start();
 
 		mqSession = mqConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -75,12 +85,18 @@ public class MQSessionProvider {
 		requestTopics = new HashMap<>();
 		responseTopics = new HashMap<>();
 		
-		// initiate consumers/producers
+		// initiate topics
 		requestTopics.put(ComponentKey.KEUI, mqSession.createTopic(Configuration.KEUI_REQUEST_TOPIC));
 		requestTopics.put(ComponentKey.API, mqSession.createTopic(Configuration.API_REQUEST_TOPIC));
+		requestTopics.put(ComponentKey.RECOMMENDER_ISSUE, mqSession.createTopic(Configuration.RECOMMENDER_REQUEST_TOPIC_ISSUE));
+		requestTopics.put(ComponentKey.RECOMMENDER_IDENTITY, mqSession.createTopic(Configuration.RECOMMENDER_REQUEST_TOPIC_IDENTITY));
+		requestTopics.put(ComponentKey.RECOMMENDER_MODULE, mqSession.createTopic(Configuration.RECOMMENDER_REQUEST_TOPIC_MODULE));
 		
 		responseTopics.put(ComponentKey.KEUI, mqSession.createTopic(Configuration.KEUI_RESPONSE_TOPIC));
 		responseTopics.put(ComponentKey.API, mqSession.createTopic(Configuration.API_RESPONSE_TOPIC));
+		responseTopics.put(ComponentKey.RECOMMENDER_ISSUE, mqSession.createTopic(Configuration.RECOMMENDER_RESPONSE_TOPIC_ISSUE));
+		responseTopics.put(ComponentKey.RECOMMENDER_IDENTITY, mqSession.createTopic(Configuration.RECOMMENDER_RESPONSE_TOPIC_IDENTITY));
+		responseTopics.put(ComponentKey.RECOMMENDER_MODULE, mqSession.createTopic(Configuration.RECOMMENDER_RESPONSE_TOPIC_MODULE));
 		
 		log.info("Initialization finished!");
 	}
@@ -125,6 +141,72 @@ public class MQSessionProvider {
 	 */
 	public MessageConsumer getAPIConsumer() throws JMSException {
 		return getConsumer(ComponentKey.API);
+	}
+	
+	/**
+	 * Creates a <code>MassageProducer</code> for the Recommender issue request
+	 * topic.
+	 * 
+	 * @return
+	 * @throws JMSException
+	 */
+	public MessageProducer getRecommenderIssueProducer() throws JMSException {
+		return getProducer(ComponentKey.RECOMMENDER_ISSUE);
+	}
+	
+	/**
+	 * Creates a <code>MassageConsumer</code> for the Recommender issue recommendation
+	 * topic.
+	 * 
+	 * @return
+	 * @throws JMSException
+	 */
+	public MessageConsumer getRecommenderIssueConsumer() throws JMSException {
+		return getConsumer(ComponentKey.RECOMMENDER_ISSUE);
+	}
+	
+	/**
+	 * Creates a <code>MassageProducer</code> for the Recommender identity request
+	 * topic.
+	 * 
+	 * @return
+	 * @throws JMSException
+	 */
+	public MessageProducer getRecommenderIdentityProducer() throws JMSException {
+		return getProducer(ComponentKey.RECOMMENDER_IDENTITY);
+	}
+	
+	/**
+	 * Creates a <code>MassageConsumer</code> for the Recommender identity recommendation
+	 * topic.
+	 * 
+	 * @return
+	 * @throws JMSException
+	 */
+	public MessageConsumer getRecommenderIdentityConsumer() throws JMSException {
+		return getConsumer(ComponentKey.RECOMMENDER_IDENTITY);
+	}
+	
+	/**
+	 * Creates a <code>MassageProducer</code> for the Recommender module request
+	 * topic.
+	 * 
+	 * @return
+	 * @throws JMSException
+	 */
+	public MessageProducer getRecommenderModuleProducer() throws JMSException {
+		return getProducer(ComponentKey.RECOMMENDER_MODULE);
+	}
+	
+	/**
+	 * Creates a <code>MassageConsumer</code> for the Recommender module recommendation
+	 * topic.
+	 * 
+	 * @return
+	 * @throws JMSException
+	 */
+	public MessageConsumer getRecommenderModuleConsumer() throws JMSException {
+		return getConsumer(ComponentKey.RECOMMENDER_MODULE);
 	}
 	
 	private MessageProducer getProducer(ComponentKey componentKey) throws JMSException {
