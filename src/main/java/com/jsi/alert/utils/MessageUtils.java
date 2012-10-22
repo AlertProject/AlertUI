@@ -305,7 +305,7 @@ public class MessageUtils {
 		}
 	}
 	
-	public static String genKEUIItemDetailsMessage(String itemId, String requestId) {
+	private static SOAPMessage genKEUIDetailsMsg(String requestId, int maxCount) {
 		try {
 			SOAPMessage msg = getKEUIQueryTemplate("Query", "generalQuery", requestId);
 			SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
@@ -314,14 +314,14 @@ public class MessageUtils {
 			
 			SOAPElement query = (SOAPElement) data.getElementsByTagName("query").item(0);
 			SOAPElement queryArgs = query.addChildElement("queryArgs");
-			SOAPElement conditions = queryArgs.addChildElement("conditions");
-			conditions.addChildElement("itemIds").setTextContent(itemId);
+			queryArgs.addChildElement("conditions");
+			
 			
 			SOAPElement params = query.addChildElement("params");
 			params.addAttribute(envelope.createName("resultData"), "itemData");
 			params.addAttribute(envelope.createName("includePeopleData"), "True");
 			params.addAttribute(envelope.createName("offset"), "0");
-			params.addAttribute(envelope.createName("maxCount"), "1");
+			params.addAttribute(envelope.createName("maxCount"), maxCount + "");
 			params.addAttribute(envelope.createName("sortBy"), "dateDesc");
 			params.addAttribute(envelope.createName("itemDataSnipLen"), "-1");
 			params.addAttribute(envelope.createName("snipMatchKeywords"), "True");
@@ -334,11 +334,56 @@ public class MessageUtils {
 			params.addAttribute(envelope.createName("keywordSource"), "text");
 			params.addAttribute(envelope.createName("keywordMethod"), "localConceptSpV");
 
+			return msg;
+		} catch (Throwable t) {
+			log.error("Failed to generate KEUI details message!", t);
+			throw new IllegalArgumentException("An error occurred while generating KEUI item details message!", t);
+		}
+	}
+	
+	/**
+	 * Generates a request for full item content which can be sent to the KEUI component.
+	 * 
+	 * @param itemId
+	 * @param requestId
+	 * @return
+	 */
+	public static String genKEUIItemDetailsMessage(String itemId, String requestId) {
+		try {
+			SOAPMessage msg = genKEUIDetailsMsg(requestId, 1);
+			SOAPElement conditions = (SOAPElement) msg.getSOAPBody().getElementsByTagName("conditions").item(0);
+		
+			conditions.addChildElement("itemIds").setTextContent(itemId);
+			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			msg.writeTo(out);
 			return new String(out.toByteArray());
 		} catch (Throwable t) {
-			throw new IllegalArgumentException("An error occurred while generating KEUI item details message!", t);
+			log.error("Failed to generate KEUI item details message!", t);
+			throw new IllegalArgumentException(t);
+		}
+	}
+	
+	/**
+	 * Generates a request for forum thread which can be sent to the KEUI component.
+	 * 
+	 * @param itemId
+	 * @param requestId
+	 * @return
+	 */
+	public static String genKEUIForumDetailsMsg(String itemId, String requestId) {
+		try {
+			SOAPMessage msg = genKEUIDetailsMsg(requestId, Integer.MAX_VALUE);
+			SOAPElement conditions = (SOAPElement) msg.getSOAPBody().getElementsByTagName("conditions").item(0);
+		
+			conditions.addChildElement("threads").setTextContent(itemId);
+			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			msg.writeTo(out);
+			return new String(out.toByteArray());
+		} catch (Throwable t) {
+			log.error("Failed to generate KEUI item details message!", t);
+			throw new IllegalArgumentException(t);
 		}
 	}
 	

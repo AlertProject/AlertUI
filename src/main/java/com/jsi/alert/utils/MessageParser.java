@@ -267,6 +267,8 @@ public class MessageParser {
 					result.put("lastModified", dateFormat.parse(node.getTextContent()).getTime());
 				else if ("s3:issueStatus".equals(nodeName))
 					result.put("status", node.getTextContent());
+				else if ("s3:issueId".equals(nodeName))
+					result.put("id", Long.parseLong(node.getTextContent()));
 				else if ("s3:issueAssignedTo".equals(nodeName)) {
 					NodeList assignedProps = node.getChildNodes();
 					
@@ -391,7 +393,12 @@ public class MessageParser {
 					
 					if (t1 == null) return 1;
 					else if (t2 == null) return -1;
-					else return (int) (t1 - t2);
+					else {
+						long dt = t1 - t2;
+						if (dt < 0) return -1;
+						else if (dt > 0) return 1;
+						else return 0;
+					}
 				}
 			});
 			
@@ -779,12 +786,12 @@ public class MessageParser {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static JSONObject parseKEUIItemsResponse(String responseMsg) {
+	public static JSONObject parseKEUIItemsResponse(String responseMsg, boolean sortByDate) {
 		try {
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
-			JSONArray items = new JSONArray();
+			List<JSONObject> items = new ArrayList<>();
 			
 			// parse people
 			Element results = (Element) doc.getElementsByTagName("results").item(0);
@@ -831,10 +838,34 @@ public class MessageParser {
 				items.add(itemJSon);
 			}
 			
+			if (sortByDate) {
+				Collections.sort(items, new Comparator<JSONObject>() {
+					@Override
+					public int compare(JSONObject o1, JSONObject o2) {
+						Object time1 = o1.get("time");
+						Object time2 = o2.get("time");
+						
+						if (time1 == null)
+							return 1;
+						else if (time2 == null)
+							return -1;
+						else {
+							long dt = ((Long) time1) - ((Long) time2);
+							if (dt < 0) return -1;
+							else if (dt > 0) return 1;
+							else return 0;
+						}
+					}
+				});
+			}
+			
+			JSONArray itemsJSon = new JSONArray();
+			itemsJSon.addAll(items);
+			
 			JSONObject result = new JSONObject();
 			result.put("type", "itemData");
 			result.put("persons", new JSONObject(peopleH));
-			result.put("items", items);
+			result.put("items", itemsJSon);
 			result.put("info", info);
 			
 			return result;
@@ -842,6 +873,10 @@ public class MessageParser {
 			log.error("Failed to parse KEUI items response!", t);
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing KEUI items response!!", t);
 		}
+	}
+	
+	public static JSONObject parseKEUIItemsResponse(String responseMsg) {
+		return parseKEUIItemsResponse(responseMsg, false);
 	}
 	
 	/**
@@ -909,7 +944,13 @@ public class MessageParser {
 		long time = Long.parseLong(node.getAttribute("time")) - 11644473600000L;
 		String[] tags = node.getAttribute("tags").split(",");
 		String entryId = node.getAttribute("entryId");
-		String content = Utils.escapeHtml(Utils.removeMultLineBreaks(node.getElementsByTagName("shortContent").item(0).getTextContent()));
+		
+		String content;
+		NodeList contentNodes = node.getElementsByTagName("shortContent");
+		if (contentNodes.getLength() > 0)
+			content = Utils.escapeHtml(Utils.removeMultLineBreaks(node.getElementsByTagName("shortContent").item(0).getTextContent()));
+		else
+			content = Utils.escapeHtml(node.getElementsByTagName("fullContent").item(0).getTextContent());
 		
 		JSONArray tagsArr = new JSONArray();
 		tagsArr.addAll(Arrays.asList(tags));
@@ -1184,10 +1225,6 @@ public class MessageParser {
 			
 			// get the issue
 			Element issue = (Element) eventData.getElementsByTagName("sc:issue").item(0);
-			JSONObject issueJSon = new JSONObject();
-			issueJSon.put("id", Long.parseLong(issue.getElementsByTagName("sc:id").item(0).getTextContent()));
-			issueJSon.put("bug", issue.getElementsByTagName("o:bug").item(0).getTextContent());
-			issueJSon.put("subject", issue.getElementsByTagName("sc:subject").item(0).getTextContent());
 			
 			// parse the identities
 			JSONArray identitiesJSon = new JSONArray();
@@ -1202,7 +1239,7 @@ public class MessageParser {
 				identitiesJSon.add(identityJSon);
 			}
 			
-			result.put("issue", issueJSon);
+			result.put("id",  Long.parseLong(issue.getElementsByTagName("sc:id").item(0).getTextContent()));
 			result.put("people", identitiesJSon);
 			
 			return result;

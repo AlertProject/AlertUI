@@ -39,6 +39,7 @@ public class QueryServlet extends MQServlet {
 		ITEM("itemData"),
 		ISSUE_DETAILS("issueDetails"),
 		COMMIT_DETAILS("commitDetails"),
+		FORUM_DETAILS("forumDetails"),
 		ITEM_DETAILS("itemDetails"),
 		DUPLICATE_ISSUE("duplicateIssue"),
 		SUGGEST_MY_CODE("suggestMyCode"),
@@ -102,6 +103,8 @@ public class QueryServlet extends MQServlet {
 				processIssueDetailsRq(request, response);
 			else if (QueryType.COMMIT_DETAILS.value.equals(type))
 				processCommitDetailsRq(request, response);
+			else if (QueryType.FORUM_DETAILS.value.equals(type))
+				processForumDetailsRq(request, response);
 			else if (QueryType.ITEM_DETAILS.value.equals(type))
 				processItemDetailsRq(request, response);
 			else if (QueryType.DUPLICATE_ISSUE.value.equals(type))
@@ -215,7 +218,28 @@ public class QueryServlet extends MQServlet {
 	}
 	
 	/**
-	 * Processes the clients Item details request.
+	 * Processes the clients forum post details request.
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws ServletException 
+	 * @throws JMSException 
+	 * @throws IOException 
+	 * @throws Exception
+	 */
+	private void processForumDetailsRq(HttpServletRequest request, HttpServletResponse response) throws JMSException, ServletException, IOException {
+		String itemId = request.getParameter(QUERY_PARAM);
+		String requestId = Utils.genRequestID();
+		String requestMsg = MessageUtils.genKEUIForumDetailsMsg(itemId, requestId);
+		
+		String responseMsg = getKEUIResponse(requestMsg, requestId);
+		JSONObject result = MessageParser.parseKEUIItemsResponse(responseMsg, true);
+		
+		result.writeJSONString(response.getWriter());
+	}
+	
+	/**
+	 * Processes the clients (general) Item details request.
 	 * 
 	 * @param request
 	 * @param response
@@ -347,10 +371,10 @@ public class QueryServlet extends MQServlet {
 	 * @throws IOException
 	 */
 	private void processSuggestDevelopersRq(HttpServletRequest request, HttpServletResponse response) throws JMSException, ServletException, IOException {
-		List<Long> issueIds = Arrays.asList(new Long[] {179144L});	// TODO get ID from request
+		Long issueId = Long.parseLong(request.getParameter("issueId"));		
 		
 		String requestId = Utils.genRequestID();
-		String requestMsg = MessageUtils.genRecommenderIdentityMsg(issueIds, requestId);
+		String requestMsg = MessageUtils.genRecommenderIdentityMsg(Arrays.asList(new Long[] {issueId}), requestId);
 		String responseMsg = getRecommenderIdentityResponse(requestMsg, requestId);
 		
 		JSONObject result = MessageParser.parseRecommenderIdentitiesMsg(responseMsg);

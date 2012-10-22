@@ -931,6 +931,22 @@ var AlertViz = function(options) {
     		});
     	},
     	
+    	searchForumDetails: function (itemId) {
+    		$('#details_wrapper').addClass('loading');
+    		
+    		$.ajax({
+    			type: 'POST',
+    			url: 'query',
+    			data: {type: 'forumDetails', query: itemId},
+    			dataType: 'json',
+    			async: true,
+    			success: function (data, textStatus, jqXHR) {
+    				$('#details_wrapper').addClass('loading');
+    				that.setForumDetails(data, itemId);
+    			}
+    		});
+    	},
+    	
     	searchIssueDetails: function (itemId, itemUri) {
     		$('#details_wrapper').addClass('loading');
     		
@@ -1225,6 +1241,22 @@ var AlertViz = function(options) {
     		return that.searchForDeveloperByQueryOpts(queryOpts);
     	},
     	
+    	recommendDevelopers: function (issueId) {
+    		$('#suggest_dev_div').addClass('loading');
+    		
+    		$.ajax({
+    			type: "POST",
+                url: "query",
+                dataType: "json",
+                async: true,
+                data: {type: 'peopleForIssue', issueId: issueId},
+    			success: function (data, textStatus, jqXHR) {
+    				that.setRecommendedDevelopers(data);
+    			},
+    			error: function (jqXHR, textStatus, errorThrown) {/* For now do nothing */}
+    		});
+    	},
+    	
     	jumpPage: function (offset, limit) {
     		var queryOpts = currentQueryOpts;
     		queryOpts.offset = offset;
@@ -1236,6 +1268,73 @@ var AlertViz = function(options) {
     		case 'itemData':
     			return that.searchItemsByQueryOpts(queryOpts);
     		}
+    	},
+    	
+    	setRecommendedDevelopers: function (data) {
+    		$('#suggest_dev_div').removeClass('loading');
+    		var html = '<ul>';
+    		
+    		$.each(data.people, function (idx, person) {
+    			var name = person.name;
+    			var uuid = person.uuid;
+    			
+    			html += '<li class="tree_li">';
+				html += '<span class="leaf">' + name + '</span>';
+				html += '<img src="img/search-16.png" alt="Search" onclick="return false;" />';	// TODO search not implemented yet
+				html += '</li>';
+    		});
+    		
+    		html += '</ul>';
+    		$('#suggest_dev_div').html(html);
+    	},
+    	
+    	setForumDetails: function (data, itemId) {
+    		var items = data.items;
+    		var people = data.persons;
+    		
+    		var html = '';
+    		
+    		$.each(items, function (idx, item) {
+    			
+    			// get the recipients
+    			var recipientNameV = [];
+    			$.each(item.recipientIDs, function (recIdx, recipientId) {
+    				if (recipientId in people)
+    					recipientNameV.push(people[recipientId].name);
+    				else
+    					recipientNameV.push('Unknown');
+    			});
+    			
+    			var senderName = (item.senderID in people ? people[item.senderID].name : 'Unknown');
+    			
+    			html += '<div class="details_section">';
+    			html += '<table class="heading' + (item.id == itemId ? ' content_open' : '') + '"><tr>';
+    			html += '<td class="title_desc">Post by ';
+    			html += '<span class="headings_author">';
+    			html += senderName;
+    			if (recipientNameV.length > 0)
+    				html += ' to ' + recipientNameV.join();
+    			html += '</span>';
+    			html += '<span class="headings_date">' + (item.time == null ? '' : new Date(item.time).format(defaultDateFormat)) + '</span>';
+    			html += '</td>';
+    			html += '</tr></table>';
+    			
+    			// content
+    			html += '<div class="content' + (item.id == itemId ? ' selected_post' : '') + '">' + item.content + '</div>';
+    			
+    			html += '</div>';
+    		});
+    		
+    		$('#details_wrapper').html(html);
+    		jQuery(".content").hide();
+    		jQuery(".selected_post").show();
+    		jQuery(".heading").click(function() {
+			    jQuery(this).next(".content").slideToggle(500);
+			    if ($(this).hasClass('content_open'))
+			    	$(this).removeClass('content_open');
+			    else
+			    	$(this).addClass('content_open');
+			});
     	},
     	
     	setIssueDetails: function (data, selectedUri) {
@@ -1272,8 +1371,17 @@ var AlertViz = function(options) {
     			html += '</div>';
     		}
     		
-    		// related issues TODO
-
+    		// related issues
+    		// header
+    		html += '<div class="details_section">';
+    		html += '<table class="heading"><tr>';
+    		html += '<td class="title_desc">Recommended developers</td>';
+    		html += '</tr></table>';
+    		// content
+    		html += '<div class="content" id="suggest_dev_div"></div>';
+    		html += '</div>';
+    		
+    		
     		// insert html
     		$('#details_wrapper').html(html);
     		jQuery(".content").hide();
@@ -1285,6 +1393,8 @@ var AlertViz = function(options) {
 			    else
 			    	$(this).addClass('content_open');
 			});
+    		
+    		that.recommendDevelopers(data.id);
     	},
     	
     	openCommitTab: function (e, commit) {
@@ -1715,7 +1825,7 @@ var AlertViz = function(options) {
 	    			html += '</table></div>';
     				break;
     			case Type.post:
-    				html += '<div class="item-wrapper email" onclick="viz.searchItemDetails(' + item.id + ')"><table class="item_table">';
+    				html += '<div class="item-wrapper forum_post" onclick="viz.searchForumDetails(' + item.id + ')"><table class="item_table">';
     				
     				// author + date
     				html += '<tr>';
@@ -1835,7 +1945,11 @@ var AlertViz = function(options) {
     			$(event.currentTarget).addClass('item-selected');
     		});
     		
-    		$('.item-wrapper')[0].click();
+    		// search for the first item, if modules are present, the first item is second in the list
+    		if (data.modules != null && data.modules.length > 0)
+    			$('.item-wrapper')[1].click();
+    		else
+    			$('.item-wrapper')[0].click();
     	},
 
     	createGraph: function(data) {

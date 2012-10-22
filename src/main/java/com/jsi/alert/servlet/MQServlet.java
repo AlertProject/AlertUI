@@ -56,6 +56,25 @@ public abstract class MQServlet extends HttpServlet {
 			throw new ServletException(t);
 		}
     }
+	
+	/*
+	 * (non-Javadoc)
+	 * @see javax.servlet.GenericServlet#destroy()
+	 */
+	@Override
+	public void destroy() {
+		if (log.isDebugEnabled()) log.debug("Destroying a servlet, closing ActiveMQ consumers and producers...");
+		try {
+			// clean up
+			for (ComponentKey key : producerH.keySet()) {
+				producerH.get(key).close();
+				consumerH.get(key).close();
+			}
+			
+		} catch (JMSException e) {
+			log.error(e.getMessage(), e);
+		}
+	}
     
     /**
      * Creates the MQ producer and consumer.
@@ -183,25 +202,6 @@ public abstract class MQServlet extends HttpServlet {
 	 */
 	protected String getRecommenderModuleResponse(String requestMsg, String requestId) throws JMSException, ServletException {
 		return getMqResponse(requestMsg, requestId, ComponentKey.RECOMMENDER_MODULE);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see javax.servlet.GenericServlet#destroy()
-	 */
-	@Override
-	public void destroy() {
-		if (log.isDebugEnabled()) log.debug("Destroying a servlet, closing ActiveMQ consumers and producers...");
-		try {
-			// clean up
-			for (ComponentKey key : producerH.keySet()) {
-				producerH.get(key).close();
-				consumerH.get(key).close();
-			}
-			
-		} catch (JMSException e) {
-			log.error(e.getMessage(), e);
-		}
 	}
 	
 	/*
