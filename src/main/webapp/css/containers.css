@@ -1,8 +1,3 @@
-body, html {
-	height: 100%;
-	padding-top: 66px;
-}
-
 #scrollbar1 { width: 520px; clear: both; margin: 20px 0 10px; }
 #scrollbar1 .viewport { width: 500px; height: 200px; overflow: hidden; position: relative; }
 #scrollbar1 .overview { list-style: none; position: absolute; left: 0; top: 0; }

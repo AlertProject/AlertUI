@@ -862,10 +862,11 @@ var AlertViz = function(options) {
     		if (socialGraph != null)
     			socialGraph.clear();
     		$('#items-div').html('');
-    		$('#item_nav').html('');
+    		$('#page_td').html('');
     	},
     	
     	searchRelatedByQueryOpts: function (queryOpts, offset, limit) {
+    		$('#items-div').addClass('loading');
     		$.ajax({
     			type: 'POST',
     			url: 'query',
@@ -902,6 +903,8 @@ var AlertViz = function(options) {
     	},
     	
     	searchRelated: function (offset) {
+    		that.cleanData();
+    		
     		var queryOpts = {
     			type: 'suggestMyCode',
 				NoneChk: $('#my_none_check').attr('checked') == 'checked',
@@ -2155,10 +2158,10 @@ var AlertViz = function(options) {
 	    		that.searchIssueId();
 	    		break;
 	    	case 'step2':
-	    		// TODO implement
+	    		that.searchRelated();
 	    		break;
 	    	case 'step3':
-	    		// TODO implement
+	    		that.searchForDeveloper();
 	    		break;
 	    	}
 	    	

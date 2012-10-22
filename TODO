@@ -13,7 +13,7 @@
 - logout
 - search for developer in new tab when recommended developer is clicked
 - when suggesting people for issue get the UUID from request (currently hardcoded)
-- implement issues related to my code search
+- implement issues related to my code search !! Metadata prepocasna
 - paging pri suggest issues for a developer
 - paging pri duplicate issue (gregor mora vrnit info tag)
 - tooltip pri social graph-u je treba zrihtat
