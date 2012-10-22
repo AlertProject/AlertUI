@@ -16,16 +16,17 @@
 	cursor: pointer;
 }
 
-.tree_ul .tree_li .leaf {
+.tree_li .leaf {
 	cursor: default;
 }
 
-.tree_ul .tree_li .tree_a, .tree_ul .tree_li {
+.tree_li .tree_a, .tree_li {
 	color: gray;
+	font-weight: bold;
 	text-decoration: none;
 	padding-bottom: 3px;
 }
 
-.tree_ul .tree_li:HOVER, .tree_ul .tree_li .tree_a:HOVER {
+.tree_li:HOVER, .tree_li .tree_a:HOVER {
 	color: black;
 }
