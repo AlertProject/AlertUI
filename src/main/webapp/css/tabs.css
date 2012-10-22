@@ -374,7 +374,11 @@
 }
 
 .hidden {
+	display: none;
+}
+#browse_content.hidden, #subscribe_content.hidden {
+	display: block !important;
 	visibility: hidden;
 	position: absolute;
-	left: -10000px;
+	top: -50000px;
 }

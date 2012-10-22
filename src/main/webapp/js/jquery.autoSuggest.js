@@ -435,11 +435,8 @@
 				function moveSelection(direction){
 					if($(":visible",results_holder).length > 0){
 						var lis = $("li", results_holder);
-						if(direction == "down"){
-							var start = lis.eq(0);
-						} else {
-							var start = lis.filter(":last");
-						}					
+						var start = direction == "down" ? lis.eq(0) : lis.filter(":last");
+				
 						var active = $("li.active:first", results_holder);
 						if(active.length > 0){
 							if(direction == "down"){
@@ -450,6 +447,17 @@
 						}
 						lis.removeClass("active");
 						start.addClass("active");
+						
+						// adjust the scroll
+						var list = $('#as-results-'+ x + ' .as-list');
+						var listHeight = list.height();
+						var activeTop = start.position().top;
+						if (activeTop < 0)
+							list.scrollTo({top: '-=' + Math.abs(activeTop) + 'px', left:'+=0px'}, 0);
+						else if (activeTop + start.outerHeight() > listHeight) {
+							var dh = activeTop + start.outerHeight() - listHeight;
+							list.scrollTo({top: '+=' + dh + 'px', left:'+=0px'}, 0);
+						}
 					}
 				}				
 			});
