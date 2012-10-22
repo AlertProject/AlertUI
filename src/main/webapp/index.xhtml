@@ -102,7 +102,7 @@
      			 	<!--
      			 	$('#nav li').click(function (event) {
      			 		$('#nav li').removeClass('current');
-     			 		$('#browse_content, #subscribe_content, #overview_content, #administration_content, #login_content').addClass('hidden');
+     			 		$('#container_main').children().addClass('hidden');
      			 		
      			 		switch ($(event.currentTarget).attr('id')) {
      			 		case 'browse_tab':

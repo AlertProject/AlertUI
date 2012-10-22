@@ -887,8 +887,12 @@ var AlertViz = function(options) {
     			dataType: 'json',
     			async: true,
     			success: function (data, textStatus, jqXHR) {
-    				currentQueryOpts = queryOpts;
-    				that.setQueryResults(data);
+    				if (data.message != null && data.message == 'Not logged in!') {
+    					$('#login_tab a').click();	// ge to login
+    				} else {
+	    				currentQueryOpts = queryOpts;
+	    				that.setQueryResults(data);
+    				}
     			}
     		});
     		

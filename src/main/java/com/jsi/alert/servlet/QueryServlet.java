@@ -285,6 +285,7 @@ public class QueryServlet extends MQServlet {
 	 * @throws JMSException 
 	 * @throws SOAPException 
 	 */
+	@SuppressWarnings("unchecked")
 	private void processRelatedMyCodeRq(HttpServletRequest request, HttpServletResponse response) throws IOException, JMSException, SOAPException, ServletException {
 		// first check if the user is authenticated
 		HttpSession session = request.getSession();
@@ -315,7 +316,10 @@ public class QueryServlet extends MQServlet {
 			// if no user => redirect to login
 			if (log.isDebugEnabled())
 				log.debug("User with no session searching for issues related to their code, redirecting to login!");
-			response.sendRedirect(Configuration.LOGIN_URL);
+			
+			JSONObject result = new JSONObject();
+			result.put("message", "Not logged in!");
+			result.writeJSONString(response.getWriter());
 		}
 	}
 
