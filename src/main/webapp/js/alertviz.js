@@ -861,6 +861,8 @@ var AlertViz = function(options) {
     		$('#page_td').html('');
     		if (socialGraph != null)
     			socialGraph.clear();
+    		$('#items-div').html('');
+    		$('#item_nav').html('');
     	},
     	
     	searchRelatedByQueryOpts: function (queryOpts, offset, limit) {
