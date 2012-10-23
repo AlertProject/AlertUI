@@ -1,7 +1,6 @@
 package com.jsi.alert.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class Notification implements Serializable {
 	

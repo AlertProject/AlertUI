@@ -1,5 +1,6 @@
 package com.jsi.alert.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jsi.alert.beans.UserPrincipal;
+import com.jsi.alert.model.Notification;
 import com.jsi.alert.service.UniversalService.RequestType;
 import com.jsi.alert.utils.Configuration;
 
@@ -92,6 +94,12 @@ public class AuthenticatorService {
 				user.setAuthenticated(userInfo.isAuthenticated());
 				
 				return true;
+			} else {
+				user.setAdmin(null);
+				user.setAuthenticated(false);
+				user.setEmail(null);
+				user.setNotifications(new ArrayList<Notification>());
+				user.setUuid(null);
 			}
 		}
 		return false;
