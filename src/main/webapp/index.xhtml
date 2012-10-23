@@ -68,13 +68,11 @@
 					 		<c:if test="#{index.user.admin}">
 					 			<li id="administration_tab"><a>ADMINISTRATION</a></li>
 					 		</c:if>
+					 		<li id="logout_tab"><a>LOGOUT</a></li>
 					 		<li>
 				 				<div id="notification_div">
 					 				<div class='arrow'></div>
      		 		 				<div class='arrow-border'></div>
-       				 				<p>
-										<a href="#{index.getLogoutUrl()}" style="float:right;font-size:12px;">Logout</a>
-	 								</p>
      			    				<ul id="notification_list">
 	     			    				<c:forEach items="#{index.user.notifications}" var="notification">
 	     			    					<li>
@@ -101,11 +99,11 @@
      			 </ul>
      			 <script type="application/javascript">
      			 	<!--
-     			 	$('#nav li').click(function (event) {
+     			 	$('#nav li').children('a').click(function (event) {
      			 		$('#nav li').removeClass('current');
      			 		$('#container_main').children().addClass('hidden');
      			 		
-     			 		switch ($(event.currentTarget).attr('id')) {
+     			 		switch ($(event.currentTarget).parent().attr('id')) {
      			 		case 'browse_tab':
      			 			$('#browse_content').removeClass('hidden');
      			 			$('#browse_tab').addClass('current');
@@ -126,6 +124,9 @@
      			 			$('#login_content').removeClass('hidden');
      			 			$('#login_tab').addClass('current');
      			 			break;
+     			 		case 'logout_tab':
+     			 			$('#logout_content').removeClass('hidden');
+     			 			$('#logout_tab').addClass('current');
      			 		}
      			 		return false;
      			 	});
@@ -165,7 +166,7 @@
 														<label for="to_text">and</label>
 														<input type="text" id="to_text" class="text_date" onchange="updateUrl();" style="width:100px;"/></td>
 													<td><input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();"/><label> Issues</label></td>
-													<td>
+													<td style="padding-right: 28px;">
 														<button id="propertiesbtn" onclick="return false;">+</button>
 														<div id="propertiesdiv">
 															<div class="arrow1"></div>
@@ -207,7 +208,7 @@
 														</div>
 														<script type="application/javascript">
 															<!--
-															$('#propertiesdiv').popup({trigger: '#propertiesbtn', align: 'center', duration: 'fast', top: 10, event: 'click'});
+															$('#propertiesdiv').popup({trigger: '#propertiesbtn', align: 'center', duration: 'fast', top: 11, event: 'click'});
 															-->
 														</script>
 													</td>
@@ -368,6 +369,7 @@
 		<div id="overview_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getOverviewUrl()}"></iframe></div>
 		<div id="administration_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getAdminUrl()}"></iframe></div>
 		<div id="login_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getLoginUrl()}"></iframe></div>
+		<div id="logout_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getLogoutUrl()}"></iframe></div>
 	</div>
 </body>
 </html>

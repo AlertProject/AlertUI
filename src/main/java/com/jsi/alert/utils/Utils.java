@@ -30,12 +30,23 @@ public class Utils {
 	}
 	
 	/**
-	 * Returns true if the parameter represents an integer.
+	 * Returns the number if the parameter represents an integer.
 	 */
 	public static Long parseLong(String number) {
 		try {
 			return Long.parseLong(number);
-		} catch (NumberFormatException nx) {
+		} catch (Throwable t) {
+			return null;
+		}
+	}
+	
+	/**
+	 * Returns the number if the parameter represents an integer.
+	 */
+	public static Integer parseInt(String number) {
+		try {
+			return Integer.parseInt(number);
+		} catch (Throwable t) {
 			return null;
 		}
 	}

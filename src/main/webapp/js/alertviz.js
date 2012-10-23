@@ -865,44 +865,37 @@ var AlertViz = function(options) {
     		$('#page_td').html('');
     	},
     	
-    	searchRelatedByQueryOpts: function (queryOpts, offset, limit) {
+    	searchRelatedByQueryOpts: function (queryOpts) {
     		$('#items-div').addClass('loading');
     		$.ajax({
     			type: 'POST',
     			url: 'query',
-    			data: {
-    				type: 'suggestMyCode',
-    				NoneChk: queryOpts.NoneChk,
-        			FixedChk: queryOpts.FixedChk,
-        			WontFixChk: queryOpts.WontFixChk,
-        			InvalidChk: queryOpts.InvalidChk,
-        			DuplicateChk: queryOpts.DuplicateChk,
-        			WorksForMeChk: queryOpts.WorksForMeChk,
-        			UnknownChk: queryOpts.UnknownChk,
-        			OpenChk: queryOpts.OpenChk,
-        			VerifiedChk: queryOpts.VerifiedChk,
-        			AssignedChk: queryOpts.AssignedChk,
-        			ResolvedChk: queryOpts.ResolvedChk,
-        			ClosedChk: queryOpts.ClosedChk,
-        			offset: offset == null ? 0 : offset,
-        			limit: limit == null ? itemsPerPage : limit
-    			},
+    			data: queryOpts,
     			dataType: 'json',
     			async: true,
     			success: function (data, textStatus, jqXHR) {
-    				if (data.message != null && data.message == 'Not logged in!') {
-    					$('#login_tab a').click();	// ge to login
-    				} else {
 	    				currentQueryOpts = queryOpts;
 	    				that.setQueryResults(data);
+    			},
+    			error: function (jqXHR, textStatus, errorThrown) {
+    				if (jqXHR.status == 401) {
+	    				var login = $('#login_tab a');
+	    				if (login.length > 0)
+	    					login.click();
+	    				else {
+	    					window.location.replace('index.xhtml');
+	    				}
     				}
+    			},
+    			complete: function () {
+    				$('#items-div').removeClass('loading');
     			}
     		});
     		
     		return false;
     	},
     	
-    	searchRelated: function (offset) {
+    	searchRelated: function () {
     		that.cleanData();
     		
     		var queryOpts = {
@@ -918,10 +911,12 @@ var AlertViz = function(options) {
     			VerifiedChk: $('#my_veririfed_check').attr('checked') == 'checked',
     			AssignedChk: $('#my_assigned_check').attr('checked') == 'checked',
     			ResolvedChk: $('#my_resolved_check').attr('checked') == 'checked',
-    			ClosedChk: $('#my_closed_check').attr('checked') == 'checked'
+    			ClosedChk: $('#my_closed_check').attr('checked') == 'checked',
+    			offset: 0,
+    			limit: itemsPerPage
     		};
     		
-    		return that.searchRelatedByQueryOpts(queryOpts, offset, itemsPerPage);
+    		return that.searchRelatedByQueryOpts(queryOpts);
     	},
     	
     	searchItemDetails: function (itemId) {
@@ -934,8 +929,11 @@ var AlertViz = function(options) {
     			dataType: 'json',
     			async: true,
     			success: function (data, textStatus, jqXHR) {
-    				$('#details_wrapper').addClass('loading');
+    				$('#details_wrapper').removeClass('loading');
     				that.setItemDetails(data);
+    			},
+    			complete: function () {
+    				$('#details_wrapper').removeClass('loading');
     			}
     		});
     	},
@@ -950,8 +948,11 @@ var AlertViz = function(options) {
     			dataType: 'json',
     			async: true,
     			success: function (data, textStatus, jqXHR) {
-    				$('#details_wrapper').addClass('loading');
+    				$('#details_wrapper').removeClass('loading');
     				that.setForumDetails(data, itemId);
+    			},
+    			complete: function () {
+    				$('#details_wrapper').removeClass('loading');
     			}
     		});
     	},
@@ -968,6 +969,9 @@ var AlertViz = function(options) {
     			success: function (data, textStatus, jqXHR) {
     				$('#details_wrapper').removeClass('loading');
     				that.setIssueDetails(data, itemUri);
+    			},
+    			complete: function () {
+    				$('#details_wrapper').removeClass('loading');
     			}
     		});
     	},
@@ -982,22 +986,21 @@ var AlertViz = function(options) {
     			success: function (data, textStatus, jqXHR) {
     				$('#details_wrapper').removeClass('loading');
     				that.setCommitDetails(data);
+    			},
+    			complete: function () {
+    				$('#details_wrapper').removeClass('loading');
     			}
     		});
     	},
     	
     	setQueryResults: function (data) {
     		if (data.type == 'peopleData') {
-    			$('#graph-div').removeClass('loading');
         		that.createGraph(data);
         	} else if (data.type == 'timelineData') {
-        		$('#chart-div').removeClass('loading');
         		that.createTimeline(data);
-        		$('#wordcloud-div').removeClass('loading');
         	} else if (data.type == 'keywordData') {
         		that.createWordCloud(data.data);
         	} else if (data.type == 'itemData') {
-        		$('#items-div').removeClass('loading');
         		that.createItems(data);
         	}
     	},
@@ -1052,7 +1055,19 @@ var AlertViz = function(options) {
                 success: function (data, textStatus, jqXHR) {
                 	that.setQueryResults(data);
                 },
-                error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
+                complete: function () {
+                	switch (queryType) {
+            		case 'keywordData':
+            			$('#wordcloud-div').removeClass('loading');
+            			break;
+            		case 'timelineData':
+            			$('#chart-div').removeClass('loading');
+            			break;
+            		case 'peopleData':
+            			$('#graph-div').removeClass('loading');
+            			break;
+            		}
+                }
             });
     	},
     	
@@ -1106,8 +1121,12 @@ var AlertViz = function(options) {
                 	currentQueryOpts = queryOpts;
                 	that.setQueryResults(data);
                 },
-                error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
+                complete: function () {
+                	$('#items-div').removeClass('loading');
+                }
             });
+    		
+    		return false;
     	},
     	
     	searchKeywordsGeneral: function (queryOpts) {
@@ -1210,7 +1229,9 @@ var AlertViz = function(options) {
 	                	currentQueryOpts = queryOpts;
 	    				that.setQueryResults(data);
 	    			},
-	                error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
+	                complete: function () {
+	                	$('#items-div').removeClass('loading');
+	                }
 	            });
     		} catch (e) {
     			alert(e);
@@ -1227,13 +1248,13 @@ var AlertViz = function(options) {
                 url: "query",
                 dataType: "json",
                 async: true,
-                data: {
-                	type: 'suggestPeople',
-                	people: queryOpts.person
-                },
+                data: queryOpts,
                 success: function (data, textStatus, jqXHR) {
                 	currentQueryOpts = queryOpts;
                 	that.setQueryResults(data);
+                },
+                complete: function () {
+                	$('#items-div').removeClass('loading');
                 }
     		});
     		
@@ -1244,7 +1265,10 @@ var AlertViz = function(options) {
     		var people = personSearch.getSearchStr('person');
     		
     		var queryOpts = {
-    			person: people
+    			type: 'suggestPeople',
+    			person: people,
+    			offset: 0,
+            	limit: itemsPerPage
     		};
     		
     		return that.searchForDeveloperByQueryOpts(queryOpts);
@@ -1262,7 +1286,9 @@ var AlertViz = function(options) {
     			success: function (data, textStatus, jqXHR) {
     				that.setRecommendedDevelopers(data);
     			},
-    			error: function (jqXHR, textStatus, errorThrown) {/* For now do nothing */}
+    			complete: function () {
+    				$('#suggest_dev_div').removeClass('loading');
+    			}
     		});
     	},
     	
@@ -1276,11 +1302,14 @@ var AlertViz = function(options) {
     			return that.searchIssueByQueryOpts(queryOpts);
     		case 'itemData':
     			return that.searchItemsByQueryOpts(queryOpts);
+    		case 'suggestMyCode':
+    			return that.searchRelatedByQueryOpts(queryOpts);
+    		case 'suggestPeople':
+    			return that.searchForDeveloperByQueryOpts(queryOpts);
     		}
     	},
     	
     	setRecommendedDevelopers: function (data) {
-    		$('#suggest_dev_div').removeClass('loading');
     		var html = '<ul>';
     		
     		$.each(data.people, function (idx, person) {

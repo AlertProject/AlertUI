@@ -42,6 +42,8 @@ public class MessageUtils {
 	
 	private static final String KEUI_ITEM_SNIP_LEN = "200";
 	
+	private static final int DEFAULT_LIMIT = 100;
+	
 	private static final String[] keuiIgnoreKeys = {
 		"issuesChk",
 		"commitsChk",
@@ -604,7 +606,12 @@ public class MessageUtils {
 		}
 	}
 	
-	private static String genKEUIIssueListMsg(List<?> identifiers, String requestId, IdType idType) throws DOMException, SOAPException, IOException {
+	private static String genKEUIIssueListMsg(List<?> identifiers, Integer offset, Integer limit, String requestId, IdType idType) throws DOMException, SOAPException, IOException {
+		if (offset == null || limit == null) {
+			log.warn("Offset and limit parameters not specified, using default values...");
+			return genKEUIIssueListMsg(identifiers, 0, DEFAULT_LIMIT, requestId, idType);
+		}
+		
 		SOAPMessage msg = getKEUIQueryTemplate("Query", "generalQuery", requestId);
 		SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
 		SOAPElement query = (SOAPElement) msg.getSOAPBody().getElementsByTagName("query").item(0);
@@ -641,8 +648,8 @@ public class MessageUtils {
 		// set the parameters
 		SOAPElement params = query.addChildElement("params");
 		params.addAttribute(envelope.createName("resultData"), "itemData");
-		params.addAttribute(envelope.createName("offset"), "0");	// TODO get offset from client
-		params.addAttribute(envelope.createName("maxCount"), "100");	// TODO get limit from client
+		params.addAttribute(envelope.createName("offset"), offset.toString());
+		params.addAttribute(envelope.createName("maxCount"), limit.toString());
 		params.addAttribute(envelope.createName("includeAttachments"), "True");
 		params.addAttribute(envelope.createName("sortBy"), "dateDesc");
 		params.addAttribute(envelope.createName("itemDataSnipLen"), KEUI_ITEM_SNIP_LEN);
@@ -655,16 +662,9 @@ public class MessageUtils {
 		return new String(out.toByteArray());
 	}
 	
-	/**
-	 * Generates a KEUI message to request issue short content from issueIDs.
-	 * 
-	 * @param issueIds
-	 * @param requestId
-	 * @return
-	 */
-	public static String genKEUIIssueListByIdMsg(List<Long> issueIds, String requestId) {
+	public static String genKEUIIssueListByIdMsg(List<Long> issueIds, Integer offset, Integer limit, String requestId) {
 		try {
-			return genKEUIIssueListMsg(issueIds, requestId, IdType.ID);
+			return genKEUIIssueListMsg(issueIds, offset, limit, requestId, IdType.ID);
 		} catch (Throwable t) {
 			throw new IllegalArgumentException("An unecpected exception occurred while generating KEUI get issues from IDs message!", t);
 		}
@@ -673,13 +673,15 @@ public class MessageUtils {
 	/**
 	 * Generates a KEUI message to request issue short content from issue URIs.
 	 * 
-	 * @param issueIds
+	 * @param issueUris
+	 * @param offset
+	 * @param limit
 	 * @param requestId
 	 * @return
 	 */
-	public static String genKEUIIssueListByUriMsg(List<String> issueUris, String requestId) {
+	public static String genKEUIIssueListByUriMsg(List<String> issueUris, Integer offset, Integer limit, String requestId) {
 		try {
-			return genKEUIIssueListMsg(issueUris, requestId, IdType.URI);
+			return genKEUIIssueListMsg(issueUris, offset, limit, requestId, IdType.URI);
 		} catch (Throwable t) {
 			throw new IllegalArgumentException("An unecpected exception occurred while generating KEUI get issues from URIs message!", t);
 		}

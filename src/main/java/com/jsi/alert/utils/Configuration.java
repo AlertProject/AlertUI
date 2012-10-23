@@ -35,7 +35,7 @@ public class Configuration {
 	
 	static {
 		// read the properties
-		if (log.isDebugEnabled()) log.debug("Reading properties file...");
+		if (log.isDebugEnabled()) log.debug("Reading properties...");
 		
 		Properties props = new Properties();
 		try {

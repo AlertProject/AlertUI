@@ -285,7 +285,6 @@ public class QueryServlet extends MQServlet {
 	 * @throws JMSException 
 	 * @throws SOAPException 
 	 */
-	@SuppressWarnings("unchecked")
 	private void processRelatedMyCodeRq(HttpServletRequest request, HttpServletResponse response) throws IOException, JMSException, SOAPException, ServletException {
 		// first check if the user is authenticated
 		HttpSession session = request.getSession();
@@ -297,6 +296,9 @@ public class QueryServlet extends MQServlet {
 			
 			// send a message to Recommender to get the IDs of issues
 			String uuid = user.getUuid();
+			Integer offset = Utils.parseInt(request.getParameter("offset"));
+			Integer limit = Utils.parseInt(request.getParameter("limit"));
+			
 			String requestId1 = Utils.genRequestID();
 			String requestId2 = Utils.genRequestID();
 			
@@ -306,7 +308,7 @@ public class QueryServlet extends MQServlet {
 			List<String> issueUris = MessageParser.parseAPIIssuesResponse(apiResponse);
 			
 			// now that I have the issueIDs I have to send them to the KEUI component
-			String keuiRq = MessageUtils.genKEUIIssueListByUriMsg(issueUris, requestId2);
+			String keuiRq = MessageUtils.genKEUIIssueListByUriMsg(issueUris, offset, limit, requestId2);
 			String keuiResp = getKEUIResponse(keuiRq, requestId2);
 			
 			JSONObject result = MessageParser.parseKEUIItemsResponse(keuiResp);
@@ -315,11 +317,9 @@ public class QueryServlet extends MQServlet {
 		else {
 			// if no user => redirect to login
 			if (log.isDebugEnabled())
-				log.debug("User with no session searching for issues related to their code, redirecting to login!");
+				log.debug("User with no session searching for issues related to their code, sending code 401!");
 			
-			JSONObject result = new JSONObject();
-			result.put("message", "Not logged in!");
-			result.writeJSONString(response.getWriter());
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 	}
 
@@ -335,15 +335,20 @@ public class QueryServlet extends MQServlet {
 	@SuppressWarnings("unchecked")
 	private void processSuggestForPeopleRq(HttpServletRequest request, HttpServletResponse response) throws IOException, JMSException, ServletException {
 		String uuid = "4883429c-82e1-476c-8120-859d109d8dae";	// TODO get the UUID from the paramters
+//		String uuid = request.getParameter("person");
+		List<String> uuidList = Arrays.asList(new String[] {uuid});
+		
+		Integer offset = Utils.parseInt(request.getParameter("offset"));
+		Integer limit = Utils.parseInt(request.getParameter("limit"));
 		
 		// send messages to Recommender to get the IDs
 		String requestId1 = Utils.genRequestID();
 		String requestId2 = Utils.genRequestID();
 		
-		String recommenderIssueRq = MessageUtils.genRecommenderIssuesMsg(Arrays.asList(new String[] {uuid}), requestId1);
+		String recommenderIssueRq = MessageUtils.genRecommenderIssuesMsg(uuidList, requestId1);
 		String recommenderIssueResp = getRecommenderIssueResponse(recommenderIssueRq, requestId1);
 		
-		String recommenderModuleRq = MessageUtils.genRecommenderModulesMsg(Arrays.asList(new String[] {uuid}), requestId2);
+		String recommenderModuleRq = MessageUtils.genRecommenderModulesMsg(uuidList, requestId2);
 		String recommenderModuleResp = getRecommenderModuleResponse(recommenderModuleRq, requestId2);
 		
 		// parse responses
@@ -352,7 +357,7 @@ public class QueryServlet extends MQServlet {
 		
 		// now that I have the issueIDs I have to send them to the KEUI component
 		String requestId3 = Utils.genRequestID();
-		String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueIds, requestId3);
+		String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueIds, offset, limit, requestId3);
 		String keuiResp = getKEUIResponse(keuiRq, requestId3);
 		
 		// construct result
