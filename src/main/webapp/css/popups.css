@@ -26,29 +26,21 @@
 	background:#fff;
 }
 
-.arrow1 {
+.arrow {
    	width: 0;
    	height: 0;
    	border-left: 12px solid transparent;
    	border-right: 12px solid transparent;
    	border-bottom: 12px solid #FFF;
-   	position:absolute;
-   	top: -11px;
-   	left: 108px;
-   	z-index:20;
-   	display:inherit;
+   	display: block;
 }
-.arrow1-border {
+.arrow-border {
    	width: 0;
    	height: 0;
    	border-left: 12px solid transparent;
    	border-right: 12px solid transparent;
    	border-bottom: 12px solid #BBBBBB;
-   	position:absolute;
-   	top: -12px;
-   	left: 108px;
-   	z-index:19;
-   	display:inherit;
+   	display: block;
 }
 #sort_div {
 	background-color: #B6DE8F !important;
@@ -100,7 +92,7 @@
    background:linear-gradient(top,#f4f4f4,#e8e8e8);
    text-transform:lowercase !important;
    width:160px !important;
-   margin:8px !important;
+   margin-top:8px !important;
    height:20px !important;
    line-height:20px !important;
    font-weight:normal !important;
@@ -120,6 +112,39 @@
     -moz-box-shadow:0px 0px 8px #aaa;
     -webkit-box-shadow:0px 0px 8px #aaa;
     box-shadow:0px 0px 8px #aaa;
-    padding:10px;
-    overflow-y:scroll;
+}
+
+#notification_wrapper {
+	overflow-y: scroll;
+	padding: 0;
+	padding:10px;
+	width: 200px;
+	height: 480px;
+}
+
+#notification_list {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+.notification {
+	width: 100%;
+	border-top: 1px solid #CCC !important;
+}
+
+.notification td {
+	padding: 0px !important;
+	font-size: 12px !important;
+	text-shadow: 1px 1px 1px white !important;
+}
+
+.notification a {
+	font: bold 12px/20px Arial, Helvetica, sans-serif !important;
+	font-weight: bold !important;
+	color: #7BA857 !important;
+	text-shadow: 1px 1px 1px #CCC !important;
+}
+
+.notification_date {
+	float: right;
 }

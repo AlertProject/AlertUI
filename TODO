@@ -18,6 +18,8 @@
 - paging pri duplicate issue (gregor mora vrnit info tag)
 
 - tooltip pri social graph-u je treba zrihtat
+- pointer, ko cursor nad notifikacijami
+- na FF je notification button grde zelene barve, ko ga kliknes
 
 /////////////////////////////////////////////////////////////////////////
 Bug, ki sem ga nasel v UIju pa je, da next vedno

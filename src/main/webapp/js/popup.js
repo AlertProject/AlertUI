@@ -8,8 +8,17 @@
 		var horizontalOffset = config.left == null ? 0 : config.left;
 		var eventType = config.event || 'click';
 		
+		var arrow = $($(popup).children('.arrow'));
+		var arrowBorder = $($(popup).children('.arrow-border'));
+		if (arrow.length > 0) {
+			arrow.css('position', 'absolute');
+			arrow.css('z-index', '120');
+			arrowBorder.css('position', 'absolute');
+			arrowBorder.css('z-index', '119');
+		}
+		
 		$(popup).css('display', 'none');
-		$(popup).css('z-index', '100');
+		$(popup).css('z-index', '121');
 		$(popup).css('position', 'absolute');
 		
 		$(trigger).bind(eventType, function (event) {
@@ -31,6 +40,14 @@
 	
 				$(popup).css('left', left);
 				$(popup).css('top', top);
+				
+				// set the arrows
+				if (arrow.length > 0) {
+					arrow.css('left', ($(popup).outerWidth()/2 - arrow.outerWidth()/2) + 'px');
+					arrow.css('top', '-' + (arrow.outerHeight() - 1) + 'px');
+					arrowBorder.css('left', ($(popup).outerWidth()/2 - arrowBorder.outerWidth()/2) + 'px');
+					arrowBorder.css('top', '-' + arrowBorder.outerHeight() + 'px');
+				}
 			}
 			$(popup).fadeToggle(fadeDuration);
 			return false;

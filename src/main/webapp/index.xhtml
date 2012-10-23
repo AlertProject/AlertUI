@@ -70,26 +70,28 @@
 					 		</c:if>
 					 		<li id="logout_tab"><a>LOGOUT</a></li>
 					 		<li>
+					 			<input type="button" id="notification_btn" class="notifications_open" value="#{index.user.email} (#{fn:length(index.user.notifications)})" />
 				 				<div id="notification_div">
 					 				<div class='arrow'></div>
      		 		 				<div class='arrow-border'></div>
-     			    				<ul id="notification_list">
-	     			    				<c:forEach items="#{index.user.notifications}" var="notification">
-	     			    					<li>
-	     			    						<table class="notification">
-													<tr><td><a href="${notification.link}">${notification.title}</a><span class="notification_date">${notification.publishDate}</span></td></tr>
-	     			    							<tr><td>#{notification.content}</td></tr>
-     			    							</table>
-	     			    					</li>
-	     			    				</c:forEach>
-     			    				</ul>
+     		 		 				<div id="notification_wrapper">
+	     			    				<ul id="notification_list">
+		     			    				<c:forEach items="#{index.user.notifications}" var="notification">
+		     			    					<li>
+		     			    						<table class="notification">
+														<tr><td><a href="${notification.link}">${notification.title}</a><span class="notification_date">${notification.publishDate}</span></td></tr>
+		     			    							<tr><td>#{notification.content}</td></tr>
+	     			    							</table>
+		     			    					</li>
+		     			    				</c:forEach>
+	     			    				</ul>
+     			    				</div>
 					 			</div>
-				 			<input type="button" id="notification_btn" class="notifications_open" value="#{index.user.email} (#{fn:length(index.user.notifications)})" />
-			 				<script type="application/javascript">
-				 				<!--
-				 				$('#notification_div').popup({trigger: '#notification_btn', align: 'center', duration: 'fast', top: 20, event: 'click'});
-				 				-->
-			 				</script>
+				 				<script type="application/javascript">
+					 				<!--
+					 				$('#notification_div').popup({trigger: '#notification_btn', align: 'center', duration: 'fast', top: 21, event: 'click'});
+					 				-->
+				 				</script>
 		     			     </li>
 					 	</c:when>
 					 	<c:otherwise>
@@ -169,8 +171,8 @@
 													<td style="padding-right: 28px;">
 														<button id="propertiesbtn" onclick="return false;">+</button>
 														<div id="propertiesdiv">
-															<div class="arrow1"></div>
-															<div class="arrow1-border"></div>
+															<div class="arrow"></div>
+															<div class="arrow-border"></div>
 															<table id="popuptbl">
 																<tr>
 																	<td><label><span>Status:</span></label></td>
