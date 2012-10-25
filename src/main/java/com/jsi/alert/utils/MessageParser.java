@@ -382,6 +382,27 @@ public class MessageParser {
 					
 					comments.add(commentJSon);
 				}
+				else if ("s3:references".equals(nodeName)) {
+					Element references = (Element) node;
+					NodeList issues = references.getElementsByTagName("s3:issue");
+					
+					JSONArray issuesJSon = new JSONArray();
+					for (int issueIdx = 0; issueIdx < issues.getLength(); issueIdx++) {
+						Node issue = issues.item(issueIdx);
+						JSONObject issueJSon = new JSONObject();
+						
+						NodeList issueProps = issue.getChildNodes();
+						for (int propIdx = 0; propIdx < issueProps.getLength(); propIdx++) {
+							Node prop = issueProps.item(propIdx);
+							
+							issueJSon.put(prop.getNodeName().substring(3), prop.getTextContent());
+						}
+						
+						issuesJSon.add(issueJSon);
+					}
+					
+					result.put("related", issuesJSon);
+				}
 			}
 			
 			// sort the comments on date

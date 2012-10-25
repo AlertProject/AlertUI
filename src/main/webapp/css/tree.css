@@ -20,6 +20,10 @@
 	cursor: default;
 }
 
+.tree_li .leaf.normal_weight {
+	font-weight: normal;
+}
+
 .tree_li .tree_a, .tree_li {
 	color: gray;
 	font-weight: bold;

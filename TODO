@@ -18,15 +18,7 @@
 - na FF je notification button grde zelene barve, ko ga kliknes
 - when manually added to a text box, no more selections allowed does not appear
 - timeline loading not shown
-
-
-/////////////////////////////////////////////////////////////////////////
-Bug, ki sem ga nasel v UIju pa je, da next vedno
-da offset=100 (nikoli 200,300, ...), ne glede kolikokrat pritisnem na
-gumb >>.
-
-- ne dobim info <info totalCount="826" offset="0" maxCount="100"></info>
-/////////////////////////////////////////////////////////////////////////
+- show metadata in extended issue view
 
 	
 

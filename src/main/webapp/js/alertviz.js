@@ -1457,6 +1457,28 @@ var AlertViz = function(options) {
     		html += '<div class="content" id="suggest_dev_div"></div>';
     		html += '</div>';
     		
+    		if (data.related != null && data.related.length > 0) {
+    			var related = data.related;
+    			
+    			html += '<div class="details_section">';
+        		html += '<table class="heading"><tr>';
+        		html += '<td class="title_desc">Related Issues</td>';
+        		html += '</tr></table>';
+    			
+        		html += '<div class="content" id="suggest_dev_div">';
+        		
+        		html += '<ul>';
+    			$.each(related, function (idx, issue) {
+    				html += '<li class="tree_li">';
+    				html += '<span class="leaf normal_weight">' + issue.issueDescription + '</span>';
+    				html += '</li>';
+    			});
+    			html += '</ul>';
+    			
+    			html += '</div>';
+        		html += '</div>';
+    		}
+    		
     		
     		// insert html
     		$('#details_wrapper').html(html);
