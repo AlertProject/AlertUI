@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.jsi.alert.beans.UserPrincipal;
 import com.jsi.alert.utils.Configuration;
+import com.jsi.alert.utils.Utils;
 
 /**
  * A <code>Servlet</code>
@@ -50,7 +51,7 @@ public class LoginServlet extends HttpServlet {
 			} else {
 				if (log.isInfoEnabled())
 					log.info("Cannot create a session: email=" + email + ", redirecting to login page!");
-				response.sendRedirect(Configuration.LOGIN_URL);
+				response.sendRedirect(Utils.getLoginUrl());
 			}
 		} catch (Throwable t) {
 			log.error("Failed to create a session!", t);

@@ -1,6 +1,7 @@
 package com.jsi.alert.beans;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +16,7 @@ import com.jsi.alert.model.Notification;
 import com.jsi.alert.service.AuthenticatorService;
 import com.jsi.alert.service.NotificationService;
 import com.jsi.alert.utils.Configuration;
+import com.jsi.alert.utils.Utils;
 
 /**
  * A presenter for the index page.
@@ -59,11 +61,18 @@ public class Index implements Serializable {
 	}
 	
 	public String getLoginUrl() {
-		return Configuration.LOGIN_URL;
+		return Utils.getLoginUrl();
 	}
 	
 	public String getLogoutUrl() {
-		return Configuration.LOGOUT_URL;
+		try {
+			if (user != null && user.getEmail() != null)
+				return Utils.getLogoutUrl(user.getEmail());
+		} catch (UnsupportedEncodingException e) {
+			if (log.isWarnEnabled())
+				log.warn("Failed to construct logout URL!", e);
+		}
+		return "";
 	}
 
 	public UserPrincipal getUser() {
@@ -75,7 +84,13 @@ public class Index implements Serializable {
 	}
 	
 	public String getSubscribeUrl() {
-		return Configuration.SUBSCRIBE_URL;
+		if (user != null && user.getUuid() != null && user.getEmail() != null) {
+			return Utils.getSubscribeUrl(user.getUuid(), user.getEmail());
+		} else {
+			if (log.isWarnEnabled())
+				log.warn("Trying to construct a subscribe URL for an invalid user: " + user);
+		}
+		return "";
 	}
 	
 	public String getOverviewUrl() {
@@ -83,6 +98,6 @@ public class Index implements Serializable {
 	}
 	
 	public String getAdminUrl() {
-		return Configuration.ADMINISTRATION_URL;
+		return Utils.getAdminUrl();
 	}
 }

@@ -77,6 +77,10 @@ public class MQSessionProvider {
 		if (log.isDebugEnabled()) log.debug("Creating connections...");
 		ConnectionFactory factory = new ActiveMQConnectionFactory(Configuration.ACTIVEMQ_URL);
 		Connection mqConnection = factory.createConnection();
+		
+		if (Configuration.ACTIVEMQ_CLIENT_ID != null)
+			mqConnection.setClientID("UI");
+		
 		mqConnection.start();
 
 		mqSession = mqConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);

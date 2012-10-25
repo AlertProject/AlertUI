@@ -133,7 +133,7 @@ public class MessageParser {
 						String label = fileProp.getNodeName();
 						
 						if ("s3:fileId".equals(label))
-							file.put("id", Long.parseLong(fileProp.getTextContent()));
+							file.put("id", fileProp.getTextContent());
 						else if ("s3:fileUri".equals(label))
 							file.put("uri", fileProp.getTextContent());
 						else if ("s3:fileAction".equals(label))
@@ -159,7 +159,7 @@ public class MessageParser {
 								if ("s3:moduleUri".equals(moduleLabel))
 									module.put("uri", moduleProp.getTextContent());
 								else if ("s3:moduleId".equals(moduleLabel))
-									module.put("id", Long.parseLong(moduleProp.getTextContent()));
+									module.put("id", moduleProp.getTextContent());
 								else if ("s3:moduleName".equals(moduleLabel))
 									module.put("name", moduleProp.getTextContent());
 								else if ("s3:moduleStartLine".equals(moduleLabel))
@@ -176,7 +176,7 @@ public class MessageParser {
 										String methodLabel = methodProp.getNodeName();
 										
 										if ("s3:methodId".equals(methodLabel))
-											method.put("id", Long.parseLong(methodProp.getTextContent()));
+											method.put("id", methodProp.getTextContent());
 										else if ("s3:methodStartLine".equals(methodLabel))
 											method.put("startLine", Integer.parseInt(methodProp.getTextContent()));
 										else if ("s3:methodEndLine".equals(methodLabel))
@@ -591,6 +591,7 @@ public class MessageParser {
 			if (fromToCountsStr.startsWith("\n")) fromToCountsStr = fromToCountsStr.substring(1);
 			
 			String[] fromToCountsStrV = fromToCountsStr.split(",");
+			int maxCountEdge = Integer.MIN_VALUE;
 			for (String fromToStr : fromToCountsStrV) {
 				if (fromToStr.isEmpty()) continue;
 				
@@ -601,13 +602,17 @@ public class MessageParser {
 				long source = Long.parseLong(fromToTup[0]);
 				long target = Long.parseLong(fromToTup[1]);
 				
+				int count = Integer.parseInt(fromToTup[2]);
+				if (count > maxCountEdge)
+					maxCountEdge = count;
+				
 				edge.put("source", source);
 				edge.put("target", target);
 				
 				// data
 				JSONObject data = new JSONObject();
 				data.put("directed", true);
-				data.put("count", Integer.parseInt(fromToTup[2]));
+				data.put("count", count);
 				
 				edge.put("data", data);
 				edgeV.add(edge);
@@ -617,6 +622,14 @@ public class MessageParser {
 					neighbours.add(target);
 				}
 			}
+			
+			// set the opacity
+			for (JSONObject edge : edgeV) {
+				JSONObject data = (JSONObject) edge.get("data");
+				int count = (Integer) data.get("count");
+				data.put("opacity", (double) count/maxCountEdge);
+			}
+
 			
 			JSONArray edgesJSon = new JSONArray();
 			edgesJSon.addAll(edgeV);
@@ -1081,6 +1094,7 @@ public class MessageParser {
 				case "person":
 					label = attributes.getNamedItem("name").getNodeValue();
 					value = attributes.getNamedItem("account").getNodeValue();
+					jsonObj.put("uuid", attributes.getNamedItem("uuid").getNodeValue());
 					type = "person";
 					break;
 				case "concept":

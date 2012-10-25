@@ -46,7 +46,7 @@ ul.as-selections {
 	height: 33px;
 	width: 906px;
 }
-ul.as-selections.loading {
+ul.as-selections.loading_sugg {
 	background-color: #fff;
 }
 ul.as-selections li {

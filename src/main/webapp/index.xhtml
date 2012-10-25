@@ -52,6 +52,23 @@
 		$(document).ready(function() {
 			viz = AlertViz();
 			loadState();
+			
+			$('#confirm_logout').dialog({
+	            resizable: false,
+	            height:140,
+	            modal: true,
+	            draggable: false,
+	            autoOpen: false,
+	            buttons: {
+	                Logout: function() {
+	                    $(this).dialog( "close" );
+	                    document.location.href = 'http://77.49.89.15:9090/stardom-ui/luka.stopar%40ijs.si/logout';
+	                },
+	                Cancel: function() {
+	                    $(this).dialog( "close" );
+	                }
+	            }
+	        });
 		});
 	</script>
 	<style type="text/css">.tabber{visibility: hidden;}</style>
@@ -63,14 +80,19 @@
 				<ul>
 				     <li><img src="img/logo.png" style="float:left;width:60px;hight:60px;margin-right:10px;"></img></li>
 					 <li id="browse_tab" class="current"><a>BROWSE</a></li>
-					 <li id="subscribe_tab"><a>SUBSCRIBE</a></li>
 					 <li id="overview_tab"><a>PROJECT OVERVIEW</a></li>
 					 <c:choose>
 					 	<c:when test="#{index.isUserLoggedIn()}">
+					 		<li id="subscribe_tab"><a>SUBSCRIBE</a></li>
 					 		<c:if test="#{index.user.admin}">
 					 			<li id="administration_tab"><a>ADMINISTRATION</a></li>
 					 		</c:if>
-					 		<li id="logout_tab"><a>LOGOUT</a></li>
+					 		<li id="logout_tab">
+					 			<a onclick="$('#confirm_logout').dialog('open'); return false;">LOGOUT</a>
+					 			<div id="confirm_logout" title="Logout">
+					 				<p><span>Are you sure you wish to logout?</span></p>
+					 			</div>
+					 		</li>
 					 		<li>
 					 			<input type="button" id="notification_btn" class="notifications_open" value="#{index.user.email} (#{fn:length(index.user.notifications)})" />
 				 				<div id="notification_div">
@@ -103,7 +125,7 @@
      			 </ul>
      			 <script type="application/javascript">
      			 	<!--
-     			 	$('#nav li').children('a').click(function (event) {
+     			 	$('#nav li:not(#logout_tab)').children('a').click(function (event) {
      			 		$('#nav li').removeClass('current');
      			 		$('#container_main').children().addClass('hidden');
      			 		
@@ -369,11 +391,19 @@
 				</div>
 			</div>
 		</div>
-		<div id="subscribe_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getSubscribeUrl()}"></iframe></div>
 		<div id="overview_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getOverviewUrl()}"></iframe></div>
-		<div id="administration_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getAdminUrl()}"></iframe></div>
-		<div id="login_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getLoginUrl()}"></iframe></div>
-		<div id="logout_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getLogoutUrl()}"></iframe></div>
+		<c:choose>
+			<c:when test="#{index.isUserLoggedIn()}">
+				<div id="subscribe_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getSubscribeUrl()}"></iframe></div>
+				<c:if test="#{index.user.admin}">
+					<div id="administration_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getAdminUrl()}"></iframe></div>
+				</c:if>
+				<div id="logout_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getLogoutUrl()}"></iframe></div>
+			</c:when>
+		 	<c:otherwise>
+		 		<div id="login_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getLoginUrl()}"></iframe></div>
+		 	</c:otherwise>
+		 </c:choose>
 	</div>
 </body>
 </html>

@@ -292,7 +292,7 @@
 					if (string == prev) return;
 					prev = string;
 					if (string.length >= opts.minChars) {
-						selections_holder.addClass("loading");
+						selections_holder.addClass("loading_sugg");
 						if(d_type == "string"){
 							var limit = "";
 							if(opts.retrieveLimit){
@@ -314,7 +314,7 @@
 							processData(org_data, string);
 						}
 					} else {
-						selections_holder.removeClass("loading");
+						selections_holder.removeClass("loading_sugg");
 						results_holder.hide();
 					}
 				}
@@ -383,7 +383,7 @@
 							if(opts.retrieveLimit && opts.retrieveLimit == matchCount ){ break; }
 						}
 					}
-					selections_holder.removeClass("loading");
+					selections_holder.removeClass("loading_sugg");
 					if(matchCount <= 0){
 						results_ul.html('<li class="as-message">'+opts.emptyText+'</li>');
 					}

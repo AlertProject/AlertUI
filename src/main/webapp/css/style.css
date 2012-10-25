@@ -369,3 +369,8 @@ input.button {
 ::-webkit-scrollbar-thumb:window-inactive {
 	background: rgba(255,0,0,0.4); 
 }
+.loading {
+	background-image:url('../img/loading.gif');
+	background-repeat: no-repeat;
+	background-position: center;
+}

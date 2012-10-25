@@ -525,11 +525,18 @@ public class MessageUtils {
 				}
 			}
 			
-			if (props.containsKey("people")) {
-				String[] people = props.getProperty("people").split(",");
+			if (props.containsKey("peopleUris")) {
+				String[] uris = props.getProperty("peopleUris").split(",");
 				
-				for (String person : people)
-					conditions.addChildElement("person").setTextContent(person);
+				for (String uri : uris)
+					conditions.addChildElement("person").addAttribute(envelope.createName("uri"), uri);
+			}
+			
+			if (props.containsKey("peopleUuids")) {
+				String[] uuids = props.getProperty("peopleUuids").split(",");
+				
+				for (String uuid : uuids)
+					conditions.addChildElement("person").addAttribute(envelope.createName("uuid"), uuid);
 			}
 			
 			if (props.containsKey("issues")) {
@@ -653,8 +660,6 @@ public class MessageUtils {
 		params.addAttribute(envelope.createName("includeAttachments"), "True");
 		params.addAttribute(envelope.createName("sortBy"), "dateDesc");
 		params.addAttribute(envelope.createName("itemDataSnipLen"), KEUI_ITEM_SNIP_LEN);
-		params.addAttribute(envelope.createName("snipMatchKeywords"), "True");
-		params.addAttribute(envelope.createName("keywordMatchOffset"), "25");
 		params.addAttribute(envelope.createName("includePeopleData"), "True");
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

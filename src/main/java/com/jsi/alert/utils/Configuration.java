@@ -12,7 +12,7 @@ public class Configuration {
 	
 	public static final String USER_PRINCIPAL = "userPrincipal";
 	
-	public static String ACTIVEMQ_URL;
+	public static String ACTIVEMQ_URL, ACTIVEMQ_CLIENT_ID;
 	public static String KEUI_REQUEST_TOPIC, KEUI_RESPONSE_TOPIC;
 	public static String API_REQUEST_TOPIC, API_RESPONSE_TOPIC;
 	public static String RECOMMENDER_REQUEST_TOPIC_ISSUE, RECOMMENDER_RESPONSE_TOPIC_ISSUE;
@@ -23,7 +23,7 @@ public class Configuration {
 	
 	public static boolean LOG_EVENTS;
 	
-	public static String LOGIN_URL, LOGOUT_URL, AUTHENTICATE_URL;
+	public static String STARDOM_BASE_PATH;
 	public static String NOTIFICATION_URL, NOTIFICATION_PARAMETER;
 	
 	public static long REQUEST_TIMEOUT;
@@ -31,7 +31,7 @@ public class Configuration {
 	public static boolean USE_DEFAULT_USER;
 	public static String DEFAULT_USER_UUID, DEFAULT_USER_EMAIL, DEFAULT_USER_NOTIFICATION_ID;
 	
-	public static String SUBSCRIBE_URL, OVERVIEW_URL, ADMINISTRATION_URL;
+	public static String SUBSCRIBE_URL, OVERVIEW_URL;
 	
 	static {
 		// read the properties
@@ -42,6 +42,7 @@ public class Configuration {
 			props.load(Configuration.class.getClassLoader().getResourceAsStream("alert.properties"));
 
 			ACTIVEMQ_URL = props.getProperty("activemq.url");
+			ACTIVEMQ_CLIENT_ID = props.getProperty("activemq.clientId");
 			
 			// topics
 			KEUI_REQUEST_TOPIC = props.getProperty("topic.keui.request");
@@ -59,14 +60,11 @@ public class Configuration {
 			LOG_EVENTS = Boolean.parseBoolean(props.getProperty("log_events"));
 			
 			// urls
-			LOGIN_URL = props.getProperty("login.form.url");
-			LOGOUT_URL = props.getProperty("logout.form.url");
-			AUTHENTICATE_URL = props.getProperty("login.authenticate.url");
+			STARDOM_BASE_PATH = props.getProperty("stardom.url.basepath");
 			
 			// iframes
 			SUBSCRIBE_URL = props.getProperty("iframe.subscribe");
 			OVERVIEW_URL = props.getProperty("iframe.overview");
-			ADMINISTRATION_URL = props.getProperty("iframe.administration");
 			
 			NOTIFICATION_URL = props.getProperty("notifications.url");
 			NOTIFICATION_PARAMETER = props.getProperty("notifications.param");

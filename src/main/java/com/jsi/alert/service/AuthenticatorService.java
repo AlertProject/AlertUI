@@ -15,6 +15,7 @@ import com.jsi.alert.beans.UserPrincipal;
 import com.jsi.alert.model.Notification;
 import com.jsi.alert.service.UniversalService.RequestType;
 import com.jsi.alert.utils.Configuration;
+import com.jsi.alert.utils.Utils;
 
 /**
  * A utilities class which contacts a web service to fetch the logged in users data
@@ -38,7 +39,7 @@ public class AuthenticatorService {
 		Map<String, String> params = new HashMap<>();
 		params.put("email", email);
 		
-		String response = UniversalService.fetchUrl(Configuration.AUTHENTICATE_URL, params, MediaType.APPLICATION_JSON, RequestType.POST);
+		String response = UniversalService.fetchUrl(Utils.getAuthCheckUrl(), params, MediaType.APPLICATION_JSON, RequestType.POST);
 		
 		if (response != null) {
 			if (log.isDebugEnabled())

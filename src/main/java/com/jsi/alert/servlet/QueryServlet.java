@@ -334,8 +334,7 @@ public class QueryServlet extends MQServlet {
 	 */
 	@SuppressWarnings("unchecked")
 	private void processSuggestForPeopleRq(HttpServletRequest request, HttpServletResponse response) throws IOException, JMSException, ServletException {
-		String uuid = "4883429c-82e1-476c-8120-859d109d8dae";	// TODO get the UUID from the paramters
-//		String uuid = request.getParameter("person");
+		String uuid = request.getParameter("person");
 		List<String> uuidList = Arrays.asList(new String[] {uuid});
 		
 		Integer offset = Utils.parseInt(request.getParameter("offset"));

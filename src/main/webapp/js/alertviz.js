@@ -4,10 +4,6 @@ var defaultDateFormat = "isoDate";
 var settingManually = false;
 var currentTab = 0;
 
-function loginSuccess(email) {
-	alert('works, email: ' + email);		// TODO
-}
-
 //returns the value of a CSS attribute
 function getCssValue(clazz, attribute) {
 	var $p = $("<p class='" + clazz + "'></p>").hide().appendTo("body");
@@ -42,12 +38,13 @@ function genCurrentUrl() {
 function getCurrentState() {
 	var searchGeneral = viz.searchStateGeneral;
 	var issueIdSearch = viz.searchStateIssueId;
-	var searchPerson = viz.searchStatePerson;	// TODO
+	var searchPerson = viz.searchStatePerson;
 	
 	var result = {};
 	var general = {};
 	var duplicate = {};
 	var myCode = {};
+	var personState = {};
 	
 	
 	// general search
@@ -136,6 +133,7 @@ function getCurrentState() {
 	var duplResolvedChk = $('#dup_resolved_check').attr('checked') == 'checked';
 	var duplClosedChk = $('#dup_closed_check').attr('checked') == 'checked';
 	
+	// only send checkboxes when they are false
 	if (!duplNoneChk) duplicate.n = false;
 	if (!duplFixedChk) duplicate.f = false;
 	if (!duplWontChk) duplicate.w = false;
@@ -176,10 +174,15 @@ function getCurrentState() {
 	if (!myResolvedChk) myCode.r = false;
 	if (!myClosedChk) myCode.c = false;
 	
+	// suggest issues for a developer
+	var peoplePerson = searchPerson.getTypeV('person');
+	if (peoplePerson.length > 0) personState.person = peoplePerson[0];
+	
 	// construct result
 	if (Object.getOwnPropertyNames(general).length > 0) result.gen = general;
 	if (Object.getOwnPropertyNames(duplicate).length > 0) result.dupl = duplicate;
 	if (Object.getOwnPropertyNames(myCode).length > 0) result.mc = myCode;
+	if (Object.getOwnPropertyNames(personState).length > 0) result.per = personState;
 
 	return Object.getOwnPropertyNames(result).length === 0 ? null : result;
 }
@@ -265,6 +268,7 @@ function loadState() {
 	var general = params.gen;
 	var duplicate = params.dupl;
 	var myCode = params.mc;
+	var personState = params.per;
 	
 	settingManually = true;
 	
@@ -376,6 +380,11 @@ function loadState() {
 			if (issueChks[attribute])
 				uncheckByAttr(attribute, 'my_');
 		}
+	}
+	
+	if (personState != null) {
+		var person = personState.person;
+		viz.addToSearchField('person_text', person);
 	}
 	
 	$('#navigation').find('a')[tab].click();
@@ -530,10 +539,7 @@ var SocialGraph = function(options){
 				
 				if (sourcePos == null || targetPos == null) return;
 				
-				var minAlpha = .2;
-				
-				var alpha = data.count == 0 ? minAlpha : Math.max(.2, 1 - 1/data.count);
-				var color = "rgba(85, 85, 85, " + alpha + ")";
+				var color = "rgba(85, 85, 85, " + Math.max(data.opacity, .2) + ")";
 								
 				var tail = intersect_line_box(sourcePos, targetPos, data.source.nodeBox);
 				var head = intersect_line_box(tail, targetPos, data.target.nodeBox);
@@ -731,18 +737,17 @@ var Search = function (opts) {
 		},
 		
 		addToSearch: function (data) {
-			if (data.type == 'product' || data.type == 'person' || data.type == 'issue') {
-				// have to send URI
-				var value = data.value;
-				var label = data.label;
-				
-				var array = searchTerms[data.type];
+			var array = searchTerms[data.type];
+			
+			if (data.type == 'product'|| data.type == 'issue') {
 				if (that.indexOfLabel(data.type, label) < 0)
-					array.push({type: data.type, label: label, value: value});
+					array.push({type: data.type, label: data.label, value: data.value});
 			} else if (data.type == 'source') {
-				var array = searchTerms[data.type];
 				if (that.indexOfLabel(data.type, data.label) < 0)
 					array.push({type: data.type, label: data.label, value: data.value, tooltip: data.tooltip});
+			} else if (data.type == 'person') {
+				if (that.indexOfLabel(data.type, data.label) < 0)
+					array.push({type: data.type, label: data.label, value: data.value, uuid: data.uuid});
 			}
 		},
 		
@@ -770,15 +775,29 @@ var Search = function (opts) {
 	  		}
 		},
 		
-		getSearchStr: function (type) {
+		getSearchStr: function (type, attribute) {
+			var attr = attribute || 'value';
+			
 			var list = searchTerms[type];
 			var result = '';
 			for (var i = 0; i < list.length; i++) {
-				result += list[i].value;
+				result += list[i][attr];
 				if (i < list.length - 1)
 					result += ',';
 			}
 			return result;
+		},
+		
+		getSearchStrWithoutVal: function (type, attribute) {
+			var list = searchTerms[type];
+			var result = '';
+			$.each(list, function (idx, item) {
+				if (item.value == null) {
+					result += item[attribute];
+					if (idx < list.length - 1)
+						result += ',';
+				}
+			});
 		},
 		
 		getTypeV: function (type) {
@@ -984,7 +1003,6 @@ var AlertViz = function(options) {
     			url: 'query',
     			data: {type: 'commitDetails', query: itemUri},
     			success: function (data, textStatus, jqXHR) {
-    				$('#details_wrapper').removeClass('loading');
     				that.setCommitDetails(data);
     			},
     			complete: function () {
@@ -1011,7 +1029,7 @@ var AlertViz = function(options) {
     			$('#wordcloud-div').addClass('loading');
     			break;
     		case 'timelineData':
-    			$('#chart-div').addClass('loading');
+    			$('#timeline_container').addClass('loading');
     			break;
     		case 'peopleData':
     			$('#graph-div').addClass('loading');
@@ -1024,7 +1042,8 @@ var AlertViz = function(options) {
                 data: {
                 	type: queryType,
                 	keywords: queryOpts.keywords,
-        			people: queryOpts.people,
+        			peopleUris: queryOpts.peopleUris,
+        			peopleUuids: queryOpts.peopleUuids,
         			sources: queryOpts.sources,
         			products: queryOpts.products,
         			issues: queryOpts.issues,
@@ -1061,7 +1080,7 @@ var AlertViz = function(options) {
             			$('#wordcloud-div').removeClass('loading');
             			break;
             		case 'timelineData':
-            			$('#chart-div').removeClass('loading');
+            			$('#timeline_container').removeClass('loading');
             			break;
             		case 'peopleData':
             			$('#graph-div').removeClass('loading');
@@ -1143,7 +1162,8 @@ var AlertViz = function(options) {
     	
     	searchGeneral: function() {	
     		var keywords = $('#keyword_text').val();
-    		var people = generalSearch.getSearchStr('person');
+    		var peopleUris = generalSearch.getSearchStr('person');
+    		var peopleUuids = generalSearch.getSearchStrWithoutVal('person', 'uuid');
     		var sources = generalSearch.getSearchStr('source');
     		var products = generalSearch.getSearchStr('product');
     		var issues = generalSearch.getSearchStr('issue');
@@ -1154,7 +1174,8 @@ var AlertViz = function(options) {
     		var queryOpts = {
     			type: 'generalSearch',
     			keywords: keywords,
-    			people: people,
+    			peopleUris: peopleUris,
+    			peopleUuids: peopleUuids,
     			sources: sources,
     			products: products,
     			issues: issues,
@@ -1185,10 +1206,10 @@ var AlertViz = function(options) {
     		that.cleanData();
 			
     		// search
+    		that.searchItemsGeneral(queryOpts, 0, itemsPerPage);
 			that.searchKeywordsGeneral(queryOpts);
-			that.searchTimelineGeneral(queryOpts);
-			that.searchItemsGeneral(queryOpts, 0, itemsPerPage);
 			that.searchPeopleGeneral(queryOpts);
+			that.searchTimelineGeneral(queryOpts);
 			return false;
     	},
     	
@@ -1262,7 +1283,7 @@ var AlertViz = function(options) {
     	},
     	
     	searchForDeveloper: function () {
-    		var people = personSearch.getSearchStr('person');
+    		var people = personSearch.getSearchStr('person', 'uuid');
     		
     		var queryOpts = {
     			type: 'suggestPeople',
@@ -1309,6 +1330,21 @@ var AlertViz = function(options) {
     		}
     	},
     	
+    	openPersonTab: function (e, person) {
+    		var event = e || window.event;
+    		event.stopPropagation();
+			event.preventDefault();
+			
+			if (person != null) {
+				var config = {};
+				var general = {};
+				general.people = [person];
+				
+				config.gen = general;
+				openInNewTab(config);
+			}
+    	},
+    	
     	setRecommendedDevelopers: function (data) {
     		var html = '<ul>';
     		
@@ -1318,7 +1354,7 @@ var AlertViz = function(options) {
     			
     			html += '<li class="tree_li">';
 				html += '<span class="leaf">' + name + '</span>';
-				html += '<img src="img/search-16.png" alt="Search" onclick="return false;" />';	// TODO search not implemented yet
+				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openPersonTab(event, {type: \'person\', label: \'' + name + '\', uuid: \'' + uuid + '\'});" />';
 				html += '</li>';
     		});
     		
@@ -1751,11 +1787,6 @@ var AlertViz = function(options) {
 						return 'Number of posts: ' + Highcharts.numberFormat(this.y, 0) + '<br />' + new Date(this.point.range[0]).format(defaultDateFormat) + ' to ' + new Date(this.point.range[1]).format(defaultDateFormat); 
 					}
 				},
-//				plotOptions: {
-//					column: {
-//						cursor: 'pointer'
-//					}
-//				},
 				series: [
 					{
 						name: 'Posts',
@@ -2017,6 +2048,17 @@ var AlertViz = function(options) {
     	updateUrl();
     });
     
+    var formatSelectionList = function (data, el) {
+    	if (data.type == 'source') {
+  			$(el).attr('title', data.tooltip);
+  			$(el).html($(el).html() + ' <span class="file_path">(' + data.path + ')</span>');
+  		} else if (data.type == 'person') {
+  			if (data.value == null && data.uuid != null)
+  				data.value = data.uuid;
+  		}
+  		return el;
+    };
+    
     $('#other_text').autoSuggest('suggest', {
     	selectedItemProp: 'label',
     	searchObjProps: 'label',
@@ -2042,13 +2084,7 @@ var AlertViz = function(options) {
 	  		
 	  		elem.remove();
 	  	},
-	  	formatList: function (data, el) {
-	  		if (data.type == 'source') {
-	  			$(el).attr('title', data.tooltip);
-	  			$(el).html($(el).html() + ' <span class="file_path">(' + data.path + ')</span>');
-	  		}
-	  		return el;
-	  	}
+	  	formatList: formatSelectionList
     });
     
     function setRange() {
@@ -2097,7 +2133,8 @@ var AlertViz = function(options) {
 	  		updateUrl();
 	  		
 	  		elem.remove();
-	  	}
+	  	},
+	  	formatList: formatSelectionList
     });
     
     $('#issue_id_text').blur(function (event) {
@@ -2116,17 +2153,18 @@ var AlertViz = function(options) {
     	startText: 'people,...',
     	asHtmlID: 'person_text',
     	addByWrite: false,
-    	selectionAdded: function(elem, data) {
+    	selectionAdded: function (elem, data) {
     		if (!settingManually) {
 	    		personSearch.addToSearch(data);
 	    		updateUrl();
     		}
     	},
-	  	selectionRemoved: function(elem, data) {
+	  	selectionRemoved: function (elem, data) {
 	  		personSearch.removeFromSearch(elem, data);
 	  		updateUrl();
 	  		elem.remove();
-	  	}
+	  	},
+	  	formatList: formatSelectionList
     });
     
     // tab handler

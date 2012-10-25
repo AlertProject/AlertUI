@@ -1,5 +1,7 @@
 package com.jsi.alert.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -137,5 +139,25 @@ public class Utils {
 
 	public static String removeMultLineBreaks(String text) {
 		return text.replaceAll("\n{3,}|[\n\\s+]{4,}", "\n\n");
+	}
+	
+	public static String getLoginUrl() {
+		return Configuration.STARDOM_BASE_PATH + "/login";
+	}
+	
+	public static String getLogoutUrl(String email) throws UnsupportedEncodingException {
+		return Configuration.STARDOM_BASE_PATH + "/" + URLEncoder.encode(email, "ISO-8859-1") + "/logout";
+	}
+	
+	public static String getAuthCheckUrl() {
+		return Configuration.STARDOM_BASE_PATH + "/login/authenticated";
+	}
+	
+	public static String getAdminUrl() {
+		return Configuration.STARDOM_BASE_PATH + "/search";
+	}
+
+	public static String getSubscribeUrl(String uuid, String email) {
+		return Configuration.SUBSCRIBE_URL + "?uid=" + uuid + "&email=" + email + "&username=abc";
 	}
 }
