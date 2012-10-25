@@ -62,7 +62,7 @@
 	            buttons: {
 	                Logout: function() {
 	                    $(this).dialog( "close" );
-	                    document.location.href = 'http://77.49.89.15:9090/stardom-ui/luka.stopar%40ijs.si/logout';
+	                    document.location.href = $('#logout_url').val();
 	                },
 	                Cancel: function() {
 	                    $(this).dialog( "close" );
@@ -91,6 +91,7 @@
 					 			<a onclick="$('#confirm_logout').dialog('open'); return false;">LOGOUT</a>
 					 			<div id="confirm_logout" title="Logout">
 					 				<p><span>Are you sure you wish to logout?</span></p>
+					 				<input type="hidden" id="logout_url" value="#{index.getLogoutUrl()}" />
 					 			</div>
 					 		</li>
 					 		<li>
@@ -391,17 +392,17 @@
 				</div>
 			</div>
 		</div>
-		<div id="overview_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getOverviewUrl()}"></iframe></div>
+		<div id="overview_content" class="tab_frame hidden"><iframe class="tab_frame" src="#{index.getOverviewUrl()}"></iframe></div>
 		<c:choose>
 			<c:when test="#{index.isUserLoggedIn()}">
-				<div id="subscribe_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getSubscribeUrl()}"></iframe></div>
+				<div id="subscribe_content" class="tab_frame hidden"><iframe class="tab_frame" src="#{index.getSubscribeUrl()}"></iframe></div>
 				<c:if test="#{index.user.admin}">
-					<div id="administration_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getAdminUrl()}"></iframe></div>
+					<div id="administration_content" class="tab_frame hidden"><iframe class="tab_frame" src="#{index.getAdminUrl()}"></iframe></div>
 				</c:if>
-				<div id="logout_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getLogoutUrl()}"></iframe></div>
+				<div id="logout_content" class="tab_frame hidden"><iframe class="tab_frame" src="#{index.getLogoutUrl()}"></iframe></div>
 			</c:when>
 		 	<c:otherwise>
-		 		<div id="login_content" class="hidden"><iframe height="100%" width="100%" src="#{index.getLoginUrl()}"></iframe></div>
+		 		<div id="login_content" class="tab_frame hidden"><iframe class="tab_frame" src="#{index.getLoginUrl()}"></iframe></div>
 		 	</c:otherwise>
 		 </c:choose>
 	</div>

@@ -918,10 +918,15 @@ public class MessageParser {
 					items.add(item);
 			}
 			
+			Element infoEl = (Element) results.getElementsByTagName("info").item(0);
+			int totalCount = Integer.parseInt(infoEl.getAttribute("totalCount"));
+			int offset = Integer.parseInt(infoEl.getAttribute("offset"));
+			int limit = Integer.parseInt(infoEl.getAttribute("maxCount"));
+			
 			JSONObject info = new JSONObject();
-			info.put("totalCount", Double.POSITIVE_INFINITY);
-			info.put("offset", 0);
-			info.put("limit", items.size());
+			info.put("totalCount", totalCount);
+			info.put("offset", offset);
+			info.put("limit", limit);
 			
 			JSONObject result = new JSONObject();
 			result.put("type", "itemData");

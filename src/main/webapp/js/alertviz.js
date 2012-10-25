@@ -738,16 +738,18 @@ var Search = function (opts) {
 		
 		addToSearch: function (data) {
 			var array = searchTerms[data.type];
+			var label = data.label;
+			var value = data.value;
 			
 			if (data.type == 'product'|| data.type == 'issue') {
 				if (that.indexOfLabel(data.type, label) < 0)
-					array.push({type: data.type, label: data.label, value: data.value});
+					array.push({type: data.type, label: label, value: value});
 			} else if (data.type == 'source') {
-				if (that.indexOfLabel(data.type, data.label) < 0)
-					array.push({type: data.type, label: data.label, value: data.value, tooltip: data.tooltip});
+				if (that.indexOfLabel(data.type, label) < 0)
+					array.push({type: data.type, label: label, value: value, tooltip: data.tooltip});
 			} else if (data.type == 'person') {
-				if (that.indexOfLabel(data.type, data.label) < 0)
-					array.push({type: data.type, label: data.label, value: data.value, uuid: data.uuid});
+				if (that.indexOfLabel(data.type, label) < 0)
+					array.push({type: data.type, label: label, value: value, uuid: data.uuid});
 			}
 		},
 		
@@ -957,7 +959,7 @@ var AlertViz = function(options) {
     		});
     	},
     	
-    	searchForumDetails: function (itemId) {
+    	searchKEUIThreaded: function (itemId, type) {
     		$('#details_wrapper').addClass('loading');
     		
     		$.ajax({
@@ -968,7 +970,7 @@ var AlertViz = function(options) {
     			async: true,
     			success: function (data, textStatus, jqXHR) {
     				$('#details_wrapper').removeClass('loading');
-    				that.setForumDetails(data, itemId);
+    				that.setKEUIThreadedDetails(data, itemId, type);
     			},
     			complete: function () {
     				$('#details_wrapper').removeClass('loading');
@@ -1362,7 +1364,7 @@ var AlertViz = function(options) {
     		$('#suggest_dev_div').html(html);
     	},
     	
-    	setForumDetails: function (data, itemId) {
+    	setKEUIThreadedDetails: function (data, itemId, type) {
     		var items = data.items;
     		var people = data.persons;
     		
@@ -1383,7 +1385,7 @@ var AlertViz = function(options) {
     			
     			html += '<div class="details_section">';
     			html += '<table class="heading' + (item.id == itemId ? ' content_open' : '') + '"><tr>';
-    			html += '<td class="title_desc">Post by ';
+    			html += '<td class="title_desc">' + (type == 'post' ? 'Post' : 'Email') + ' by ';
     			html += '<span class="headings_author">';
     			html += senderName;
     			if (recipientNameV.length > 0)
@@ -1434,7 +1436,7 @@ var AlertViz = function(options) {
     			html += '<div class="details_section">';
     			html += '<table class="heading' + (comment.commentUri == selectedUri ? ' content_open' : '')  + '"><tr>';
 
-    			html += '<td class="title_comm">Comment by <span class="headings_author">' + comment.person.name + '</span><span class="headings_date">' + new Date(comment.commentDate).format(defaultDateFormat) + '</span></td>';
+    			html += '<td class="title_comm"><span class="headings_author">' + comment.person.name + '</span><span class="headings_date">' + new Date(comment.commentDate).format(defaultDateFormat) + '</span></td>';
     			html += '</tr></table>';
     			// content
     			
@@ -1863,7 +1865,7 @@ var AlertViz = function(options) {
     			
     			switch (item.type) {
     			case Type.email:
-    				html += '<div class="item-wrapper email" onclick="viz.searchItemDetails(' + item.id + ')"><table class="item_table">';
+    				html += '<div class="item-wrapper email" onclick="viz.searchKEUIThreaded(' + item.id + ', \'email\')"><table class="item_table">';
     				
     				// sender receiver
     				html += '<tr>';
@@ -1894,7 +1896,7 @@ var AlertViz = function(options) {
 	    			html += '</table></div>';
     				break;
     			case Type.post:
-    				html += '<div class="item-wrapper forum_post" onclick="viz.searchForumDetails(' + item.id + ')"><table class="item_table">';
+    				html += '<div class="item-wrapper forum_post" onclick="viz.searchKEUIThreaded(' + item.id + ', \'post\')"><table class="item_table">';
     				
     				// author + date
     				html += '<tr>';
