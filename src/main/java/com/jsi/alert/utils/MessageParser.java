@@ -573,6 +573,7 @@ public class MessageParser {
 				personJSon.put("id", id);
 				personJSon.put("email", personNode.getAttribute("account"));
 				personJSon.put("label", personNode.getAttribute("name"));
+				personJSon.put("uuid", personNode.getAttribute("uuid"));
 				personJSon.put("neighbours", new JSONArray());
 				
 				nodeV.add(personJSon);
@@ -648,7 +649,7 @@ public class MessageParser {
 			for (JSONObject edge : edgeV) {
 				JSONObject data = (JSONObject) edge.get("data");
 				int count = (Integer) data.get("count");
-				data.put("opacity", (double) count/maxCountEdge);
+				data.put("opacity", Math.pow((double) count/maxCountEdge, .35));
 			}
 
 			

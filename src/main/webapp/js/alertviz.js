@@ -451,17 +451,37 @@ var SocialGraph = function(options){
 	
 	// tooltip functions
 	function showTooltip(data) {
-		var html = '<table class="tooltip"><tbody>';
-		html += '<tr>';
-		html += '<td class="tooltip_name">' + data.label + '</td>';
-		html += '<td class="tooltip_id">' + data.id + '</td>';
-		html += '</tr>';
+//		var url = $('#user_info').val().replace('{uuid}', data.uuid);
+//		
+//		$.ajax({
+//			url: url,
+//			dataType: 'json',
+//			success: function (data, textStatus, jqXHR) {
+//				alert('works');
+//			}
+//		});
 		
-		html += '<tr>';
-		html += '<td class="tooltip_mail">' + data.email + '</td>';
-		html += '<td class="tooltip_expertise">Missing!!</td>';
-		html +='</tr>';
-		html += '</tbody></table>';
+		var html = '';
+		if (data.uuid == null || data.uuid == '') {
+			html += '<table class="tooltip"><tbody>';
+			html += '<tr>';
+			html += '<td class="tooltip_name">ID of ' + data.label + ' isn\'t available!</td>';
+			html += '</tr>';
+			html += '</tbody></table>';
+		} else {
+			// TODO
+			html += '<table class="tooltip"><tbody>';
+			html += '<tr>';
+			html += '<td class="tooltip_name">' + data.label + ' IMPLEMENT ME!!</td>';
+			html += '<td class="tooltip_id">' + data.uuid + '</td>';
+			html += '</tr>';
+			
+			html += '<tr>';
+			html += '<td class="tooltip_mail">' + data.email + '</td>';
+			html += '<td class="tooltip_expertise">Missing!!</td>';
+			html +='</tr>';
+			html += '</tbody></table>';
+		}
 		
 		tooltip.show(html);
 	}
@@ -539,7 +559,7 @@ var SocialGraph = function(options){
 				
 				if (sourcePos == null || targetPos == null) return;
 				
-				var color = "rgba(85, 85, 85, " + Math.max(data.opacity, .2) + ")";
+				var color = "rgba(85, 85, 85, " + Math.max(data.opacity, .08) + ")";
 								
 				var tail = intersect_line_box(sourcePos, targetPos, data.source.nodeBox);
 				var head = intersect_line_box(tail, targetPos, data.target.nodeBox);
@@ -1100,7 +1120,8 @@ var AlertViz = function(options) {
     			type: 'itemData',
             	keywords: queryOpts.keywords,
             	issues: queryOpts.issues,
-    			people: queryOpts.people,
+            	peopleUris: queryOpts.peopleUris,
+    			peopleUuids: queryOpts.peopleUuids,
     			sources: queryOpts.sources,
     			products: queryOpts.products,
     			from: queryOpts.from,

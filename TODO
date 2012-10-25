@@ -9,7 +9,6 @@
 	
 	
 - gumbi za spremembo strani naj lepse zgledajo
-- logout
 - search for developer in new tab when recommended developer is clicked
 - implement issues related to my code search !! Metadata prepocasna
 
@@ -24,8 +23,6 @@
 MISLIM, da dela, testiraj
 - exception pri commit details
 - paging pri suggest issues for a developer
-- paging pri duplicate issue (gregor mora vrnit info tag)
-- luka, Sinan just noticed that on Firefox the subscribe and project overview tabs are not displaying correctly <GregorLeban> the hight of the iframe is too small
 
 
 

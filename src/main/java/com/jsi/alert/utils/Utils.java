@@ -160,4 +160,8 @@ public class Utils {
 	public static String getSubscribeUrl(String uuid, String email) {
 		return Configuration.SUBSCRIBE_URL + "?uid=" + uuid + "&email=" + email + "&username=abc";
 	}
+	
+	public static String getUserInfoUrl() {
+		return Configuration.STARDOM_BASE_PATH + "/search/{uuid}/uuid";
+	}
 }

@@ -270,7 +270,7 @@ public class MessageUtils {
 			params.addAttribute(envelope.createName("resultData"), "keywordData");
 			params.addAttribute(envelope.createName("keywordCount"), "40");
 			params.addAttribute(envelope.createName("keywordSource"), "concepts");
-			params.addAttribute(envelope.createName("sampleSize"), "-1");
+			params.addAttribute(envelope.createName("sampleSize"), "10000");
 			params.addAttribute(envelope.createName("keywordMethod"), "localConceptSpV");
 			params.addAttribute(envelope.createName("sortBy"), props.getProperty("sort"));
 			

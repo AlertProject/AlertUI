@@ -55,11 +55,23 @@ public class UserPrincipal implements Serializable {
 		this.authenticated = authenticated;
 	}
 	
+	/**
+	 * Clears all the fields
+	 */
 	public void clear() {
 		setAdmin(null);
 		setAuthenticated(false);
 		setEmail(null);
 		setNotifications(new ArrayList<Notification>());
 		setUuid(null);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.format("UserPrincipal: [email: %s, uuid: %s, admin: %b, authenticated: %b]", email, uuid, admin, authenticated);
 	}
 }

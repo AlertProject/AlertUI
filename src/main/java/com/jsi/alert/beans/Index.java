@@ -68,9 +68,10 @@ public class Index implements Serializable {
 		try {
 			if (user != null && user.getEmail() != null)
 				return Utils.getLogoutUrl(user.getEmail());
+			else if (log.isDebugEnabled())
+				log.debug("Trying to construct logout URL for an invalid user: " + user);
 		} catch (UnsupportedEncodingException e) {
-			if (log.isWarnEnabled())
-				log.warn("Failed to construct logout URL!", e);
+			log.error("Failed to construct logout URL!", e);
 		}
 		return "";
 	}
@@ -88,9 +89,13 @@ public class Index implements Serializable {
 			return Utils.getSubscribeUrl(user.getUuid(), user.getEmail());
 		} else {
 			if (log.isWarnEnabled())
-				log.warn("Trying to construct a subscribe URL for an invalid user: " + user);
+				log.error("Trying to construct a subscribe URL for an invalid user: " + user);
 		}
 		return "";
+	}
+	
+	public String getUserInfoUrl() {
+		return Utils.getUserInfoUrl();
 	}
 	
 	public String getOverviewUrl() {
