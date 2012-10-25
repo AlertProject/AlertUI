@@ -54,4 +54,12 @@ public class UserPrincipal implements Serializable {
 	public void setAuthenticated(boolean authenticated) {
 		this.authenticated = authenticated;
 	}
+	
+	public void clear() {
+		setAdmin(null);
+		setAuthenticated(false);
+		setEmail(null);
+		setNotifications(new ArrayList<Notification>());
+		setUuid(null);
+	}
 }

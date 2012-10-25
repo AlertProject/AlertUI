@@ -17,14 +17,11 @@
 - pointer, ko cursor nad notifikacijami
 - na FF je notification button grde zelene barve, ko ga kliknes
 - when manually added to a text box, no more selections allowed does not appear
-- timeline loading not shown
-- show metadata in extended issue view
 
 	
 
 /////////////////////////////////////////////////////////////////////////
 MISLIM, da dela, testiraj
-- logout
 - exception pri commit details
 - paging pri suggest issues for a developer
 - paging pri duplicate issue (gregor mora vrnit info tag)

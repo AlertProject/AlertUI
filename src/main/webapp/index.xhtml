@@ -399,7 +399,6 @@
 				<c:if test="#{index.user.admin}">
 					<div id="administration_content" class="tab_frame hidden"><iframe class="tab_frame" src="#{index.getAdminUrl()}"></iframe></div>
 				</c:if>
-				<div id="logout_content" class="tab_frame hidden"><iframe class="tab_frame" src="#{index.getLogoutUrl()}"></iframe></div>
 			</c:when>
 		 	<c:otherwise>
 		 		<div id="login_content" class="tab_frame hidden"><iframe class="tab_frame" src="#{index.getLoginUrl()}"></iframe></div>

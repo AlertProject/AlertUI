@@ -1,6 +1,5 @@
 package com.jsi.alert.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jsi.alert.beans.UserPrincipal;
-import com.jsi.alert.model.Notification;
 import com.jsi.alert.service.UniversalService.RequestType;
 import com.jsi.alert.utils.Configuration;
 import com.jsi.alert.utils.Utils;
@@ -84,25 +82,25 @@ public class AuthenticatorService {
 		
 		// real authentication
 		if (user != null && user.getEmail() != null) {
-			String email = user.getEmail();
-			if (log.isDebugEnabled()) log.debug("Authenticating user: " + email + "...");
-			UserPrincipal userInfo = getUserInfo(email);
-			
-			if (userInfo != null) {
-				user.setAdmin(userInfo.getAdmin());
-				user.setEmail(userInfo.getEmail());
-				user.setUuid(userInfo.getUuid());
-				user.setAuthenticated(userInfo.isAuthenticated());
+			try {
+				String email = user.getEmail();
+				if (log.isDebugEnabled()) log.debug("Authenticating user: " + email + "...");
+				UserPrincipal userInfo = getUserInfo(email);
 				
-				return true;
-			} else {
-				user.setAdmin(null);
-				user.setAuthenticated(false);
-				user.setEmail(null);
-				user.setNotifications(new ArrayList<Notification>());
-				user.setUuid(null);
+				if (userInfo != null) {
+					user.setAdmin(userInfo.getAdmin());
+					user.setEmail(userInfo.getEmail());
+					user.setUuid(userInfo.getUuid());
+					user.setAuthenticated(userInfo.isAuthenticated());
+					
+					return true;
+				}
+			} catch (Throwable t) {
+				log.error("An exception occurred while authenticating user!", t);
 			}
 		}
+		
+		if (user != null) user.clear();
 		return false;
 	}
 }
