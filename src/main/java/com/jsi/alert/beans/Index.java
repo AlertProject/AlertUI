@@ -8,6 +8,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.context.PartialViewContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +38,10 @@ public class Index implements Serializable {
 	@SuppressWarnings("unused")
 	@PostConstruct
 	private void init() {
-		if (AuthenticatorService.authenticateUser(user))
+		FacesContext context = FacesContext.getCurrentInstance();
+		PartialViewContext pvc = context.getPartialViewContext();
+		
+		if (!pvc.isAjaxRequest() && AuthenticatorService.authenticateUser(user))
 			fetchNotifications();
 	}
 	

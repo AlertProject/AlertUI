@@ -7,16 +7,19 @@
 	•  issue details
 		○  show related posts (the info that you get in the metadata content)
 	
-	
+- notifications called twice when accessing index	
 - gumbi za spremembo strani naj lepse zgledajo
 - search for developer in new tab when recommended developer is clicked
 - implement issues related to my code search !! Metadata prepocasna
+
 
 - tooltip pri social graph-u je treba zrihtat
 - pointer, ko cursor nad notifikacijami
 - na FF je notification button grde zelene barve, ko ga kliknes
 - when manually added to a text box, no more selections allowed does not appear
 - fetch notification on button click
+- tooltip bug, vcasih ne izgine
+- naj se presledek ne doda v url!! naredi trim!!
 	
 
 /////////////////////////////////////////////////////////////////////////

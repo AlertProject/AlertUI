@@ -6,7 +6,7 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:c="http://java.sun.com/jsp/jstl/core"
       xmlns:fn="http://java.sun.com/jsp/jstl/functions">
-<head>
+<h:head>
 	<title>Alert</title>
 	<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
 	<meta name="description" content="Active support and reaL-time coordination based on Event pRocessing in FLOSS developmenT" />
@@ -72,7 +72,7 @@
 		});
 	</script>
 	<style type="text/css">.tabber{visibility: hidden;}</style>
-</head>
+</h:head>
 <body>
 	<div id="header-wrap">
 		<div id="header" class="container_wide">
@@ -95,28 +95,50 @@
 					 			</div>
 					 		</li>
 					 		<li>
-					 			<input type="button" id="notification_btn" class="notifications_open" value="#{index.user.email} (#{fn:length(index.user.notifications)})" />
-				 				<div id="notification_div">
-					 				<div class='arrow'></div>
-     		 		 				<div class='arrow-border'></div>
-     		 		 				<div id="notification_wrapper">
-	     			    				<ul id="notification_list">
-		     			    				<c:forEach items="#{index.user.notifications}" var="notification">
-		     			    					<li>
-		     			    						<table class="notification">
-														<tr><td><a href="${notification.link}">${notification.title}</a><span class="notification_date">${notification.publishDate}</span></td></tr>
-		     			    							<tr><td>#{notification.content}</td></tr>
-	     			    							</table>
-		     			    					</li>
-		     			    				</c:forEach>
-	     			    				</ul>
-     			    				</div>
-					 			</div>
-				 				<script type="application/javascript">
-					 				<!--
-					 				$('#notification_div').popup({trigger: '#notification_btn', align: 'center', duration: 'fast', top: 21, event: 'click'});
-					 				-->
-				 				</script>
+					 			<h:form id="notification_form">
+					 				<div id="notification_div">
+						 				<div class='arrow'></div>
+	     		 		 				<div class='arrow-border'></div>
+	     		 		 				<div id="notification_wrapper">
+	     		 		 					<h:panelGroup id="nots_panel">
+			     			    				<ul id="notification_list">
+				     			    				<c:forEach items="#{index.user.notifications}" var="notification">
+				     			    					<li>
+				     			    						<table class="notification">
+																<tr><td><a href="${notification.link}">${notification.title}</a><span class="notification_date">${notification.publishDate}</span></td></tr>
+				     			    							<tr><td>#{notification.content}</td></tr>
+			     			    							</table>
+				     			    					</li>
+				     			    				</c:forEach>
+			     			    				</ul>
+		     			    				</h:panelGroup>
+	     			    				</div>
+						 			</div>
+						 			<h:commandButton id="notification_btn_hidden" action="#{index.fetchNotifications()}" style="display: none;">
+						 				<f:ajax render="nots_panel nots_button" />
+						 			</h:commandButton>
+						 			<a id="notification_a" onselectstart="return false;">
+						 				<h:panelGroup id="nots_button">#{index.user.email} (#{fn:length(index.user.notifications)})</h:panelGroup>
+					 				</a>
+					 				<script type="application/javascript">
+						 				<!--
+						 				$('#notification_div').popup({
+						 					trigger: '#notification_a',
+						 					align: 'center',
+						 					duration: 'fast',
+						 					top: 21,
+						 					event: 'click',
+						 					beforeOpen: function () {
+						 						$('#notification_a').addClass('open');
+						 						document.getElementById('notification_form:notification_btn_hidden').click();
+						 					},
+						 					beforeClose: function () {
+						 						$('#notification_a').removeClass('open');
+						 					}
+						 				});
+						 				-->
+				 					</script>
+				 				</h:form>
 		     			     </li>
 					 	</c:when>
 					 	<c:otherwise>

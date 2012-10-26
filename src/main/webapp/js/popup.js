@@ -7,6 +7,8 @@
 		var verticalOffset = config.top == null ? 2 : config.top;
 		var horizontalOffset = config.left == null ? 0 : config.left;
 		var eventType = config.event || 'click';
+		var beforeOpen = config.beforeOpen;
+		var beforeClose = config.beforeClose;
 		
 		var arrow = $($(popup).children('.arrow'));
 		var arrowBorder = $($(popup).children('.arrow-border'));
@@ -26,6 +28,8 @@
 			event.preventDefault();
 			
 			if ($(popup).css('display') == 'none') {
+				if (beforeOpen != null) beforeOpen.call(popup);
+				
 				var triggerPos = $(trigger).position();	// relative to the parent
 				var trigerBottom = triggerPos.top + $(trigger).height();
 				
@@ -48,14 +52,18 @@
 					arrowBorder.css('left', ($(popup).outerWidth()/2 - arrowBorder.outerWidth()/2) + 'px');
 					arrowBorder.css('top', '-' + arrowBorder.outerHeight() + 'px');
 				}
-			}
+			} else if (beforeClose != null)
+				beforeClose.call(popup);
 			$(popup).fadeToggle(fadeDuration);
 			return false;
 		});
 
 		$(document).click(function (event) {
-			if (event.target != $(popup) && event.target != $(trigger) && $(popup).css('display') != 'none' && $.inArray(event.target, $(popup).find('*')) < 0)
+			if (event.target != $(popup) && event.target != $(trigger) && $(popup).css('display') != 'none' && $.inArray(event.target, $(popup).find('*')) < 0) {
+				if (beforeClose != null) beforeClose.call(popup);
+				
 				$(popup).fadeToggle(fadeDuration);
+			}
 		});
 	};
 })(jQuery);
