@@ -5,7 +5,7 @@ var tooltip = function() {
 	var maxw = 300;
 	var speed = 80;
 	var timer = 20;
-	var delay = 1000;
+	var delay = 0;
 	var endalpha = 95;
 	var alpha = 0;
 	var tt, t, c, b, h;

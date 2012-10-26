@@ -453,39 +453,37 @@ var SocialGraph = function(options){
 	
 	// tooltip functions
 	function showTooltip(data) {
-//		var url = $('#user_info').val().replace('{uuid}', data.uuid);
-//		
-//		$.ajax({
-//			url: url,
-//			dataType: 'json',
-//			success: function (data, textStatus, jqXHR) {
-//				alert('works');
-//			}
-//		});
 		
-		var html = '';
 		if (data.uuid == null || data.uuid == '') {
-			html += '<table class="tooltip"><tbody>';
+			var html = '<table class="tooltip"><tbody>';
 			html += '<tr>';
 			html += '<td class="tooltip_name">ID of ' + data.label + ' isn\'t available!</td>';
 			html += '</tr>';
 			html += '</tbody></table>';
-		} else {
-			// TODO
-			html += '<table class="tooltip"><tbody>';
-			html += '<tr>';
-			html += '<td class="tooltip_name">' + data.label + ' IMPLEMENT ME!!</td>';
-			html += '<td class="tooltip_id">' + data.uuid + '</td>';
-			html += '</tr>';
 			
-			html += '<tr>';
-			html += '<td class="tooltip_mail">' + data.email + '</td>';
-			html += '<td class="tooltip_expertise">Missing!!</td>';
-			html +='</tr>';
-			html += '</tbody></table>';
+			tooltip.show(html);
+		} else {
+			$.ajax({
+				url: 'query',
+				dataType: 'json',
+				data: {uuid: data.uuid, type: 'personDetails'},
+				success: function (data, textStatus, jqXHR) {
+					var html = '<table class="tooltip"><tbody>';
+					html += '<tr>';
+					html += '<td class="tooltip_name">' + data.uuid + ' IMPLEMENT ME!!</td>';
+					html += '<td class="tooltip_id">' + data.uuid + '</td>';
+					html += '</tr>';
+					
+					html += '<tr>';
+					html += '<td class="tooltip_mail">' + data.uuid + '</td>';
+					html += '<td class="tooltip_expertise">Missing!!</td>';
+					html +='</tr>';
+					html += '</tbody></table>';
+					
+					tooltip.show(html);
+				}
+			});
 		}
-		
-		tooltip.show(html);
 	}
 	
 	function hideTooltip() {
@@ -864,7 +862,7 @@ var AlertViz = function(options) {
     var issueIdSearch = Search();
     var personSearch = Search();
     
-    var itemsPerPage = 100;
+    var itemsPerPage = 50;
     
     var socialGraph = null;
     var chart = null;
@@ -919,6 +917,10 @@ var AlertViz = function(options) {
     		$('#page_td').html('');
     		if (socialGraph != null)
     			socialGraph.clear();
+    		that.cleanItems();
+    	},
+    	
+    	cleanItems: function () {
     		$('#items-div').html('');
     		$('#page_td').html('');
     	},
@@ -1292,8 +1294,12 @@ var AlertViz = function(options) {
     		});
     	},
     	
-    	searchIssueByQueryOpts: function (queryOpts, selectFirst) {
-    		that.cleanData();
+    	searchIssueByQueryOpts: function (queryOpts, isFullSearch) {
+    		if (isFullSearch)
+    			that.cleanData();
+    		else
+    			that.cleanItems();
+    		
     		$('#items-div').addClass('loading');
     		try {
 	    		$.ajax({
@@ -1304,7 +1310,7 @@ var AlertViz = function(options) {
 	                async: true,
 	                success: function (data, textStatus, jqXHR) {
 	                	currentQueryOpts = queryOpts;
-	    				that.setQueryResults(data, selectFirst);
+	    				that.setQueryResults(data, isFullSearch);
 	    			},
 	                complete: function () {
 	                	$('#items-div').removeClass('loading');
@@ -2258,6 +2264,9 @@ var AlertViz = function(options) {
     	asHtmlID: 'person_text',
     	addByWrite: false,
     	selectionAdded: function (elem, data) {
+    		if (data.type == 'person')
+    			$(elem).html($(elem).html().replace(/\s+\[AKA[\w\W]*\]/g, ''));
+    		
     		if (!settingManually) {
 	    		personSearch.addToSearch(data);
 	    		updateUrl();

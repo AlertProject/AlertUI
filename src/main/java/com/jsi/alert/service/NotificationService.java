@@ -32,6 +32,7 @@ public class NotificationService {
 		try {
 			Map<String, String> params = new HashMap<>();
 			params.put(Configuration.NOTIFICATION_PARAMETER, uuid);
+			params.put("unreaded", "0");
 			
 			String response = UniversalService.fetchUrl(Configuration.NOTIFICATION_URL, params, MediaType.TEXT_XML, RequestType.GET);
 			

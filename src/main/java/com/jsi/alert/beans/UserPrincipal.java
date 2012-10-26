@@ -2,6 +2,7 @@ package com.jsi.alert.beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -45,6 +46,12 @@ public class UserPrincipal implements Serializable {
 	}
 	public void setNotifications(List<Notification> notifications) {
 		this.notifications = notifications;
+	}
+	
+	public void addNotifications(Collection<Notification> notifications) {
+		List<Notification> notifs = getNotifications();
+		notifs.clear();
+		notifs.addAll(notifications);
 	}
 	
 	public boolean isAuthenticated() {

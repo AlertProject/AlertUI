@@ -42,7 +42,7 @@ public class MessageUtils {
 	
 	private static final String KEUI_ITEM_SNIP_LEN = "200";
 	
-	private static final int DEFAULT_LIMIT = 100;
+	private static final int DEFAULT_LIMIT = 50;
 	
 	private static final String[] keuiIgnoreKeys = {
 		"issuesChk",

@@ -3,6 +3,7 @@ package com.jsi.alert.servlet;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.MediaType;
 import javax.xml.soap.SOAPException;
 
 import org.json.simple.JSONArray;
@@ -22,6 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import com.jsi.alert.beans.UserPrincipal;
 import com.jsi.alert.service.AuthenticatorService;
+import com.jsi.alert.service.UniversalService;
+import com.jsi.alert.service.UniversalService.RequestType;
 import com.jsi.alert.utils.Configuration;
 import com.jsi.alert.utils.MessageParser;
 import com.jsi.alert.utils.MessageUtils;
@@ -44,7 +48,8 @@ public class QueryServlet extends MQServlet {
 		DUPLICATE_ISSUE("duplicateIssue"),
 		SUGGEST_MY_CODE("suggestMyCode"),
 		ISSUES_FOR_PERSON("suggestPeople"),
-		PEOPLE_FOR_ISSUE("peopleForIssue");
+		PEOPLE_FOR_ISSUE("peopleForIssue"),
+		PERSON_DETAILS("personDetails");
 		
 		public final String value;
 		
@@ -115,6 +120,8 @@ public class QueryServlet extends MQServlet {
 				processSuggestForPeopleRq(request, response);
 			else if (QueryType.PEOPLE_FOR_ISSUE.value.equals(type))
 				processSuggestDevelopersRq(request, response);
+			else if (QueryType.PERSON_DETAILS.value.equals(type))
+				processPersonDetailsRq(request, response);
 			else
 				throw new IllegalArgumentException("An unexpected query type: " + type + "!");
 			
@@ -126,7 +133,7 @@ public class QueryServlet extends MQServlet {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	private Properties createRequestProps(HttpServletRequest request) {
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		
@@ -394,5 +401,12 @@ public class QueryServlet extends MQServlet {
 		JSONObject result = MessageParser.parseRecommenderIdentitiesMsg(responseMsg);
 		
 		result.writeJSONString(response.getWriter());
+	}
+	
+	private void processPersonDetailsRq(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String result = UniversalService.fetchUrl(Utils.getUserInfoUrl(request.getParameter("uuid")), new HashMap<String, String>(), MediaType.APPLICATION_JSON, RequestType.GET);
+	
+		if (result != null)
+			response.getWriter().write(result);
 	}
 }

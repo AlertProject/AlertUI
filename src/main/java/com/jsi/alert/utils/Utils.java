@@ -158,10 +158,10 @@ public class Utils {
 	}
 
 	public static String getSubscribeUrl(String uuid, String email) {
-		return Configuration.SUBSCRIBE_URL + "?uid=" + uuid + "&email=" + email + "&username=abc";
+		return Configuration.SUBSCRIBE_URL + "?uid=" + uuid + "&email=" + email + "&username=" + email;
 	}
 	
-	public static String getUserInfoUrl() {
-		return Configuration.STARDOM_BASE_PATH + "/search/{uuid}/uuid";
+	public static String getUserInfoUrl(String uuid) throws UnsupportedEncodingException {
+		return Configuration.STARDOM_BASE_PATH + "/search/" + URLEncoder.encode(uuid, "ISO-8859-1") + "/uuid";
 	}
 }

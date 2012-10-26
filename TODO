@@ -16,16 +16,13 @@
 - pointer, ko cursor nad notifikacijami
 - na FF je notification button grde zelene barve, ko ga kliknes
 - when manually added to a text box, no more selections allowed does not appear
-- thread id search pri metadata issue.getInfo
-- " [AKA.." -> zbrisi pri ljudeh
-- st. rezultatov na 50
+- fetch notification on button click
 	
 
 /////////////////////////////////////////////////////////////////////////
 MISLIM, da dela, testiraj
 - exception pri commit details
 - paging pri suggest issues for a developer
-
 
 
 User details:
@@ -35,4 +32,5 @@ User details:
 // LOGINS:
 afiestas@kde.org b2bff2d4
 lukas@kde.org 43dcb60f
-drf@kde.org 90f9ee3e
+
+drf@kde.org d03f6d9d
