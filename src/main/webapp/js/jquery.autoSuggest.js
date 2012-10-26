@@ -234,7 +234,7 @@
 					var lastCh = val.substring(val.length - 1);
 					if (lastCh == '|') {
 						var i_input = input.val().replace(/(\|)/g, "");
-						var labelTypeV = i_input.split(':');
+						var labelTypeV = i_input.split('--:--');
 						i_input = labelTypeV[0];
 						var type = labelTypeV[1];
 						if (values_input.val().search(new RegExp("^" + i_input + ",|" + "," + i_input + ",", "g")) >= 0) {

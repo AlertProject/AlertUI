@@ -383,25 +383,96 @@ public class MessageParser {
 					comments.add(commentJSon);
 				}
 				else if ("s3:references".equals(nodeName)) {
-					Element references = (Element) node;
-					NodeList issues = references.getElementsByTagName("s3:issue");
+					Element nodeEl = (Element) node;
 					
-					JSONArray issuesJSon = new JSONArray();
-					for (int issueIdx = 0; issueIdx < issues.getLength(); issueIdx++) {
-						Node issue = issues.item(issueIdx);
+					JSONArray referencesJSon = new JSONArray();
+					
+					NodeList issues = nodeEl.getElementsByTagName("s3:issue");
+					NodeList commits = nodeEl.getElementsByTagName("s3:commit");
+					NodeList emails = nodeEl.getElementsByTagName("s3:email");
+					NodeList posts = nodeEl.getElementsByTagName("s3:forumPost");
+					
+					// issues
+					for (int i = 0; i < issues.getLength(); i++) {
+						Element issue = (Element) issues.item(i);
+						
 						JSONObject issueJSon = new JSONObject();
 						
-						NodeList issueProps = issue.getChildNodes();
-						for (int propIdx = 0; propIdx < issueProps.getLength(); propIdx++) {
-							Node prop = issueProps.item(propIdx);
-							
-							issueJSon.put(prop.getNodeName().substring(3), prop.getTextContent());
-						}
+						NodeList uris = issue.getElementsByTagName("s3:issueUri");
+						NodeList threadIds = issue.getElementsByTagName("s3:threadId");
+						NodeList descriptions = issue.getElementsByTagName("s3:issueDescription");
 						
-						issuesJSon.add(issueJSon);
+						if (uris.getLength() > 0) 
+							issueJSon.put("uri", uris.item(0).getTextContent());
+						if (threadIds.getLength() > 0)
+							issueJSon.put("threadId", Long.parseLong(threadIds.item(0).getTextContent()));
+						if (descriptions.getLength() > 0)
+							issueJSon.put("description", descriptions.item(0).getTextContent());
+						
+						referencesJSon.add(issueJSon);
 					}
 					
-					result.put("related", issuesJSon);
+					// commits
+					for (int i = 0; i < commits.getLength(); i++) {
+						Element commit = (Element) commits.item(i);
+						
+						JSONObject commitJSon = new JSONObject();
+						
+						NodeList commitUris = commit.getElementsByTagName("s3:commitUri");
+						NodeList itemIds = commit.getElementsByTagName("s3:itemId");
+						NodeList commitLog = commit.getElementsByTagName("s3:commitMessageLog");
+						
+						if (commitUris.getLength() > 0)
+							commitJSon.put("uri", commitUris.item(0).getTextContent());
+						if (itemIds.getLength() > 0)
+							commitJSon.put("itemId", Long.parseLong(itemIds.item(0).getTextContent()));
+						if (commitLog.getLength() > 0)
+							commitJSon.put("description", commitLog.item(0).getTextContent());
+						
+						referencesJSon.add(commitJSon);
+					}
+					
+					// emails
+					for (int i = 0; i < emails.getLength(); i++) {
+						Element email = (Element) emails.item(i);
+						
+						JSONObject emailJSon = new JSONObject();
+						
+						NodeList emailUris = email.getElementsByTagName("s3:emailUri");
+						NodeList emailThreadIds = email.getElementsByTagName("s3:threadId");
+						NodeList emailSubjects = email.getElementsByTagName("s3:subject");
+						
+						if (emailUris.getLength() > 0)
+							emailJSon.put("uri", emailUris.item(0).getTextContent());
+						if (emailThreadIds.getLength() > 0)
+							emailJSon.put("threadId", Long.parseLong(emailThreadIds.item(0).getTextContent()));
+						if (emailSubjects.getLength() > 0)
+							emailJSon.put("description", emailSubjects.item(0).getTextContent());
+						
+						referencesJSon.add(emailJSon);
+					}
+					
+					// posts
+					for (int i = 0; i < posts.getLength(); i++) {
+						Element post = (Element) posts.item(i);
+						
+						JSONObject postJSon = new JSONObject();
+						
+						NodeList forumUris = post.getElementsByTagName("s3:postUri");
+						NodeList forumThreadIds = post.getElementsByTagName("s3:threadId");
+						NodeList forumSubject = post.getElementsByTagName("s3:subject");
+						
+						if (forumUris.getLength() > 0)
+							postJSon.put("uri", forumUris.item(0).getTextContent());
+						if (forumThreadIds.getLength() > 0)
+							postJSon.put("threadId", Long.parseLong(forumThreadIds.item(0).getTextContent()));
+						if (forumSubject.getLength() > 0)
+							postJSon.put("description", forumSubject.item(0).getTextContent());
+						
+						referencesJSon.add(postJSon);
+					}
+					
+					result.put("related", referencesJSon);
 				}
 			}
 			
@@ -1061,7 +1132,8 @@ public class MessageParser {
 			result.put("url", url);
 		}
 		else {
-			log.warn("Unknown item type received: " + type + ", ignoring...");
+			if (log.isWarnEnabled())
+				log.warn("Unknown item type received: " + type + ", ignoring...");
 			return null;
 		}
 		
@@ -1168,7 +1240,8 @@ public class MessageParser {
 					jsonObj.put("tooltip", fullPath1);
 					break;
 				default:
-					log.warn("Invalid suggestion tag: " + tagName + ", ignoring...");
+					if (log.isWarnEnabled())
+						log.warn("Invalid suggestion tag: " + tagName + ", ignoring...");
 					continue;
 				}
 				

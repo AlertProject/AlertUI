@@ -53,7 +53,7 @@ public class Index implements Serializable {
 		
 		String uuid = Configuration.USE_DEFAULT_USER ? Configuration.DEFAULT_USER_NOTIFICATION_ID : user.getUuid();
 		List<Notification> newNotifications = NotificationService.fetchNotifications(uuid);
-		user.getNotifications().addAll(newNotifications);
+		user.addNotifications(newNotifications);
 	}
 	
 	public boolean isUserLoggedIn() {
@@ -92,10 +92,6 @@ public class Index implements Serializable {
 				log.error("Trying to construct a subscribe URL for an invalid user: " + user);
 		}
 		return "";
-	}
-	
-	public String getUserInfoUrl() {
-		return Utils.getUserInfoUrl();
 	}
 	
 	public String getOverviewUrl() {

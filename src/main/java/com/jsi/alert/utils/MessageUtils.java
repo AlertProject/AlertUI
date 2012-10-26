@@ -42,7 +42,7 @@ public class MessageUtils {
 	
 	private static final String KEUI_ITEM_SNIP_LEN = "200";
 	
-	private static final int DEFAULT_LIMIT = 100;
+	private static final int DEFAULT_LIMIT = 50;
 	
 	private static final String[] keuiIgnoreKeys = {
 		"issuesChk",
@@ -561,6 +561,12 @@ public class MessageUtils {
 				conditions.addChildElement("tagIdStr").setTextContent(builder.toString());
 			}
 			
+			// threaded
+			if (props.containsKey("threadIds"))
+				conditions.addChildElement("threadIds").setTextContent(props.getProperty("threadIds"));
+			if (props.containsKey("itemIds"))
+				conditions.addChildElement("itemId").setTextContent(props.getProperty("itemIds"));
+				
 			if (props.containsKey("from") || props.contains("to")) {
 				SimpleDateFormat format = Utils.getClientDateFormat();
 				

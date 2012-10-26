@@ -7,6 +7,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jsi.alert.utils.Configuration;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource.Builder;
@@ -18,7 +19,7 @@ public class UniversalService {
 	private static final Logger log = LoggerFactory.getLogger(UniversalService.class);
 	private static Client client = Client.create(new DefaultClientConfig());
 	
-	enum RequestType {
+	public enum RequestType {
 		GET,
 		POST
 	}
@@ -60,9 +61,11 @@ public class UniversalService {
 			// success, now parse the response
 			String responseStr = response.getEntity(String.class);
 			
-			if (log.isDebugEnabled())
-				log.debug("Received response:\n" + responseStr);
-			
+			if (log.isDebugEnabled()) {
+				log.debug("Received response...");
+				if (Configuration.LOG_EVENTS)
+					log.debug(responseStr);
+			}
 			return responseStr;
 		} else {
 			log.warn("Failed to fetch resource, status code: " + response.getStatus());

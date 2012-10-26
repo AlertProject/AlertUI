@@ -54,12 +54,14 @@ function getCurrentState() {
 	var sources = searchGeneral.getTypeV('source');
 	var products = searchGeneral.getTypeV('product');
 	var issues = searchGeneral.getTypeV('issue');
+	var threads = searchGeneral.getTypeV('thread');
 	
 	if (people.length > 0) general.people = people;
 	if (keywords.length > 0) general.keywords = keywords;
 	if (sources.length > 0) general.sources = sources;
 	if (products.length > 0) general.products = products;
 	if (issues.length > 0) general.issues = issues;
+	if (threads.length > 0) general.threads = threads;
 	
 	// checkboxes
 	var issueChk = $('#issues_check').attr('checked') == 'checked';
@@ -273,7 +275,7 @@ function loadState() {
 	settingManually = true;
 	
 	// general search
-	var searchTerms = {people: true, concepts: true, sources: true, products: true, issues: true, commits: true};
+	var searchTerms = {people: true, concepts: true, sources: true, products: true, issues: true, commits: true, threads: true};
 	var filterChks = {is: true, c: true, fi: true, m: true, wo: true};
 	var issueChks = {n: true, f: true, w: true, i: true, d: true, wo: true, u: true, o: true, v: true, a: true, r: true, c: true};
 	var issueChksGen = {go: true, gn: true, gv: true, gf: true, ga: true, gw: true, gr: true, gi: true, gc: true, gwo: true, gu: true, gd: true};
@@ -451,39 +453,37 @@ var SocialGraph = function(options){
 	
 	// tooltip functions
 	function showTooltip(data) {
-//		var url = $('#user_info').val().replace('{uuid}', data.uuid);
-//		
-//		$.ajax({
-//			url: url,
-//			dataType: 'json',
-//			success: function (data, textStatus, jqXHR) {
-//				alert('works');
-//			}
-//		});
 		
-		var html = '';
 		if (data.uuid == null || data.uuid == '') {
-			html += '<table class="tooltip"><tbody>';
+			var html = '<table class="tooltip"><tbody>';
 			html += '<tr>';
 			html += '<td class="tooltip_name">ID of ' + data.label + ' isn\'t available!</td>';
 			html += '</tr>';
 			html += '</tbody></table>';
-		} else {
-			// TODO
-			html += '<table class="tooltip"><tbody>';
-			html += '<tr>';
-			html += '<td class="tooltip_name">' + data.label + ' IMPLEMENT ME!!</td>';
-			html += '<td class="tooltip_id">' + data.uuid + '</td>';
-			html += '</tr>';
 			
-			html += '<tr>';
-			html += '<td class="tooltip_mail">' + data.email + '</td>';
-			html += '<td class="tooltip_expertise">Missing!!</td>';
-			html +='</tr>';
-			html += '</tbody></table>';
+			tooltip.show(html);
+		} else {
+			$.ajax({
+				url: 'query',
+				dataType: 'json',
+				data: {uuid: data.uuid, type: 'personDetails'},
+				success: function (data, textStatus, jqXHR) {
+					var html = '<table class="tooltip"><tbody>';
+					html += '<tr>';
+					html += '<td class="tooltip_name">' + data.uuid + ' IMPLEMENT ME!!</td>';
+					html += '<td class="tooltip_id">' + data.uuid + '</td>';
+					html += '</tr>';
+					
+					html += '<tr>';
+					html += '<td class="tooltip_mail">' + data.uuid + '</td>';
+					html += '<td class="tooltip_expertise">Missing!!</td>';
+					html +='</tr>';
+					html += '</tbody></table>';
+					
+					tooltip.show(html);
+				}
+			});
 		}
-		
-		tooltip.show(html);
 	}
 	
 	function hideTooltip() {
@@ -718,14 +718,18 @@ var Search = function (opts) {
 		},
 			
 		indexOfLabel: function (type, label) {
+			return that.indexOfAttr(type, label, 'label');
+		},
+		
+		indexOfAttr: function (type, val, attr) {
 			var prV = searchTerms[type];
 			for (var i = 0; i < prV.length; i++) {
-				if (prV[i].label == label)
+				if (prV[i][attr] == val)
 					return i;
 				
-				var labelV = prV[i].label.split(',');
+				var labelV = prV[i][attr].split(',');
 				for (var j = 0; j < labelV.length; j++) {
-					if (labelV[j] == label)
+					if (labelV[j] == val)
 						return i;
 				}
 	    	}
@@ -770,6 +774,9 @@ var Search = function (opts) {
 			} else if (data.type == 'person') {
 				if (that.indexOfLabel(data.type, label) < 0)
 					array.push({type: data.type, label: label, value: value, uuid: data.uuid});
+			} else if (data.type == 'thread') {
+				if (that.indexOfLabel(data.type, label) < 0)
+					array.push({type: data.type, label: label, value: value, subtype: data.subtype});
 			}
 		},
 		
@@ -785,13 +792,20 @@ var Search = function (opts) {
 	  			type = 'source';
 	  		} else if ($(elem).hasClass('product')) {
 	  			type = 'product';
-	  		} else
+	  		} else if ($(elem).hasClass('issue')) {
 	  			type = 'issue';
+	  		} else if ($(elem).hasClass('thread')) {
+	  			type = 'thread';
+	  		}
 			
 	  		var label = data.label;
 	  		var array = searchTerms[type];
-	  		if (type == 'source' || type == 'product' || type == 'person' || type == 'issue') {
+	  		if (type == 'source' || type == 'product' || type == 'issue' || type == 'thread') {
 	  			var idx = that.indexOfLabel(type, label);
+	  			if (idx >= 0)
+	  				array.splice(idx, 1);
+	  		} else if (type == 'person') {
+	  			var idx = that.indexOfAttr(type, data.value, 'value');
 	  			if (idx >= 0)
 	  				array.splice(idx, 1);
 	  		}
@@ -814,7 +828,7 @@ var Search = function (opts) {
 			var list = searchTerms[type];
 			var result = '';
 			$.each(list, function (idx, item) {
-				if (item.value == null) {
+				if (item.value == null || item.value.indexOf('--manually--') == 0) {
 					result += item[attribute];
 					if (idx < list.length - 1)
 						result += ',';
@@ -831,7 +845,8 @@ var Search = function (opts) {
 	    		'person': [],
 	    		'source': [],
 	    		'product': [],
-	    		'issue': []
+	    		'issue': [],
+	    		'thread': []
 	    	};
 	    }
 	};
@@ -847,7 +862,7 @@ var AlertViz = function(options) {
     var issueIdSearch = Search();
     var personSearch = Search();
     
-    var itemsPerPage = 100;
+    var itemsPerPage = 50;
     
     var socialGraph = null;
     var chart = null;
@@ -881,15 +896,15 @@ var AlertViz = function(options) {
     			issueIdSearch.addToSearch(data);
     			
     			var label = data.label;
-    			$(selector).val(label + ':' + data.type + '|');
+    			$(selector).val(label + '--:--' + data.type + '|');
     		} else {
     			generalSearch.addToSearch(data);
             	
         		var label = data.label;
         		if (data.type == 'source') 
-        			$(selector).val(label + ':' + data.type + ':' + data.tooltip + '|');
+        			$(selector).val(label + '--:--' + data.type + '--:--' + data.tooltip + '|');
         		else
-        			$(selector).val(label + ':' + data.type + '|');
+        			$(selector).val(label + '--:--' + data.type + '|');
     		}
     		
     		$(selector).change();
@@ -902,11 +917,15 @@ var AlertViz = function(options) {
     		$('#page_td').html('');
     		if (socialGraph != null)
     			socialGraph.clear();
+    		that.cleanItems();
+    	},
+    	
+    	cleanItems: function () {
     		$('#items-div').html('');
     		$('#page_td').html('');
     	},
     	
-    	searchRelatedByQueryOpts: function (queryOpts) {
+    	searchRelatedByQueryOpts: function (queryOpts, selectFirst) {
     		$('#items-div').addClass('loading');
     		$.ajax({
     			type: 'POST',
@@ -916,7 +935,7 @@ var AlertViz = function(options) {
     			async: true,
     			success: function (data, textStatus, jqXHR) {
 	    				currentQueryOpts = queryOpts;
-	    				that.setQueryResults(data);
+	    				that.setQueryResults(data, selectFirst);
     			},
     			error: function (jqXHR, textStatus, errorThrown) {
     				if (jqXHR.status == 401) {
@@ -1033,7 +1052,7 @@ var AlertViz = function(options) {
     		});
     	},
     	
-    	setQueryResults: function (data) {
+    	setQueryResults: function (data, selectFirst) {
     		if (data.type == 'peopleData') {
         		that.createGraph(data);
         	} else if (data.type == 'timelineData') {
@@ -1041,7 +1060,7 @@ var AlertViz = function(options) {
         	} else if (data.type == 'keywordData') {
         		that.createWordCloud(data.data);
         	} else if (data.type == 'itemData') {
-        		that.createItems(data);
+        		that.createItems(data, selectFirst);
         	}
     	},
     	
@@ -1069,6 +1088,8 @@ var AlertViz = function(options) {
         			sources: queryOpts.sources,
         			products: queryOpts.products,
         			issues: queryOpts.issues,
+        			threadIds: queryOpts.threadIds,
+        			itemIds: queryOpts.itemIds,
         			from: queryOpts.from,
         			to: queryOpts.to,
         			sort: queryOpts.sort,
@@ -1124,6 +1145,8 @@ var AlertViz = function(options) {
     			peopleUuids: queryOpts.peopleUuids,
     			sources: queryOpts.sources,
     			products: queryOpts.products,
+    			threadIds: queryOpts.threadIds,
+    			itemIds: queryOpts.itemIds,
     			from: queryOpts.from,
     			to: queryOpts.to,
     			sort: queryOpts.sort,
@@ -1150,7 +1173,7 @@ var AlertViz = function(options) {
     		});
     	},
     	
-    	searchItemsByQueryOpts: function (queryOpts) {
+    	searchItemsByQueryOpts: function (queryOpts, selectFirst) {
     		$('#items-div').addClass('loading');
     		
     		$.ajax({
@@ -1161,7 +1184,7 @@ var AlertViz = function(options) {
                 async: true,
                 success: function (data, textStatus, jqXHR) {
                 	currentQueryOpts = queryOpts;
-                	that.setQueryResults(data);
+                	that.setQueryResults(data, selectFirst);
                 },
                 complete: function () {
                 	$('#items-div').removeClass('loading');
@@ -1190,6 +1213,16 @@ var AlertViz = function(options) {
     		var sources = generalSearch.getSearchStr('source');
     		var products = generalSearch.getSearchStr('product');
     		var issues = generalSearch.getSearchStr('issue');
+    		var threads = generalSearch.getTypeV('thread');
+    		
+    		var threadIds = [];
+    		var itemIds = [];
+    		$.each(threads, function (idx, thread) {
+    			if (thread.subtype == 'thread')
+    				threadIds.push(thread.value);
+    			else
+    				itemIds.push(thread.value);
+    		});
     		
     		var from = $('#from_text').val();
     		var to = $('#to_text').val();
@@ -1202,6 +1235,8 @@ var AlertViz = function(options) {
     			sources: sources,
     			products: products,
     			issues: issues,
+    			threadIds: threadIds.join(),
+    			itemIds: itemIds.join(),
     			from: from,
     			to: to,
     			sort: ($('#relevance_sort').attr('checked') == 'checked') ? 'relevance' : 'dateDesc',
@@ -1259,8 +1294,12 @@ var AlertViz = function(options) {
     		});
     	},
     	
-    	searchIssueByQueryOpts: function (queryOpts) {
-    		that.cleanData();
+    	searchIssueByQueryOpts: function (queryOpts, isFullSearch) {
+    		if (isFullSearch)
+    			that.cleanData();
+    		else
+    			that.cleanItems();
+    		
     		$('#items-div').addClass('loading');
     		try {
 	    		$.ajax({
@@ -1271,7 +1310,7 @@ var AlertViz = function(options) {
 	                async: true,
 	                success: function (data, textStatus, jqXHR) {
 	                	currentQueryOpts = queryOpts;
-	    				that.setQueryResults(data);
+	    				that.setQueryResults(data, isFullSearch);
 	    			},
 	                complete: function () {
 	                	$('#items-div').removeClass('loading');
@@ -1283,7 +1322,7 @@ var AlertViz = function(options) {
     		return false;
     	},
     	
-    	searchForDeveloperByQueryOpts: function (queryOpts) {
+    	searchForDeveloperByQueryOpts: function (queryOpts, selectFirst) {
     		that.cleanData();
     		$('#items-div').addClass('loading');
     		
@@ -1295,7 +1334,7 @@ var AlertViz = function(options) {
                 data: queryOpts,
                 success: function (data, textStatus, jqXHR) {
                 	currentQueryOpts = queryOpts;
-                	that.setQueryResults(data);
+                	that.setQueryResults(data, selectFirst);
                 },
                 complete: function () {
                 	$('#items-div').removeClass('loading');
@@ -1343,13 +1382,13 @@ var AlertViz = function(options) {
     		
     		switch(queryOpts.type) {
     		case 'duplicateIssue':
-    			return that.searchIssueByQueryOpts(queryOpts);
+    			return that.searchIssueByQueryOpts(queryOpts, false);
     		case 'itemData':
-    			return that.searchItemsByQueryOpts(queryOpts);
+    			return that.searchItemsByQueryOpts(queryOpts, false);
     		case 'suggestMyCode':
-    			return that.searchRelatedByQueryOpts(queryOpts);
+    			return that.searchRelatedByQueryOpts(queryOpts, false);
     		case 'suggestPeople':
-    			return that.searchForDeveloperByQueryOpts(queryOpts);
+    			return that.searchForDeveloperByQueryOpts(queryOpts, false);
     		}
     	},
     	
@@ -1434,6 +1473,23 @@ var AlertViz = function(options) {
 			});
     	},
     	
+    	openThreadTab: function (e, thread) {
+    		var event = e || window.event;
+			event.stopPropagation();
+			event.preventDefault();
+			
+			if (thread != null) {
+	    		var config = {};
+	    		
+	    		var general = {};
+	    		general.threads = [thread];
+	    		
+	    		config.gen = general;
+	    		openInNewTab(config);
+    		}
+    		return false;
+    	},
+    	
     	setIssueDetails: function (data, selectedUri) {
     		// generate accordion
     		// item description
@@ -1489,9 +1545,14 @@ var AlertViz = function(options) {
         		html += '<div class="content" id="suggest_dev_div">';
         		
         		html += '<ul>';
-    			$.each(related, function (idx, issue) {
+    			$.each(related, function (idx, ref) {
     				html += '<li class="tree_li">';
-    				html += '<span class="leaf normal_weight">' + issue.issueDescription + '</span>';
+    				html += '<span class="leaf normal_weight">' + ref.description + '</span>';
+    				
+    				if (ref.threadId != null)
+    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openThreadTab(event,{type: \'thread\', label: \'Thread ID: ' + ref.threadId + '\', value: \'' + ref.threadId + '\', subtype: \'thread\'});" />';
+    				else 
+    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openThreadTab(event,{type: \'thread\', label: \'Item ID: ' + ref.itemId + '\', value: \'' + ref.itemId + '\', subtype: \'commit\'});" />';
     				html += '</li>';
     			});
     			html += '</ul>';
@@ -1871,7 +1932,7 @@ var AlertViz = function(options) {
 			});
     	},
     	
-    	createItems: function(data) {
+    	createItems: function(data, selectFirst) {
     		var Type = {"email": 10, "post": 11, "bugDescription": 12, "bugComment": 13, "commit": 14, "wikiPost": 15};
     		
     		$('#items-div').html('');
@@ -2059,11 +2120,13 @@ var AlertViz = function(options) {
     			$(event.currentTarget).addClass('item-selected');
     		});
     		
-    		// search for the first item, if modules are present, the first item is second in the list
-    		if (data.modules != null && data.modules.length > 0)
-    			$('.item-wrapper')[1].click();
-    		else
-    			$('.item-wrapper')[0].click();
+    		if (selectFirst != false) {
+	    		// search for the first item, if modules are present, the first item is second in the list
+	    		if (data.modules != null && data.modules.length > 0)
+	    			$('.item-wrapper')[1].click();
+	    		else
+	    			$('.item-wrapper')[0].click();
+    		}
     	},
 
     	createGraph: function(data) {
@@ -2099,7 +2162,7 @@ var AlertViz = function(options) {
   			$(el).html($(el).html() + ' <span class="file_path">(' + data.path + ')</span>');
   		} else if (data.type == 'person') {
   			if (data.value == null && data.uuid != null)
-  				data.value = data.uuid;
+  				data.value = '--manually--' + data.label;
   		}
   		return el;
     };
@@ -2117,6 +2180,8 @@ var AlertViz = function(options) {
     	selectionAdded: function(elem, data) {
     		if (data.type == 'source')
 				$(elem).attr('title', data.tooltip);
+    		if (data.type == 'person')
+    			$(elem).html($(elem).html().replace(/\s+\[AKA[\w\W]*\]/g, ''));
     		
     		if (!settingManually) {
 	    		generalSearch.addToSearch(data);
@@ -2199,6 +2264,9 @@ var AlertViz = function(options) {
     	asHtmlID: 'person_text',
     	addByWrite: false,
     	selectionAdded: function (elem, data) {
+    		if (data.type == 'person')
+    			$(elem).html($(elem).html().replace(/\s+\[AKA[\w\W]*\]/g, ''));
+    		
     		if (!settingManually) {
 	    		personSearch.addToSearch(data);
 	    		updateUrl();
