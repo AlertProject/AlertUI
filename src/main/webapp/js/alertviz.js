@@ -720,14 +720,18 @@ var Search = function (opts) {
 		},
 			
 		indexOfLabel: function (type, label) {
+			return that.indexOfAttr(type, label, 'label');
+		},
+		
+		indexOfAttr: function (type, val, attr) {
 			var prV = searchTerms[type];
 			for (var i = 0; i < prV.length; i++) {
-				if (prV[i].label == label)
+				if (prV[i][attr] == val)
 					return i;
 				
-				var labelV = prV[i].label.split(',');
+				var labelV = prV[i][attr].split(',');
 				for (var j = 0; j < labelV.length; j++) {
-					if (labelV[j] == label)
+					if (labelV[j] == val)
 						return i;
 				}
 	    	}
@@ -798,8 +802,12 @@ var Search = function (opts) {
 			
 	  		var label = data.label;
 	  		var array = searchTerms[type];
-	  		if (type == 'source' || type == 'product' || type == 'person' || type == 'issue' || type == 'thread') {
+	  		if (type == 'source' || type == 'product' || type == 'issue' || type == 'thread') {
 	  			var idx = that.indexOfLabel(type, label);
+	  			if (idx >= 0)
+	  				array.splice(idx, 1);
+	  		} else if (type == 'person') {
+	  			var idx = that.indexOfAttr(type, data.value, 'value');
 	  			if (idx >= 0)
 	  				array.splice(idx, 1);
 	  		}
@@ -2166,6 +2174,8 @@ var AlertViz = function(options) {
     	selectionAdded: function(elem, data) {
     		if (data.type == 'source')
 				$(elem).attr('title', data.tooltip);
+    		if (data.type == 'person')
+    			$(elem).html($(elem).html().replace(/\s+\[AKA[\w\W]*\]/g, ''));
     		
     		if (!settingManually) {
 	    		generalSearch.addToSearch(data);
