@@ -56,7 +56,6 @@ ul.as-selections li {
 ul.as-selections li.as-selection-item {
 	color: #000;
 	font-family: Arial, Helvetica, sans-serif;
-	text-shadow: 0 1px 1px #fff;
 	border: 1px solid #ccc;
 	border-top-color: #ccc;
 	padding: 2px 7px 2px 10px;
@@ -91,6 +90,12 @@ ul.as-selections li.as-selection-item.product {
 	background-color: #ddd;
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ddd), to(#ccc));
 }
+ul.as-selections li.as-selection-item.thread {
+	color: white;
+	background-color: #969696;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#969696), to(#696969));
+}
+
 ul.as-selections li.as-selection-item:last-child {
 	margin-left: 30px;
 }

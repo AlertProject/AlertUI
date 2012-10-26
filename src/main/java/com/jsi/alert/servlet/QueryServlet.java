@@ -341,30 +341,36 @@ public class QueryServlet extends MQServlet {
 		Integer limit = Utils.parseInt(request.getParameter("limit"));
 		
 		// send messages to Recommender to get the IDs
-		String requestId1 = Utils.genRequestID();
-		String requestId2 = Utils.genRequestID();
+		final String requestId1 = Utils.genRequestID();
 		
 		String recommenderIssueRq = MessageUtils.genRecommenderIssuesMsg(uuidList, requestId1);
 		String recommenderIssueResp = getRecommenderIssueResponse(recommenderIssueRq, requestId1);
 		
-		String recommenderModuleRq = MessageUtils.genRecommenderModulesMsg(uuidList, requestId2);
-		String recommenderModuleResp = getRecommenderModuleResponse(recommenderModuleRq, requestId2);
-		
 		// parse responses
 		List<Long> issueIds = MessageParser.parseRecommenderIssueIdsMsg(recommenderIssueResp);
-		List<String> moduleIds = MessageParser.parseRecommenderModuleIdsMsg(recommenderModuleResp);
 		
 		// now that I have the issueIDs I have to send them to the KEUI component
-		String requestId3 = Utils.genRequestID();
-		String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueIds, offset, limit, requestId3);
-		String keuiResp = getKEUIResponse(keuiRq, requestId3);
+		final String requestId2 = Utils.genRequestID();
+		String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueIds, offset, limit, requestId2);
+		String keuiResp = getKEUIResponse(keuiRq, requestId2);
 		
 		// construct result
 		JSONObject result = MessageParser.parseKEUIItemsResponse(keuiResp);
-		JSONArray modulesJSon = new JSONArray();
-		modulesJSon.addAll(moduleIds);
 		
-		result.put("modules", modulesJSon);
+		if (offset == 0) {
+			// put modules on the first page only
+			final String requestId3 = Utils.genRequestID();
+			
+			String recommenderModuleRq = MessageUtils.genRecommenderModulesMsg(uuidList, requestId3);
+			String recommenderModuleResp = getRecommenderModuleResponse(recommenderModuleRq, requestId3);
+		
+			List<String> moduleIds = MessageParser.parseRecommenderModuleIdsMsg(recommenderModuleResp);
+			
+			JSONArray modulesJSon = new JSONArray();
+			modulesJSon.addAll(moduleIds);
+			
+			result.put("modules", modulesJSon);
+		}
 		
 		result.writeJSONString(response.getWriter());
 	}
