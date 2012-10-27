@@ -50,7 +50,7 @@ function getCurrentState() {
 	// general search
 	// search terms
 	var people = searchGeneral.getTypeV('person');
-	var keywords = $('#keyword_text').val();
+	var keywords = $('#keyword_text').val().replace(/^\s+|\s+$/g, "");
 	var sources = searchGeneral.getTypeV('source');
 	var products = searchGeneral.getTypeV('product');
 	var issues = searchGeneral.getTypeV('issue');
@@ -451,8 +451,11 @@ var SocialGraph = function(options){
 		return arbor.Point(p1.x + ua * (p2.x - p1.x), p1.y + ua * (p2.y - p1.y));
 	};
 	
+	var tooltipShown = false;
+	
 	// tooltip functions
 	function showTooltip(data) {
+		tooltipShown = true;
 		
 		if (data.uuid == null || data.uuid == '') {
 			var html = '<table class="tooltip"><tbody>';
@@ -468,6 +471,8 @@ var SocialGraph = function(options){
 				dataType: 'json',
 				data: {uuid: data.uuid, type: 'personDetails'},
 				success: function (data, textStatus, jqXHR) {
+					if (!tooltipShown) return;
+					
 					var html = '<table class="tooltip"><tbody>';
 					html += '<tr>';
 					html += '<td class="tooltip_name">' + data.uuid + ' IMPLEMENT ME!!</td>';
@@ -489,6 +494,7 @@ var SocialGraph = function(options){
 	function hideTooltip() {
 		if (tooltip != null)
 			tooltip.hide();
+		tooltipShown = false;
 	}
 	
 	$('#' + options.container).mouseleave(hideTooltip);
