@@ -322,7 +322,7 @@ public class QueryServlet extends MQServlet {
 			result.writeJSONString(response.getWriter());
 		}
 		else {
-			// if no user => redirect to login
+			// if no user => send unauthorized
 			if (log.isDebugEnabled())
 				log.debug("User with no session searching for issues related to their code, sending code 401!");
 			

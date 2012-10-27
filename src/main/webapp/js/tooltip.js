@@ -6,7 +6,7 @@ var tooltip = function() {
 	var speed = 80;
 	var timer = 20;
 	var delay = 0;
-	var endalpha = 95;
+	var endalpha = 80;
 	var alpha = 0;
 	var tt, t, c, b, h;
 	var ie = document.all ? true : false;
