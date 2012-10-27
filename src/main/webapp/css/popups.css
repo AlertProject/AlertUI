@@ -181,7 +181,7 @@
     progid:DXImageTransform.Microsoft.dropshadow(OffX=8, OffY=8, Color='#aaa');
 }
 #notification_wrapper {
-	overflow-y: scroll;
+	overflow-y:auto;
 	padding: 0;
 	padding:10px;
 	width: 200px;
