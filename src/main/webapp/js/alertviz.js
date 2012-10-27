@@ -1954,9 +1954,10 @@ var AlertViz = function(options) {
     		if (data.modules != null && data.modules.length > 0) {
     			html += '<li>';
     			html += '<div class="item-wrapper modules">';
+    			html += '<table class="item_table"><tr><td class="item_header">Recommended modules</td></tr>';
     			
+    			html += '<tr><td class="item_content">';
     			html += '<ul class="module_ul">';
-    			html += '<li class="modules_heading">Recommended modules:</li>';
     			
     			$.each(data.modules, function (idx, module) {
     				html += '<li>' + module + '</li>';
@@ -1964,6 +1965,7 @@ var AlertViz = function(options) {
     			
     			html += '</ul>';
     			
+    			html += '</td></tr></table>';
     			html += '</div>';
     			html += '</li>';
     		}
