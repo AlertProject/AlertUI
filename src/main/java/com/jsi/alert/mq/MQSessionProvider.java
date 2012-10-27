@@ -79,7 +79,7 @@ public class MQSessionProvider {
 		Connection mqConnection = factory.createConnection();
 		
 		if (Configuration.ACTIVEMQ_CLIENT_ID != null)
-			mqConnection.setClientID("UI");
+			mqConnection.setClientID(Configuration.ACTIVEMQ_CLIENT_ID);
 		
 		mqConnection.start();
 

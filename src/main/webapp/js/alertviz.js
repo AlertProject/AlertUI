@@ -457,7 +457,35 @@ var SocialGraph = function(options){
 	function showTooltip(data) {
 		tooltipShown = true;
 		
-		if (data.uuid == null || data.uuid == '') {
+		var data = {"uuid":"fd2a6ff5-0397-41d3-8b83-d9fb90f9ee3e","metrics":[{"id":0,"name":"CommunicationTemporalMetric","value":8},{"id":1,"name":"ItsTemporalMetric","value":140},{"id":2,"name":"ScmActivityMetric","value":189},{"id":3,"name":"ScmApiIntroducedMetric","value":67},{"id":4,"name":"ItsIssuesResolvedMetric","value":356},{"id":5,"name":"ItsActivityMetric","value":1962},{"id":6,"name":"ScmTemporalMetric","value":207},{"id":7,"name":"CommunicationActivityMetric","value":126}],"profiles":[{"id":7,"sourceId":"none","name":"Dario","lastname":"Freddi","username":"drf kde org","email":"drf kde org","source":"its","uri":null},{"id":8,"sourceId":"200","name":null,"lastname":"","username":"drf kde org","email":"drf@kde.org","source":"its-change","uri":null},{"id":9,"sourceId":"809","name":"Dario","lastname":"Freddi","username":"drf kde org","email":"","source":"scm","uri":null},{"id":10,"sourceId":"none","name":"Dario","lastname":"Freddi","username":"drf54321 gmail com","email":null,"source":"mailing","uri":null},{"id":669,"sourceId":"none","name":"Dario","lastname":"Freddi","username":"drf","email":"drf","source":"its","uri":"http://www.alert-project.eu/ontologies/alert_scm.owl#Person22"},{"id":1441,"sourceId":"none","name":"Dario","lastname":"Freddi","username":"","email":"drf kde org","source":"mailing","uri":"http://www.alert-project.eu/ontologies/alert_scm.owl#Person1575"},{"id":1488,"sourceId":"none","name":null,"lastname":null,"username":"drf","email":"drf","source":"its-change","uri":"http://www.alert-project.eu/ontologies/alert_scm.owl#Person22"}],"ciPerClass":{"occasional contributors":1.080485153071748E-8,"developers to engage":8.757856291888973E-9,"testers":0.6465839228548342,"core developers":1.7981814013354956E-4,"bug triagers":2.5068574190018466E-10,"reviewers":5.2325601529403E-15}};
+		
+		var usernames = [];
+		$.each(data.profiles, function (idx, profile) {
+			usernames.push(profile.username);
+		});
+		
+		var html = '<table class="tooltip">';
+		html += '<tr>';
+		html += '<td class="tooltip_name">';
+		html += data.profiles[0].lastname + ', ' + data.profiles[0].name;
+		html += '<span class="tooltip_usernames">' + usernames.join() + '</span>';
+		html += '</td>';
+		
+		html += '<tr>';
+		html += '<td class="tooltip_scores">';
+		for (var attr in data.ciPerClass) {
+			var val = data.ciPerClass[key];
+			
+			html += attr + ': ' + (val*100).toFixed(2) + '%<br />';
+		}
+		html += '</td>';
+		html +='</tr>';
+		
+		html += '</table>';
+		
+		tooltip.show(html);
+		
+		/*if (data.uuid == null || data.uuid == '') {
 			var html = '<table class="tooltip"><tbody>';
 			html += '<tr>';
 			html += '<td class="tooltip_name">ID of ' + data.label + ' isn\'t available!</td>';
@@ -473,22 +501,34 @@ var SocialGraph = function(options){
 				success: function (data, textStatus, jqXHR) {
 					if (!tooltipShown) return;
 					
-					var html = '<table class="tooltip"><tbody>';
+					var usernames = [];
+					$.each(data.profiles, function (idx, profile) {
+						usernames.push(profile.username);
+					});
+					
+					var html = '<table class="tooltip">';
 					html += '<tr>';
-					html += '<td class="tooltip_name">' + data.uuid + ' IMPLEMENT ME!!</td>';
-					html += '<td class="tooltip_id">' + data.uuid + '</td>';
-					html += '</tr>';
+					html += '<td class="tooltip_name">';
+					html += data.profiles[0].lastname + ', ' + data.profiles[0].name;
+					html += '<span class="tooltip_usernames">' + usernames.join() + '</span>';
+					html += '</td>';
 					
 					html += '<tr>';
-					html += '<td class="tooltip_mail">' + data.uuid + '</td>';
-					html += '<td class="tooltip_expertise">Missing!!</td>';
+					html += '<td class="tooltip_scores">';
+					for (var attr in data.ciPerClass) {
+						var val = data.ciPerClass[key];
+						
+						html += attr + ': ' + (val*100).toFixed(2) + '%<br />';
+					}
+					html += '</td>';
 					html +='</tr>';
-					html += '</tbody></table>';
+					
+					html += '</table>';
 					
 					tooltip.show(html);
 				}
 			});
-		}
+		}*/
 	}
 	
 	function hideTooltip() {

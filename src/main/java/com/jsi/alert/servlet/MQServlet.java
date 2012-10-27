@@ -141,6 +141,9 @@ public abstract class MQServlet extends HttpServlet {
 				throw new ServletException(componentKey + " timed out!");
 			
 			Message receivedMsg = consumer.receive(2000);
+			if (receivedMsg != null && log.isDebugEnabled())
+				log.debug("Received a message...");
+			
 			if (receivedMsg instanceof TextMessage) {
 				TextMessage received = (TextMessage) receivedMsg;
 				responseMsg = received.getText();
