@@ -217,34 +217,7 @@
     border-radius:8px 0px 0px 8px;
     color:#333;
     text-shadow:1px 1px 1px #fff;
-	background:
-        -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0.09, rgb(240,240,240)),
-        color-stop(0.55, rgb(255,255,255)),
-        color-stop(0.78, rgb(255,255,255))
-        );
-    background:
-        -moz-linear-gradient(
-        center bottom,
-        rgb(240,240,240) 9%,
-        rgb(255,255,255) 55%,
-        rgb(255,255,255) 78%
-        );
-    background-image: 
-    	-o-linear-gradient(
-    	90deg,
-    	rgb(240,240,240)  9%,
-    	rgb(255,255,255)  55%,
-    	rgb(255,255,255)  78%
-    	);
-    filter:progid:DXImageTransform.Microsoft.gradient(
-    	GradientType=0,
-   		startColorstr=#f0f0f0,
-    	endColorstr=#ffffff
-    	);
+	background:#000;
 }
 .tooltip_expertise{
 	text-align:right;
@@ -286,14 +259,15 @@
 }
 .pages{
 	font-size:10px;
-	text-align:center;
-	line-height:11px;    
+	text-align:center;  
 	text-shadow:1px 1px 1px #fff;
+	vertical-align:middle;
 }
-.pages a{
+.pages img {
+	cursor:pointer;
+}
+.no_results{
 	font-size:10px;
-	color:#7BA857;
-	line-height:11px;
 }
 .pages_table{
 	width:100%;
