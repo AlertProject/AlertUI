@@ -1945,7 +1945,7 @@ var AlertViz = function(options) {
     		var peopleH = data.persons;
 			var items = data.items;
 			if (items.length == 0 && (data.modules == null || data.modules.length == 0)) {
-				$('#items-div').html('<span class="no_results">No results!</span>');
+				$('#items-div').html('<span class="no_results">No results found.</span>');
 				return;
 			}
     		var html = '<ul>';

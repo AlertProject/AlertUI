@@ -47,18 +47,17 @@
    	display: block;
 }
 #sort_div {
-	background-color: #B6DE8F !important;
+	background-color: #fff !important;
     -moz-border-radius:5px;
     -webkit-border-radius:5px;
     -khtml-border-radius:5px;
     border-radius:5px;
-    -moz-box-shadow:0px 0px 3px #aaa;
-    -webkit-box-shadow:0px 0px 3px #aaa;
-    box-shadow:0px 0px 3px #aaa;
-    progid:DXImageTransform.Microsoft.dropshadow(OffX=3, OffY=3, Color='#aaa');
+    -moz-box-shadow:0px 0px 8px #aaa;
+    -webkit-box-shadow:0px 0px 8px #aaa;
+    box-shadow:0px 0px 8px #aaa;
+    progid:DXImageTransform.Microsoft.dropshadow(OffX=8, OffY=8, Color='#aaa');
     position:absolute;
-    padding: 8px !important;
-    padding: 5px;
+    padding: 5px !important;
 }
 #sort_div table {
 	margin-left: auto !important;
@@ -67,7 +66,7 @@
 	margin-bottom: auto !important;
 	width: 100% !important;
 	height: 100% !important;
-	background-color:#B6DE8F !important;
+	background-color:#fff !important;
 	moz-border-radius:0px;
 	-webkit-border-radius:0px;
 	-khtml-border-radius:0px;
@@ -79,9 +78,6 @@
 }
 #sort_div table tr, #sort_div table tbody {
 	width: 100%;
-}
-#sort_div tr td {
-	padding: 8px !important;
 }
 #searchbtnrel{
 	width:100%;
@@ -208,4 +204,8 @@
 }
 .notification_date {
 	float: right;
+}
+.sortpopupheader{
+	padding:3px !important;
+	font-weight:bold !important;
 }

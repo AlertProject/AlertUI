@@ -406,4 +406,6 @@ input.button {
 	background-image:url('../img/loading.gif');
 	background-repeat: no-repeat;
 	background-position: center;
+	opacity:0.5;
+	filter:alpha(opacity=50);
 }

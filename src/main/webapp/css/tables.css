@@ -8,7 +8,7 @@
     color:#000;
     font-weight:bold;
     font-size:12px;
-    text-shadow:1px 1px 1px #ccc;
+    text-shadow:1px 1px 1px #fff;
     text-overflow: ellipsis;
     max-width: 1ex;
     white-space: nowrap;
@@ -23,7 +23,7 @@
     text-align: right;
     color:#000;
     font-size:12px;
-    text-shadow:1px 1px 1px #ccc;
+    text-shadow:1px 1px 1px #fff;
 }
 .item_subject{
     padding:2px 6px 2px 6px;
@@ -267,7 +267,10 @@
 	cursor:pointer;
 }
 .no_results{
-	font-size:10px;
+	font-size:28px;
+	opacity:0.4;
+	collor:#ccc;
+	line-height:640px;
 }
 .pages_table{
 	width:100%;

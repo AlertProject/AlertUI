@@ -283,14 +283,22 @@
 										<div id="sort_div">
 											<table>
 												<tr>
+													<td class="sortpopupheader" colspan="2">
+													Sort by:
+													</td>
+												</tr>
+												<tr>
 													<td>
-														Sort by: 
 														<input type="radio" id="relevance_sort" name="sort_radio" value="relevence" onchange="updateUrl(window.event);" checked="checked" /><label> Relevance</label>
+													</td>
+													<td>
 														<input type="radio" id="date_sort" name="sort_radio" value="date" onchange="updateUrl(window.event);" /><label> Date</label>
 													</td>
 												</tr>
 												<tr>
-													<td><input class="checkbox" type="checkbox" id="use_or_check" onchange="updateUrl(window.event);" >&nbsp; Keywords are optional</input></td>
+													<td colspan="2">
+														<input class="checkbox" type="checkbox" id="use_or_check" onchange="updateUrl(window.event);" >&nbsp; Keywords are optional</input>
+													</td>
 												</tr>
 											</table>
 										</div>
@@ -304,10 +312,10 @@
 										<table>
 											<tbody>
 												<tr>
-													<td colspan="8"><input type="text" id="issue_id_text" class="text_issue"/></td>
+													<td colspan="9"><input type="text" id="issue_id_text" class="text_issue"/></td>
 												</tr>
 												<tr id="customtr1">
-													<td><span>Resolution:</span></td>
+													<td class="customtd"><span>Resolution:</span></td><td></td>
 													<td><input class="check" type="checkbox" id="dup_none_check" checked="checked" onchange="updateUrl();" /><label> None</label></td>
 													<td><input class="check" type="checkbox" id="dup_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
 													<td><input class="check" type="checkbox" id="dup_wont_check" checked="checked" onchange="updateUrl();" /><label> WontFix</label></td>
@@ -317,7 +325,7 @@
 													<td><input class="check" type="checkbox" id="dup_unknown_check" checked="checked" onchange="updateUrl();" /><label> Unknown</label></td>
 												</tr>
 												<tr>
-													<td><span>Status:</span></td>
+													<td class="customtd"><span>Status:</span></td><td></td>
 													<td><input class="check" type="checkbox" id="dup_open_check" checked="checked" onchange="updateUrl();" /><label> Open</label></td>
 													<td><input class="check" type="checkbox" id="dup_veririfed_check" checked="checked" onchange="updateUrl();" /><label> Verified</label></td>
 													<td><input class="check" type="checkbox" id="dup_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
@@ -333,8 +341,8 @@
 										<table>
 											<tbody>
 												<tr id="customtr1">
-													<td><span>Resolution:</span></td>
-													<td><input class="check" type="checkbox" id="my_none_check" checked="checked" onchange="updateUrl();" /><label>None</label></td>
+													<td class="customtd"><span>Resolution:</span></td><td></td>
+													<td><input class="check" type="checkbox" id="my_none_check" checked="checked" onchange="updateUrl();" /><label> None</label></td>
 													<td><input class="check" type="checkbox" id="my_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
 													<td><input class="check" type="checkbox" id="my_wont_check" checked="checked" onchange="updateUrl();" /><label> WontFix</label></td>
 													<td><input class="check" type="checkbox" id="my_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
@@ -343,8 +351,8 @@
 													<td><input class="check" type="checkbox" id="my_unknown_check" checked="checked" onchange="updateUrl();" /><label> Unknown</label></td>
 												</tr>
 												<tr>
-													<td><span>Status:</span></td>
-													<td><input class="check" type="checkbox" id="my_open_check" checked="checked" onchange="updateUrl();" /><label>Open</label></td>
+													<td class="customtd"><span>Status:</span></td><td></td>
+													<td><input class="check" type="checkbox" id="my_open_check" checked="checked" onchange="updateUrl();" /><label> Open</label></td>
 													<td><input class="check" type="checkbox" id="my_veririfed_check" checked="checked" onchange="updateUrl();" /><label> Verified</label></td>
 													<td><input class="check" type="checkbox" id="my_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
 													<td><input class="check" type="checkbox" id="my_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>

@@ -1,6 +1,6 @@
 #keyword_text{
 	height: 33px;
-	width:910px;
+	width:908px;
 	border-radius: 4px;
 	padding-left:10px;
 	-webkit-border-radius: 4px;
@@ -207,12 +207,12 @@ li.as-result-item.active {
 
 li.as-result-item em { 
 	font-style: normal; 
-	background: rgba(153, 0, 0, 0.16);  
+	background: rgba(0, 0, 0, 0.16);  
 	padding: 0 2px;
 }
 
 li.as-result-item.active em { 
-	background: rgba(153, 0, 0, 0.16);
+	background: rgba(0, 0, 0, 0.16);
 	/*color: #fff;*/
 }
 
