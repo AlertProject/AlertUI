@@ -474,7 +474,7 @@ var SocialGraph = function(options){
 		html += '<tr>';
 		html += '<td class="tooltip_scores">';
 		for (var attr in data.ciPerClass) {
-			var val = data.ciPerClass[key];
+			var val = data.ciPerClass[attr];
 			
 			html += attr + ': ' + (val*100).toFixed(2) + '%<br />';
 		}
