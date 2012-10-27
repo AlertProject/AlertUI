@@ -126,136 +126,30 @@
     -webkit-box-shadow:0px 0px 3px #aaa;
     box-shadow:0px 0px 3px #aaa;
     progid:DXImageTransform.Microsoft.dropshadow(OffX=3, OffY=3, Color='#aaa');
-	width:250px;	
-	height:60px;
-	padding:3px;
+	width:260px;
+	padding:10px !important;
+	background:#000;
+	color:#fff;
+	text-shadow:1px 1px 1px #666;
 }
 .tooltip_name{
 	font-size:14px;
 	font-weight:bold;
-	padding-left:20px;
-    -moz-border-radius:8px 0px 0px 8px;
-    -webkit-border-radius:8px 0px 0px 8px;
-    -khtml-border-radius:8px 0px 0px 8px;
-    border-radius:8px 0px 0px 8px;
-    color:#000;
-    text-shadow:1px 1px 1px #fff;
-	background:
-        -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-		color-stop(0.09, rgb(220,220,220)),
-        color-stop(0.55, rgb(220,220,220)),
-        color-stop(0.78, rgb(240,240,240))
-        );
-    background:
-        -moz-linear-gradient(
-        center bottom,
-        rgb(220,220,220) 9%,
-        rgb(220,220,220) 55%,
-        rgb(240,240,240) 78%
-        );
-    background-image: 
-    	-o-linear-gradient(
-    	90deg,
-    	rgb(220,220,220)  9%,
-    	rgb(220,220,220)  55%,
-    	rgb(240,240,240)  78%
-    	);
-    filter:progid:DXImageTransform.Microsoft.gradient(
-    	GradientType=0,
-   		startColorstr=#dcdcdc,
-    	endColorstr=#f0f0f0
-    	);
 }
-.tooltip_id{
-	text-align:right;
-	font-size:14px;
-	font-weight:bold;
-	padding-right:20px;
-    -moz-border-radius:0px 8px 8px 0px;
-    -webkit-border-radius:0px 8px 8px 0px;
-    -khtml-border-radius:0px 8px 8px 0px;
-    border-radius:0px 8px 8px 0px;
-    color:#000;
-    text-shadow:1px 1px 1px #fff;
-	background:
-        -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-		color-stop(0.09, rgb(220,220,220)),
-        color-stop(0.55, rgb(220,220,220)),
-        color-stop(0.78, rgb(240,240,240))
-        );
-    background:
-        -moz-linear-gradient(
-        center bottom,
-        rgb(220,220,220) 9%,
-        rgb(220,220,220) 55%,
-        rgb(240,240,240) 78%
-        );
-    background-image: 
-    	-o-linear-gradient(
-    	90deg,
-    	rgb(220,220,220)  9%,
-    	rgb(220,220,220)  55%,
-    	rgb(240,240,240)  78%
-    	);
-    filter:progid:DXImageTransform.Microsoft.gradient(
-    	GradientType=0,
-   		startColorstr=#dcdcdc,
-    	endColorstr=#f0f0f0
-    	);
+.tooltip_usernames{
+	font-size:12px;
+	font-style:italic;
+	font-weight:normal;
 }
-.tooltip_mail{
-	padding-left:20px;
-    -moz-border-radius:8px 0px 0px 8px;
-    -webkit-border-radius:8px 0px 0px 8px;
-    -khtml-border-radius:8px 0px 0px 8px;
-    border-radius:8px 0px 0px 8px;
-    color:#333;
-    text-shadow:1px 1px 1px #fff;
-	background:#000;
+.tooltip_usernames:before {
+    content: "(";
+    margin-left: 6px;
 }
-.tooltip_expertise{
-	text-align:right;
-	padding-right:20px;
-    -moz-border-radius:0px 8px 8px 0px;
-    -webkit-border-radius:0px 8px 8px 0px;
-    -khtml-border-radius:0px 8px 8px 0px;
-    border-radius:0px 8px 8px 0px;
-    color:#333;
-    text-shadow:1px 1px 1px #fff;
-	background:
-        -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0.09, rgb(240,240,240)),
-        color-stop(0.55, rgb(255,255,255)),
-        color-stop(0.78, rgb(255,255,255))
-        );
-    background:
-        -moz-linear-gradient(
-        center bottom,
-        rgb(240,240,240) 9%,
-        rgb(255,255,255) 55%,
-        rgb(255,255,255) 78%
-        );
-    background-image: 
-    	-o-linear-gradient(
-    	90deg,
-    	rgb(240,240,240)  9%,
-    	rgb(255,255,255)  55%,
-    	rgb(255,255,255)  78%
-    	);
-    filter:progid:DXImageTransform.Microsoft.gradient(
-    	GradientType=0,
-   		startColorstr=#f0f0f0,
-    	endColorstr=#ffffff
-    	);
+.tooltip_usernames:after {
+    content: ")";
+}
+.tooltip_scores{
+	padding:5px !important;
 }
 .pages{
 	font-size:10px;
