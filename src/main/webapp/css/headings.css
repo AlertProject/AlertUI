@@ -17,9 +17,11 @@ position: relative;
 text-shadow:1px 1px 1px #fff !important;
 margin-bottom:5px;
 width:100%;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
-    background-color: #B6DE8F;
+-moz-border-radius:8px;
+-webkit-border-radius:8px;
+-khtml-border-radius:8px;
+border-radius:8px;
+background-color: #B6DE8F;
 }
 .content_open{
 	background:#fff;
@@ -37,12 +39,14 @@ width:100%;
 }
 .details_section{
 	background-color: #fff;
-    -moz-border-radius:8px 8px 8px 8px;
-    -webkit-border-radius:8px 8px 8px 8px;
-    border-radius:8px 8px 8px 8px;
-    -moz-box-shadow:0px 0px 3px #aaa;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+    -khtml-border-radius:8px;
+    border-radius:8px;
+	-moz-box-shadow:0px 0px 3px #aaa;
     -webkit-box-shadow:0px 0px 3px #aaa;
     box-shadow:0px 0px 3px #aaa;
+    progid:DXImageTransform.Microsoft.dropshadow(OffX=3, OffY=3, Color='#aaa');
     margin:2px;
     width:99.4%;
 }
@@ -71,13 +75,15 @@ p {
 	width: 100%;
     text-shadow:1px 1px 1px #fff;
     background-color: #fff;
-    -moz-border-radius:8px 8px 8px 8px;
-    -webkit-border-radius:8px 8px 8px 8px;
-    border-radius:8px 8px 8px 8px;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+    -khtml-border-radius:8px;
+    border-radius:8px;
     margin-bottom:10px;
-    -moz-box-shadow:0px 0px 3px #aaa;
+	-moz-box-shadow:0px 0px 3px #aaa;
     -webkit-box-shadow:0px 0px 3px #aaa;
     box-shadow:0px 0px 3px #aaa;
+    progid:DXImageTransform.Microsoft.dropshadow(OffX=3, OffY=3, Color='#aaa');
     margin:2px 2px 10px 2px;
     -ms-word-break: break-all;
     word-break: break-all;
