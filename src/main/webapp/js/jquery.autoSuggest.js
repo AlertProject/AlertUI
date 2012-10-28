@@ -69,7 +69,7 @@ var AutoSuggest = function (fieldId, data, options) {
 			$(input).removeAttr('placeholder');
 			$(input).css('width', blurWidth);
 			
-			results_holder.html('');
+			results_ul.html('');
 			
 			if (node.type == null)
 				node.type = 'keyword';
@@ -336,7 +336,7 @@ var AutoSuggest = function (fieldId, data, options) {
 					break;
 				default:
 					if(opts.showResultList){
-						if(opts.selectionLimit && $("li.as-selection-item", selections_holder).length >= opts.selectionLimit){
+						if(opts.selectionLimit && nodes.length >= opts.selectionLimit){
 							results_ul.html('<li class="as-message">'+opts.limitText+'</li>');
 							results_holder.show();
 						} else {
