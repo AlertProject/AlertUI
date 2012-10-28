@@ -513,19 +513,19 @@ public class MessageParser {
 	 * @param apiResponse
 	 * @return
 	 */
-	public static List<String> parseAPIIssuesResponse(String responseMsg) {
+	public static List<Long> parseAPIIssuesResponse(String responseMsg) {
 		try {
-			List<String> result = new ArrayList<>();
+			List<Long> result = new ArrayList<>();
 			
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
 			Element apiResponse = (Element) doc.getElementsByTagName("ns1:apiResponse").item(0);
-			NodeList issueURIs = apiResponse.getElementsByTagName("s3:issueUri");
+			NodeList issueURIs = apiResponse.getElementsByTagName("s3:issueId");
 			for (int i = 0; i < issueURIs.getLength(); i++) {
 				Element node = (Element) issueURIs.item(i);
 				
-				result.add(node.getTextContent());
+				result.add(Long.parseLong(node.getTextContent()));
 			}
 			
 			return result;

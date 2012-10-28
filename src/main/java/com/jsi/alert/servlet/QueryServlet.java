@@ -414,11 +414,11 @@ public class QueryServlet extends MQServlet {
 			getAPIResponse(apiRq, requestId1, new MsgCallbackImpl(context) {
 				@Override
 				public void onSuccess(String apiResponse) throws Exception {
-					List<String> issueUris = MessageParser.parseAPIIssuesResponse(apiResponse);
+					List<Long> issueUris = MessageParser.parseAPIIssuesResponse(apiResponse);
 				
 					// now that I have the URIs, I have to call KEUI, to get the actual items
 					String requestId2 = Utils.genRequestID();
-					String keuiRq = MessageUtils.genKEUIIssueListByUriMsg(issueUris, offset, limit, requestId2);
+					String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueUris, offset, limit, requestId2);
 				
 					getKEUIResponse(keuiRq, requestId2, new MsgCallbackImpl(context) {
 						@Override

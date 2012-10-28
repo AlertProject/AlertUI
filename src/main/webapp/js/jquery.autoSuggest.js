@@ -69,6 +69,8 @@ var AutoSuggest = function (fieldId, data, options) {
 			$(input).removeAttr('placeholder');
 			$(input).css('width', blurWidth);
 			
+			results_holder.html('');
+			
 			if (node.type == null)
 				node.type = 'keyword';
 			

@@ -1528,12 +1528,11 @@ var AlertViz = function(options) {
     		html += '<td>Committer: <div id="author_desc" class="data">' + data.committer.name + '</div></td>';
     		if (data.author != null) html += '<td>Author: <div id="author_desc" class="data">' + data.author.name + '</div></td>';
     		html += '<td>Date: <div id="date_desc" class="data">' + new Date(data.commitDate).format(defaultDateFormat) + '</div></td>';
-    		html += '<td>Revision: <div id="resolution_desc" class="data">' + data.revisionTag + '</div></td>';
     		
     		html += '</tr></table>';
-    	
+    		
     		// content
-    		html += '<div class="content"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.message + '</div></td></tr></table></div>';
+    		html += '<div class="content"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.message + '<br /><span class="revision"><em>Revision:</em> ' + data.revisionTag + '</span></div></td></tr></table></div>';
     		html += '</div>';
     		
     		// files
