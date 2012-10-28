@@ -28,7 +28,7 @@ public class Utils {
 	 * Generates and returns a request id.
 	 */
 	public static String genRequestID() {
-		return System.nanoTime() + "" + rand.nextInt(10000);
+		return System.nanoTime() + "" + rand.nextInt(1000000);
 	}
 	
 	/**

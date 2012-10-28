@@ -14,7 +14,7 @@ var tooltip = function() {
 	var showTimer = null;
 	
 	return {
-		show : function(v, w) {
+		show : function(v, w, x, y) {
 			if (tt == null) {
 				tt = document.createElement('div');
 				tt.setAttribute('id', id);
@@ -46,6 +46,12 @@ var tooltip = function() {
 				tt.style.width = maxw + 'px';
 			}
 			h = parseInt(tt.offsetHeight) + top;
+			
+			if (left != null)
+				tt.style.left = (x + left) + 'px';
+			if (top != null)
+				tt.style.top = (y - h) + 'px';
+			
 			
 			clearInterval(tt.timer);
 			clearTimeout(showTimer);
@@ -84,10 +90,12 @@ var tooltip = function() {
 		},
 		hide : function() {
 			clearTimeout(showTimer);
-			clearInterval(tt.timer);
-			tt.timer = setInterval(function() {
-				tooltip.fade(-1);
-			}, timer);
+			if (tt != null) {
+				clearInterval(tt.timer);
+				tt.timer = setInterval(function() {
+					tooltip.fade(-1);
+				}, timer);
+			}
 		}
 	};
 }();

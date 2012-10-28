@@ -9,7 +9,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.jms.JMSException;
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +30,7 @@ import com.jsi.alert.beans.UserPrincipal;
 import com.jsi.alert.service.AuthenticatorService;
 import com.jsi.alert.service.UniversalService;
 import com.jsi.alert.service.UniversalService.RequestType;
+import com.jsi.alert.servlet.callback.MsgCallbackImpl;
 import com.jsi.alert.utils.Configuration;
 import com.jsi.alert.utils.MessageParser;
 import com.jsi.alert.utils.MessageUtils;
@@ -34,6 +39,7 @@ import com.jsi.alert.utils.Utils;
 /**
  * Servlet implementation class QueryServlet
  */
+@WebServlet(name = "QueryServlet", urlPatterns = {"/query"}, asyncSupported = true)
 public class QueryServlet extends MQServlet {
 	
 	private enum QueryType {
@@ -124,17 +130,13 @@ public class QueryServlet extends MQServlet {
 				processPersonDetailsRq(request, response);
 			else
 				throw new IllegalArgumentException("An unexpected query type: " + type + "!");
-			
-			Writer writer = response.getWriter();
-			writer.flush();
-			writer.close();
 		} catch (Throwable ex) {
 			log.error("An unexpected exception occurred!", ex);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
 
-	private Properties createRequestProps(HttpServletRequest request) {
+	private Properties createRequestProps(ServletRequest request) {
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		
 		Properties props = new Properties();
@@ -148,61 +150,117 @@ public class QueryServlet extends MQServlet {
 	}
 
 	private void processPeopleRq(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		final AsyncContext context = request.startAsync();
+		
 		Properties props = createRequestProps(request);
 		
 		final String requestId = Utils.genRequestID();
 		String requestMsg = MessageUtils.genKEUIPeopleMessage(props, requestId);
-		String responseMsg = getKEUIResponse(requestMsg, requestId);
-		JSONObject result = MessageParser.parseKEUIPeopleResponse(responseMsg);
 		
-		result.writeJSONString(response.getWriter());
+		getKEUIResponse(requestMsg, requestId, new MsgCallbackImpl(context) {
+			@Override
+			public void onSuccess(String msg) throws Exception {
+				JSONObject result = MessageParser.parseKEUIPeopleResponse(msg);
+				
+				ServletResponse response = context.getResponse();
+				result.writeJSONString(response.getWriter());
+				
+				Writer writer = response.getWriter();
+				writer.flush();
+				writer.close();
+				context.complete();
+			}
+		});
 	}
 	
 	private void processKeywordRq(HttpServletRequest request, HttpServletResponse response)  throws Exception {
+		final AsyncContext context = request.startAsync();
+		
 		Properties props = createRequestProps(request);
 		
 		final String requestId = Utils.genRequestID();
 		String requestMsg = MessageUtils.genKEUIKeywordMessage(props, requestId);
-		String responseMsg = getKEUIResponse(requestMsg, requestId);
-		JSONObject result = MessageParser.parseKEUIKeywordsResponse(responseMsg);
 		
-		result.writeJSONString(response.getWriter());
+		getKEUIResponse(requestMsg, requestId, new MsgCallbackImpl(context) {
+			@Override
+			public void onSuccess(String msg) throws Exception {
+				JSONObject result = MessageParser.parseKEUIKeywordsResponse(msg);
+				
+				Writer out = context.getResponse().getWriter();
+				result.writeJSONString(out);
+				out.flush();
+				out.close();
+				context.complete();
+			}
+		});
 	}
 
 	private void processTimelineRq(HttpServletRequest request, HttpServletResponse response)  throws Exception {
+		final AsyncContext context = request.startAsync();
+		
 		Properties props = createRequestProps(request);
 		
 		final String requestId = Utils.genRequestID();
 		String requestMsg = MessageUtils.genKEUITimelineMessage(props, requestId);
-		String responseMsg = getKEUIResponse(requestMsg, requestId);
-		JSONObject result = MessageParser.parseKEUITimelineResponse(responseMsg);
 		
-		result.writeJSONString(response.getWriter());
+		getKEUIResponse(requestMsg, requestId, new MsgCallbackImpl(context) {
+			@Override
+			public void onSuccess(String msg) throws Exception {
+				JSONObject result = MessageParser.parseKEUITimelineResponse(msg);
+			
+				Writer out = context.getResponse().getWriter();
+				result.writeJSONString(out);
+				out.flush();
+				out.close();
+				context.complete();
+			}
+		});
 	}
 
 	
 	private void processItemsRq(HttpServletRequest request, HttpServletResponse response)  throws Exception {
+		final AsyncContext context = request.startAsync();
+		
 		Properties props = createRequestProps(request);
 		
 		final String requestId = Utils.genRequestID();
 		String requestMsg = MessageUtils.getKEUIItemsMessage(props, requestId);
-		String responseMsg = getKEUIResponse(requestMsg, requestId);
-		JSONObject result = MessageParser.parseKEUIItemsResponse(responseMsg);
 		
-		result.writeJSONString(response.getWriter());
+		getKEUIResponse(requestMsg, requestId, new MsgCallbackImpl(context) {
+			@Override
+			public void onSuccess(String msg) throws Exception {
+				JSONObject result = MessageParser.parseKEUIItemsResponse(msg);
+				
+				Writer out = context.getResponse().getWriter();
+				result.writeJSONString(out);
+				out.flush();
+				out.close();
+				context.complete();
+			}
+		});
 	}
 	
 	private void processIssueDetailsRq(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		final AsyncContext context = request.startAsync();
+		
 		// check if the ID is a number
 		String itemId = request.getParameter(QUERY_PARAM);
 		String requestId = Utils.genRequestID();
 		
 		String requestMsg = MessageUtils.genAPIIssueDetailsMsg(itemId, requestId);
-		String responseMsg = getAPIResponse(requestMsg, requestId);
 		
-		JSONObject result = MessageParser.parseAPIIssueDetailsMsg(responseMsg);
-		
-		result.writeJSONString(response.getWriter());
+		getAPIResponse(requestMsg, requestId, new MsgCallbackImpl(context) {
+			@Override
+			public void onSuccess(String msg) throws Exception {
+				JSONObject result = MessageParser.parseAPIIssueDetailsMsg(msg);
+				
+				Writer out = context.getResponse().getWriter();
+				result.writeJSONString(out);
+				out.flush();
+				out.close();
+				context.complete();
+			}
+		});
 	}
 	
 	/**
@@ -213,15 +271,25 @@ public class QueryServlet extends MQServlet {
 	 * @throws Exception
 	 */
 	private void processCommitDetailsRq(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		final AsyncContext context = request.startAsync();
+		
 		String itemId = request.getParameter(QUERY_PARAM);
 		String requestId = Utils.genRequestID();
 
 		String requestMsg = MessageUtils.genAPICommitDetailsMsg(itemId, requestId);
-		String responseMsg = getAPIResponse(requestMsg, requestId);
 		
-		JSONObject result = MessageParser.parseAPICommitDetailsMessage(responseMsg);
-		
-		result.writeJSONString(response.getWriter());
+		getAPIResponse(requestMsg, requestId, new MsgCallbackImpl(context) {
+			@Override
+			public void onSuccess(String msg) throws Exception {
+				JSONObject result = MessageParser.parseAPICommitDetailsMessage(msg);
+				
+				Writer out = context.getResponse().getWriter();
+				result.writeJSONString(out);
+				out.flush();
+				out.close();
+				context.complete();
+			}
+		});
 	}
 	
 	/**
@@ -235,14 +303,24 @@ public class QueryServlet extends MQServlet {
 	 * @throws Exception
 	 */
 	private void processForumDetailsRq(HttpServletRequest request, HttpServletResponse response) throws JMSException, ServletException, IOException {
+		final AsyncContext context = request.startAsync();
+		
 		String itemId = request.getParameter(QUERY_PARAM);
 		String requestId = Utils.genRequestID();
 		String requestMsg = MessageUtils.genKEUIForumDetailsMsg(itemId, requestId);
 		
-		String responseMsg = getKEUIResponse(requestMsg, requestId);
-		JSONObject result = MessageParser.parseKEUIItemsResponse(responseMsg, true);
-		
-		result.writeJSONString(response.getWriter());
+		getKEUIResponse(requestMsg, requestId, new MsgCallbackImpl(context) {
+			@Override
+			public void onSuccess(String msg) throws Exception {
+				JSONObject result = MessageParser.parseKEUIItemsResponse(msg, true);
+				
+				Writer out = context.getResponse().getWriter();
+				result.writeJSONString(out);
+				out.flush();
+				out.close();
+				context.complete();
+			}
+		});
 	}
 	
 	/**
@@ -253,14 +331,24 @@ public class QueryServlet extends MQServlet {
 	 * @throws Exception
 	 */
 	private void processItemDetailsRq(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		final AsyncContext context = request.startAsync();
+		
 		String itemId = request.getParameter(QUERY_PARAM);
 		String requestId = Utils.genRequestID();
 		String requestMsg = MessageUtils.genKEUIItemDetailsMessage(itemId, requestId);
 		
-		String responseMsg = getKEUIResponse(requestMsg, requestId);
-		JSONObject result = MessageParser.parseKEUIItemDetailsMsg(responseMsg);
-		
-		result.writeJSONString(response.getWriter());
+		getKEUIResponse(requestMsg, requestId, new MsgCallbackImpl(context) {
+			@Override
+			public void onSuccess(String msg) throws Exception {
+				JSONObject result = MessageParser.parseKEUIItemDetailsMsg(msg);
+				
+				Writer out = context.getResponse().getWriter();
+				result.writeJSONString(out);
+				out.flush();
+				out.close();
+				context.complete();
+			}
+		});
 	}
 	
 	/**
@@ -271,16 +359,27 @@ public class QueryServlet extends MQServlet {
 	 * @throws Exception
 	 */
 	private void processDuplicateIssueRq(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		final AsyncContext context = request.startAsync();
+		
 		Properties props = createRequestProps(request);
 		
 		String requestId = Utils.genRequestID();
 		String requestMsg = MessageUtils.genKEUIDuplicateIssueMsg(props, requestId);
 		
-		String responseMsg = getKEUIResponse(requestMsg, requestId);
-		JSONObject result = MessageParser.parseKEUIDuplicateResponse(responseMsg);
-		
-		result.writeJSONString(response.getWriter());
+		getKEUIResponse(requestMsg, requestId, new MsgCallbackImpl(context) {
+			@Override
+			public void onSuccess(String msg) throws Exception {
+				JSONObject result = MessageParser.parseKEUIDuplicateResponse(msg);
+				
+				Writer out = context.getResponse().getWriter();
+				result.writeJSONString(out);
+				out.flush();
+				out.close();
+				context.complete();
+			}
+		});
 	}
+
 	
 	/**
 	 * Processes the Issues related to my code request.
@@ -293,6 +392,8 @@ public class QueryServlet extends MQServlet {
 	 * @throws SOAPException 
 	 */
 	private void processRelatedMyCodeRq(HttpServletRequest request, HttpServletResponse response) throws IOException, JMSException, SOAPException, ServletException {
+		final AsyncContext context = request.startAsync();
+		
 		// first check if the user is authenticated
 		HttpSession session = request.getSession();
 		
@@ -303,23 +404,36 @@ public class QueryServlet extends MQServlet {
 			
 			// send a message to Recommender to get the IDs of issues
 			String uuid = user.getUuid();
-			Integer offset = Utils.parseInt(request.getParameter("offset"));
-			Integer limit = Utils.parseInt(request.getParameter("limit"));
+			final Integer offset = Utils.parseInt(request.getParameter("offset"));
+			final Integer limit = Utils.parseInt(request.getParameter("limit"));
 			
+			// first call API to get a list of issue URIs
 			String requestId1 = Utils.genRequestID();
-			String requestId2 = Utils.genRequestID();
-			
 			String apiRq = MessageUtils.genAPIIssuesForUserMsg(uuid, requestId1);
-			String apiResponse = getAPIResponse(apiRq, requestId1);
 			
-			List<String> issueUris = MessageParser.parseAPIIssuesResponse(apiResponse);
-			
-			// now that I have the issueIDs I have to send them to the KEUI component
-			String keuiRq = MessageUtils.genKEUIIssueListByUriMsg(issueUris, offset, limit, requestId2);
-			String keuiResp = getKEUIResponse(keuiRq, requestId2);
-			
-			JSONObject result = MessageParser.parseKEUIItemsResponse(keuiResp);
-			result.writeJSONString(response.getWriter());
+			getAPIResponse(apiRq, requestId1, new MsgCallbackImpl(context) {
+				@Override
+				public void onSuccess(String apiResponse) throws Exception {
+					List<String> issueUris = MessageParser.parseAPIIssuesResponse(apiResponse);
+				
+					// now that I have the URIs, I have to call KEUI, to get the actual items
+					String requestId2 = Utils.genRequestID();
+					String keuiRq = MessageUtils.genKEUIIssueListByUriMsg(issueUris, offset, limit, requestId2);
+				
+					getKEUIResponse(keuiRq, requestId2, new MsgCallbackImpl(context) {
+						@Override
+						public void onSuccess(String keuiResp) throws Exception {
+							JSONObject result = MessageParser.parseKEUIItemsResponse(keuiResp);
+							
+							Writer out = context.getResponse().getWriter();
+							result.writeJSONString(out);
+							out.flush();
+							out.close();
+							context.complete();
+						}
+					});
+				}
+			});
 		}
 		else {
 			// if no user => send unauthorized
@@ -327,6 +441,7 @@ public class QueryServlet extends MQServlet {
 				log.debug("User with no session searching for issues related to their code, sending code 401!");
 			
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			context.complete();
 		}
 	}
 
@@ -341,45 +456,63 @@ public class QueryServlet extends MQServlet {
 	 */
 	@SuppressWarnings("unchecked")
 	private void processSuggestForPeopleRq(HttpServletRequest request, HttpServletResponse response) throws IOException, JMSException, ServletException {
-		String uuid = request.getParameter("person");
-		List<String> uuidList = Arrays.asList(new String[] {uuid});
+		final AsyncContext context = request.startAsync();
 		
-		Integer offset = Utils.parseInt(request.getParameter("offset"));
-		Integer limit = Utils.parseInt(request.getParameter("limit"));
+		final List<String> uuidList = Arrays.asList(new String[] {request.getParameter("person")});
+		
+		final Integer offset = Utils.parseInt(request.getParameter("offset"));
+		final Integer limit = Utils.parseInt(request.getParameter("limit"));
 		
 		// send messages to Recommender to get the IDs
 		final String requestId1 = Utils.genRequestID();
 		
 		String recommenderIssueRq = MessageUtils.genRecommenderIssuesMsg(uuidList, requestId1);
-		String recommenderIssueResp = getRecommenderIssueResponse(recommenderIssueRq, requestId1);
-		
-		// parse responses
-		List<Long> issueIds = MessageParser.parseRecommenderIssueIdsMsg(recommenderIssueResp);
-		
-		// now that I have the issueIDs I have to send them to the KEUI component
-		final String requestId2 = Utils.genRequestID();
-		String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueIds, offset, limit, requestId2);
-		String keuiResp = getKEUIResponse(keuiRq, requestId2);
-		
-		// construct result
-		JSONObject result = MessageParser.parseKEUIItemsResponse(keuiResp);
-		
-		if (offset == 0) {
-			// put modules on the first page only
-			final String requestId3 = Utils.genRequestID();
+		getRecommenderIssueResponse(recommenderIssueRq, requestId1, new MsgCallbackImpl(context) {
+			@Override
+			public void onSuccess(String recommenderIssueResp) throws Exception {
+				List<Long> issueIds = MessageParser.parseRecommenderIssueIdsMsg(recommenderIssueResp);
 			
-			String recommenderModuleRq = MessageUtils.genRecommenderModulesMsg(uuidList, requestId3);
-			String recommenderModuleResp = getRecommenderModuleResponse(recommenderModuleRq, requestId3);
-		
-			List<String> moduleIds = MessageParser.parseRecommenderModuleIdsMsg(recommenderModuleResp);
+				// now that I have the issueIDs I have to send them to the KEUI component
+				final String requestId2 = Utils.genRequestID();
+				String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueIds, offset, limit, requestId2);
 			
-			JSONArray modulesJSon = new JSONArray();
-			modulesJSon.addAll(moduleIds);
-			
-			result.put("modules", modulesJSon);
-		}
-		
-		result.writeJSONString(response.getWriter());
+				getKEUIResponse(keuiRq, requestId2, new MsgCallbackImpl(context) {
+					@Override
+					public void onSuccess(String keuiResp) throws Exception {
+						final JSONObject result = MessageParser.parseKEUIItemsResponse(keuiResp);
+						
+						// on the first page also show the modules
+						if (offset == 0) {
+							final String requestId3 = Utils.genRequestID();
+							String recommenderModuleRq = MessageUtils.genRecommenderModulesMsg(uuidList, requestId3);
+						
+							getRecommenderModuleResponse(recommenderModuleRq, requestId3, new MsgCallbackImpl(context) {
+								@Override
+								public void onSuccess(String recommenderModuleResp) throws Exception {
+									List<String> moduleIds = MessageParser.parseRecommenderModuleIdsMsg(recommenderModuleResp);
+									
+									JSONArray modulesJSon = new JSONArray();
+									modulesJSon.addAll(moduleIds);
+									result.put("modules", modulesJSon);
+									
+									Writer out = context.getResponse().getWriter();
+									result.writeJSONString(out);
+									out.flush();
+									out.close();
+									context.complete();
+								}
+							});
+						} else {
+							Writer out = context.getResponse().getWriter();
+							result.writeJSONString(out);
+							out.flush();
+							out.close();
+							context.complete();
+						}
+					}
+				});
+			}
+		});
 	}
 	
 	/**
@@ -392,21 +525,36 @@ public class QueryServlet extends MQServlet {
 	 * @throws IOException
 	 */
 	private void processSuggestDevelopersRq(HttpServletRequest request, HttpServletResponse response) throws JMSException, ServletException, IOException {
+		final AsyncContext context = request.startAsync();
+		context.setTimeout(20000);	// TODO delete me
+		
 		Long issueId = Long.parseLong(request.getParameter("issueId"));		
 		
 		String requestId = Utils.genRequestID();
 		String requestMsg = MessageUtils.genRecommenderIdentityMsg(Arrays.asList(new Long[] {issueId}), requestId);
-		String responseMsg = getRecommenderIdentityResponse(requestMsg, requestId);
 		
-		JSONObject result = MessageParser.parseRecommenderIdentitiesMsg(responseMsg);
-		
-		result.writeJSONString(response.getWriter());
+		getRecommenderIdentityResponse(requestMsg, requestId, new MsgCallbackImpl(context) {
+			@Override
+			public void onSuccess(String msg) throws Exception {
+				JSONObject result = MessageParser.parseRecommenderIdentitiesMsg(msg);
+				
+				Writer out = context.getResponse().getWriter();
+				result.writeJSONString(out);
+				out.flush();
+				out.close();
+				context.complete();
+			}
+		});
 	}
 	
 	private void processPersonDetailsRq(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String result = UniversalService.fetchUrl(Utils.getUserInfoUrl(request.getParameter("uuid")), new HashMap<String, String>(), MediaType.APPLICATION_JSON, RequestType.GET);
 	
+		Writer out = response.getWriter();
 		if (result != null)
-			response.getWriter().write(result);
+			out.write(result);
+		
+		out.flush();
+		out.close();
 	}
 }

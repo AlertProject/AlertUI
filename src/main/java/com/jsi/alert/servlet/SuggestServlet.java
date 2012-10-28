@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jms.JMSException;
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +19,7 @@ import org.json.simple.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jsi.alert.servlet.callback.MsgCallbackImpl;
 import com.jsi.alert.utils.MessageParser;
 import com.jsi.alert.utils.MessageUtils;
 import com.jsi.alert.utils.Utils;
@@ -24,8 +27,9 @@ import com.jsi.alert.utils.Utils;
 /**
  * A <code>Servlet</code> which handles suggestion requests.
  */
+@WebServlet(name = "SuggestServlet", urlPatterns = {"/suggest"}, asyncSupported = true)
 public class SuggestServlet extends MQServlet {
-
+	
 	private static final long serialVersionUID = 3704611136606008852L;
 	
 	private static final Logger log = LoggerFactory.getLogger(SuggestServlet.class);
@@ -45,8 +49,7 @@ public class SuggestServlet extends MQServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+	public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 		try {
 			Map<String, String[]> parameters = request.getParameterMap();
 			
@@ -72,14 +75,21 @@ public class SuggestServlet extends MQServlet {
 			String requestId = Utils.genRequestID();
 			
 			String requestMsg = MessageUtils.genKEUISuggestionMessage(currInput, "Other".equals(suggType) ? "People,Products,Sources,Issues" : suggType, requestId);
-			String responseMsg = getKEUIResponse(requestMsg, requestId);
-			JSONArray responseJSon = MessageParser.parseKEUISuggestMessage(responseMsg);
 			
-			Writer out = response.getWriter();
-			responseJSon.writeJSONString(out);
-			
-			out.flush();
-			out.close();
+			final AsyncContext context = request.startAsync();
+			getKEUIResponse(requestMsg, requestId, new MsgCallbackImpl(context) {
+				@Override
+				public void onSuccess(String msg) throws Exception {
+					JSONArray responseJSon = MessageParser.parseKEUISuggestMessage(msg);
+					
+					Writer out = response.getWriter();
+					responseJSon.writeJSONString(out);
+					
+					out.flush();
+					out.close();
+					context.complete();
+				}
+			});
 		} catch (Throwable t) {
 			log.error("An unexpected exception occurred!", t);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
