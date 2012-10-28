@@ -39,7 +39,6 @@
 .item_similarity {
 	float: right;
 }
-
 .item_content{
     padding:0px 6px 4px 6px;
 }
@@ -90,7 +89,19 @@
 	background-position: 96% 16px;
 	background-size: 60px;
 }
-
+.item-wrapper.modules .item_table{
+	background-image:url("../img/module.png");
+	background-repeat:no-repeat;
+	background-position: 96% 16px;
+	background-size: 60px;
+}
+ul.module_ul {
+	list-style-image:url('../img/dot.png') !important;
+	text-indent:20px !important;
+}
+li.module_ul{
+	display: block !important;
+}
 .item_table{
 	color:#333;
     text-shadow:1px 1px 1px #fff;
