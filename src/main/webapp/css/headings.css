@@ -91,3 +91,14 @@ p {
    -moz-hyphens: auto;
    hyphens: auto;
 }
+.heading td{
+	color:#333;
+	width:20%;
+}
+#resolution_desc{
+	-ms-word-break: break-all;
+    word-break: break-all;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+}

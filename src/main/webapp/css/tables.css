@@ -97,10 +97,8 @@
 }
 ul.module_ul {
 	list-style-image:url('../img/dot.png') !important;
-	text-indent:20px !important;
-}
-li.module_ul{
-	display: block !important;
+	text-indent:8px !important;
+	list-style-position:inside;
 }
 .item_table{
 	color:#333;
@@ -141,7 +139,7 @@ li.module_ul{
 	padding:10px !important;
 	background:#000;
 	color:#fff;
-	text-shadow:1px 1px 1px #666;
+	text-shadow:1px 1px 1px #333;
 }
 .tooltip_name{
 	font-size:14px;
