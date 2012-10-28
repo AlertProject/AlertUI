@@ -795,8 +795,6 @@ var AlertViz = function(options) {
     			return data.label.replace(/\s+\[AKA[\w\W]*\]/g, '');
     	},
     	selectionAdded: function (elem, data) {
-    		if (data.type == 'person')
-    			$(elem).html($(elem).html().replace(/\s+\[AKA[\w\W]*\]/g, ''));
 	    	if (!settingManually)
 	    		updateUrl();
     	},
