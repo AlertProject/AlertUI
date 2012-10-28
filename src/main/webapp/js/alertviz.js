@@ -1532,7 +1532,7 @@ var AlertViz = function(options) {
     		html += '</tr></table>';
     		
     		// content
-    		html += '<div class="content"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.message + '<br /><span class="revision">Revision: ' + data.revisionTag + '</span></div></td></tr></table></div>';
+    		html += '<div class="content"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.message + '<br /><span class="revision"><em>Revision:</em> ' + data.revisionTag + '</span></div></td></tr></table></div>';
     		html += '</div>';
     		
     		// files
