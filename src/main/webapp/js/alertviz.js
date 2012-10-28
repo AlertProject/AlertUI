@@ -832,10 +832,9 @@ var AlertViz = function(options) {
     	addToSearchField: function (fieldId, data) {
     		switch (fieldId) {
     		case 'keyword_text':
-    			var currentVal = $(selector).val(); 
-    			var selector = '#' + fieldId;
-    			$(selector).val(currentVal.length == 0 ? data.value : ' ' + data.value);
-    			$(selector).change();
+    			var currentVal = $('#keyword_text').val(); 
+    			$('#keyword_text').val(currentVal.length == 0 ? data.value : currentVal + ' ' + data.value);
+    			$('#keyword_text').change();
     			break;
     		case 'issue_id_text':
     			issueIdSearch.add(data);
