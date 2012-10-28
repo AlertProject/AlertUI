@@ -13,19 +13,12 @@
 
 
 
-- v item details se zeleno ozadje spet spremeni v belo, ko odpres item. V
-headings.css, line 26 bi zakomentiral background:white
+
 
 
 - v textboxu s suggestioni sem videl da spet dela brisanje s klikom na x.
 Problem, ki sem ga sedaj opazil je naslednji:
    - napisi recimo "Dario". Izberi dariota in ti ga lepo doda v textbox
-   - ce pritisnes enter ti ne naredi vec searcha, kot vcasih, ampak ti karse enkrat doda dariota (ceprav suggestion box ni pokazan)
-   - ce nato pritisnes delete, da izbrises ta novega dariota spet pokaze
-"people, products, ..." text, ceprav textbox ni prazen.
-- conditioni se ne rekonstruirajo iz urlja. Ce dodas v conditinone Dariota
-fredija, skopiras generiran url in ga odpres v novem oknu, ti ne bo vec
-dodalo dariota med conditione.
 
 
 
@@ -36,8 +29,6 @@ MISLIM, da dela, testiraj
 - exception pri commit details
 - paging pri suggest issues for a developer
 - tooltip bug, vcasih ne izgine
-
-URSIC, ko odprem commit, se zgoraj ne vidi
 
 
 User details:
