@@ -3,15 +3,12 @@ package com.jsi.alert.servlet;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,24 +18,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jsi.alert.mq.MQSessionProvider;
+import com.jsi.alert.mq.MsgListener;
 import com.jsi.alert.mq.MQSessionProvider.ComponentKey;
+import com.jsi.alert.mq.callback.MsgCallback;
 import com.jsi.alert.utils.Configuration;
 
 /**
  * An abstract <code>Servlet</code> which send a sync request to the KEUI component.
  */
 public abstract class MQServlet extends HttpServlet {
-       
+	   
 	private static final long serialVersionUID = -5462790358676407606L;
 	
 	private static final Logger log = LoggerFactory.getLogger(MQServlet.class);
 	
-	private static final String REQUEST_ID_TAG = "<ns1:eventId>\\d+</ns1:eventId>";
-	private static final Pattern REQUEST_ID_PATTERN = Pattern.compile(REQUEST_ID_TAG);
-	
 	private Session mqSession;
 	protected Map<ComponentKey, MessageProducer> producerH;
 	protected Map<ComponentKey, MessageConsumer> consumerH;
+	
+	private MsgListener listener;
     
 	/*
 	 * (non-Javadoc)
@@ -100,21 +98,18 @@ public abstract class MQServlet extends HttpServlet {
     	consumerH.put(ComponentKey.RECOMMENDER_ISSUE, provider.getRecommenderIssueConsumer());
     	consumerH.put(ComponentKey.RECOMMENDER_IDENTITY, provider.getRecommenderIdentityConsumer());
     	consumerH.put(ComponentKey.RECOMMENDER_MODULE, provider.getRecommenderModuleConsumer());
+    	
+    	// init the listener
+    	listener = new MsgListener();
+    	
+    	for (MessageConsumer consumer : consumerH.values())
+    		consumer.setMessageListener(listener);
     }
     
     private void sendMessage(String requestMsg, ComponentKey componentKey) throws JMSException {
-    	if (log.isDebugEnabled()) {
-    		log.debug("Sending message to " + componentKey + " component...");
-    		if (Configuration.LOG_EVENTS)
-    			log.debug(requestMsg);
-    	}
-    	
     	MessageProducer producer = producerH.get(componentKey);
     	Message msg = mqSession.createTextMessage(requestMsg);
     	producer.send(msg);
-    	
-    	if (log.isDebugEnabled())
-    		log.debug("Message sent!");
     }
 	
 	/**
@@ -125,7 +120,7 @@ public abstract class MQServlet extends HttpServlet {
 	 * @throws ServletException 
 	 * @throws JMSException 
 	 */
-	private String receiveMessage(String requestID, ComponentKey componentKey) throws ServletException, JMSException {
+	/*private String receiveMessage(String requestID, ComponentKey componentKey) throws ServletException, JMSException {
 		if (log.isDebugEnabled())
 			log.debug("Receiving response from the " + componentKey + " component...");
 		
@@ -138,12 +133,9 @@ public abstract class MQServlet extends HttpServlet {
 		while (!requestID.equals(receivedID)) {
 			// check if KEUI is taking too long
 			if (System.currentTimeMillis() - beginTime > Configuration.REQUEST_TIMEOUT)
-				throw new ServletException(componentKey + " timed out!");
+				throw new ServletException(componentKey + " timed out, requestId: " + requestID);
 			
-			Message receivedMsg = consumer.receive(2000);
-			if (receivedMsg != null && log.isDebugEnabled())
-				log.debug("Received a message...");
-			
+			Message receivedMsg = consumer.receive(4000);
 			if (receivedMsg instanceof TextMessage) {
 				TextMessage received = (TextMessage) receivedMsg;
 				responseMsg = received.getText();
@@ -152,6 +144,9 @@ public abstract class MQServlet extends HttpServlet {
 				Matcher matcher = REQUEST_ID_PATTERN.matcher(responseMsg);				
 				if (matcher.find()) {
 					String idTag = matcher.group(0);
+					
+					log.info("Received: " + idTag + ", target: " + requestID);
+					
 					if (REQUEST_ID_TAG.replace("\\d+", requestID).equals(idTag))
 						break;
 				}
@@ -165,46 +160,52 @@ public abstract class MQServlet extends HttpServlet {
 		}
 		
 		return responseMsg;
-	}
+	}*/
 	
-	private String getMqResponse(String requestMsg, String requestId, ComponentKey componentKey) throws JMSException, ServletException {
+	private void getMqResponse(String requestMsg, String requestId, MsgCallback callback, ComponentKey componentKey) throws JMSException, ServletException {
+		listener.addCallback(requestId, callback);
 		sendMessage(requestMsg, componentKey);
-		return receiveMessage(requestId, componentKey);
+		
+		if (log.isDebugEnabled()) {
+    		log.debug("Sent message " + requestId + " to " + componentKey + " component...");
+    		if (Configuration.LOG_EVENTS)
+    			log.debug(requestMsg);
+    	}
 	}
 	
 	/**
 	 * Sends a message to the KEUI component and receives the response.
 	 */
-	protected String getKEUIResponse(String requestMsg, String requestId) throws JMSException, ServletException {
-		return getMqResponse(requestMsg, requestId, ComponentKey.KEUI);
+	protected void getKEUIResponse(String requestMsg, String requestId, MsgCallback callback) throws JMSException, ServletException {
+		getMqResponse(requestMsg, requestId, callback, ComponentKey.KEUI);
 	}
 	
 	/**
 	 * Sends a message to the API component and receives the response.
 	 */
-	protected String getAPIResponse(String requestMsg, String requestId) throws JMSException, ServletException {
-		return getMqResponse(requestMsg, requestId, ComponentKey.API);
+	protected void getAPIResponse(String requestMsg, String requestId, com.jsi.alert.mq.callback.MsgCallback callback) throws JMSException, ServletException {
+		getMqResponse(requestMsg, requestId, callback, ComponentKey.API);
 	}
 	
 	/**
 	 * Sends an issue recommendation message to the Recommender component and receives the response.
 	 */
-	protected String getRecommenderIssueResponse(String requestMsg, String requestId) throws JMSException, ServletException {
-		return getMqResponse(requestMsg, requestId, ComponentKey.RECOMMENDER_ISSUE);
+	protected void getRecommenderIssueResponse(String requestMsg, String requestId, MsgCallback callback) throws JMSException, ServletException {
+		getMqResponse(requestMsg, requestId, callback, ComponentKey.RECOMMENDER_ISSUE);
 	}
 	
 	/**
 	 * Sends an identity recommendation message to the Recommender component and receives the response.
 	 */
-	protected String getRecommenderIdentityResponse(String requestMsg, String requestId) throws JMSException, ServletException {
-		return getMqResponse(requestMsg, requestId, ComponentKey.RECOMMENDER_IDENTITY);
+	protected void getRecommenderIdentityResponse(String requestMsg, String requestId, MsgCallback callback) throws JMSException, ServletException {
+		getMqResponse(requestMsg, requestId, callback, ComponentKey.RECOMMENDER_IDENTITY);
 	}
 	
 	/**
 	 * Sends an module recommendation message to the Recommender component and receives the response.
 	 */
-	protected String getRecommenderModuleResponse(String requestMsg, String requestId) throws JMSException, ServletException {
-		return getMqResponse(requestMsg, requestId, ComponentKey.RECOMMENDER_MODULE);
+	protected void getRecommenderModuleResponse(String requestMsg, String requestId, MsgCallback callback) throws JMSException, ServletException {
+		getMqResponse(requestMsg, requestId, callback, ComponentKey.RECOMMENDER_MODULE);
 	}
 	
 	/*

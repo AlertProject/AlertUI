@@ -49,19 +49,10 @@ function getCurrentState() {
 	
 	// general search
 	// search terms
-	var people = searchGeneral.getTypeV('person');
 	var keywords = $('#keyword_text').val().replace(/^\s+|\s+$/g, "");
-	var sources = searchGeneral.getTypeV('source');
-	var products = searchGeneral.getTypeV('product');
-	var issues = searchGeneral.getTypeV('issue');
-	var threads = searchGeneral.getTypeV('thread');
-	
-	if (people.length > 0) general.people = people;
+	var tags = searchGeneral.getNodes();
 	if (keywords.length > 0) general.keywords = keywords;
-	if (sources.length > 0) general.sources = sources;
-	if (products.length > 0) general.products = products;
-	if (issues.length > 0) general.issues = issues;
-	if (threads.length > 0) general.threads = threads;
+	if (tags.length > 0) general.tags = tags;
 	
 	// checkboxes
 	var issueChk = $('#issues_check').attr('checked') == 'checked';
@@ -119,7 +110,7 @@ function getCurrentState() {
 		general.or = true;
 	
 	// duplicate issue
-	var issue = issueIdSearch.getTypeV('issue');
+	var issue = issueIdSearch.getNodes('issue');
 	if (issue.length > 0) duplicate.iid = issue[0];
 	
 	var duplNoneChk = $('#dup_none_check').attr('checked') == 'checked';
@@ -177,7 +168,7 @@ function getCurrentState() {
 	if (!myClosedChk) myCode.c = false;
 	
 	// suggest issues for a developer
-	var peoplePerson = searchPerson.getTypeV('person');
+	var peoplePerson = searchPerson.getNodes('person');
 	if (peoplePerson.length > 0) personState.person = peoplePerson[0];
 	
 	// construct result
@@ -275,7 +266,6 @@ function loadState() {
 	settingManually = true;
 	
 	// general search
-	var searchTerms = {people: true, concepts: true, sources: true, products: true, issues: true, commits: true, threads: true};
 	var filterChks = {is: true, c: true, fi: true, m: true, wo: true};
 	var issueChks = {n: true, f: true, w: true, i: true, d: true, wo: true, u: true, o: true, v: true, a: true, r: true, c: true};
 	var issueChksGen = {go: true, gn: true, gv: true, gf: true, ga: true, gw: true, gr: true, gi: true, gc: true, gwo: true, gu: true, gd: true};
@@ -287,7 +277,7 @@ function loadState() {
 		for (var attribute in general) {
 			var value = general[attribute];
 			
-			if (searchTerms[attribute]) {	// search terms
+			if (attribute == 'tags') {	// search terms
 				// the value is an array of search terms
 				for (var i = 0; i < value.length; i++)
 					viz.addToSearchField('other_text', value[i]);
@@ -451,90 +441,68 @@ var SocialGraph = function(options){
 		return arbor.Point(p1.x + ua * (p2.x - p1.x), p1.y + ua * (p2.y - p1.y));
 	};
 	
+	var timer = null;
 	var tooltipShown = false;
 	
 	// tooltip functions
-	function showTooltip(data) {
+	function showTooltip(person, x, y) {
 		tooltipShown = true;
-		
-		var data = {"uuid":"fd2a6ff5-0397-41d3-8b83-d9fb90f9ee3e","metrics":[{"id":0,"name":"CommunicationTemporalMetric","value":8},{"id":1,"name":"ItsTemporalMetric","value":140},{"id":2,"name":"ScmActivityMetric","value":189},{"id":3,"name":"ScmApiIntroducedMetric","value":67},{"id":4,"name":"ItsIssuesResolvedMetric","value":356},{"id":5,"name":"ItsActivityMetric","value":1962},{"id":6,"name":"ScmTemporalMetric","value":207},{"id":7,"name":"CommunicationActivityMetric","value":126}],"profiles":[{"id":7,"sourceId":"none","name":"Dario","lastname":"Freddi","username":"drf kde org","email":"drf kde org","source":"its","uri":null},{"id":8,"sourceId":"200","name":null,"lastname":"","username":"drf kde org","email":"drf@kde.org","source":"its-change","uri":null},{"id":9,"sourceId":"809","name":"Dario","lastname":"Freddi","username":"drf kde org","email":"","source":"scm","uri":null},{"id":10,"sourceId":"none","name":"Dario","lastname":"Freddi","username":"drf54321 gmail com","email":null,"source":"mailing","uri":null},{"id":669,"sourceId":"none","name":"Dario","lastname":"Freddi","username":"drf","email":"drf","source":"its","uri":"http://www.alert-project.eu/ontologies/alert_scm.owl#Person22"},{"id":1441,"sourceId":"none","name":"Dario","lastname":"Freddi","username":"","email":"drf kde org","source":"mailing","uri":"http://www.alert-project.eu/ontologies/alert_scm.owl#Person1575"},{"id":1488,"sourceId":"none","name":null,"lastname":null,"username":"drf","email":"drf","source":"its-change","uri":"http://www.alert-project.eu/ontologies/alert_scm.owl#Person22"}],"ciPerClass":{"occasional contributors":1.080485153071748E-8,"developers to engage":8.757856291888973E-9,"testers":0.6465839228548342,"core developers":1.7981814013354956E-4,"bug triagers":2.5068574190018466E-10,"reviewers":5.2325601529403E-15}};
-		
-		var usernames = [];
-		$.each(data.profiles, function (idx, profile) {
-			usernames.push(profile.username);
-		});
-		
-		var html = '<table class="tooltip">';
-		html += '<tr>';
-		html += '<td class="tooltip_name">';
-		html += data.profiles[0].lastname + ', ' + data.profiles[0].name;
-		html += '<span class="tooltip_usernames">' + usernames.join() + '</span>';
-		html += '</td>';
-		
-		html += '<tr>';
-		html += '<td class="tooltip_scores">';
-		for (var attr in data.ciPerClass) {
-			var val = data.ciPerClass[attr];
+		timer = setInterval(function () {
+			if (!tooltipShown) return;
 			
-			html += attr + ': ' + (val*100).toFixed(2) + '%<br />';
-		}
-		html += '</td>';
-		html +='</tr>';
-		
-		html += '</table>';
-		
-		tooltip.show(html);
-		
-		/*if (data.uuid == null || data.uuid == '') {
-			var html = '<table class="tooltip"><tbody>';
-			html += '<tr>';
-			html += '<td class="tooltip_name">ID of ' + data.label + ' isn\'t available!</td>';
-			html += '</tr>';
-			html += '</tbody></table>';
-			
-			tooltip.show(html);
-		} else {
-			$.ajax({
-				url: 'query',
-				dataType: 'json',
-				data: {uuid: data.uuid, type: 'personDetails'},
-				success: function (data, textStatus, jqXHR) {
-					if (!tooltipShown) return;
-					
-					var usernames = [];
-					$.each(data.profiles, function (idx, profile) {
-						usernames.push(profile.username);
-					});
-					
-					var html = '<table class="tooltip">';
-					html += '<tr>';
-					html += '<td class="tooltip_name">';
-					html += data.profiles[0].lastname + ', ' + data.profiles[0].name;
-					html += '<span class="tooltip_usernames">' + usernames.join() + '</span>';
-					html += '</td>';
-					
-					html += '<tr>';
-					html += '<td class="tooltip_scores">';
-					for (var attr in data.ciPerClass) {
-						var val = data.ciPerClass[key];
+			if (person.uuid == null || person.uuid == '') {
+				var html = '<table class="tooltip"><tbody>';
+				html += '<tr>';
+				html += '<td class="tooltip_name">ID of ' + person.label + ' isn\'t available!</td>';
+				html += '</tr>';
+				html += '</tbody></table>';
+				
+				tooltip.show(html);
+			} else {
+				$.ajax({
+					url: 'query',
+					dataType: 'json',
+					data: {uuid: person.uuid, type: 'personDetails'},
+					success: function (data, textStatus, jqXHR) {
+						if (!tooltipShown) return;
 						
-						html += attr + ': ' + (val*100).toFixed(2) + '%<br />';
+						var usernames = [];
+						$.each(data.profiles, function (idx, profile) {
+							usernames.push(profile.username);
+						});
+						
+						var html = '<table class="tooltip">';
+						html += '<tr>';
+						html += '<td class="tooltip_name">';
+						html += data.profiles[0].lastname + ', ' + data.profiles[0].name;
+						html += '<span class="tooltip_usernames">' + usernames.join() + '</span>';
+						html += '</td>';
+						
+						html += '<tr>';
+						html += '<td class="tooltip_scores">';
+						for (var attr in data.ciPerClass) {
+							var val = data.ciPerClass[attr];
+							
+							html += attr + ': ' + (val*100).toFixed(2) + '%<br />';
+						}
+						html += '</td>';
+						html +='</tr>';
+						
+						html += '</table>';
+						
+						clearTimeout(timer);
+						tooltip.show(html, null, x, y);
 					}
-					html += '</td>';
-					html +='</tr>';
-					
-					html += '</table>';
-					
-					tooltip.show(html);
-				}
-			});
-		}*/
+				});
+			}
+		}, 50);
 	}
 	
 	function hideTooltip() {
+		tooltipShown = false;
+		clearTimeout(timer);
 		if (tooltip != null)
 			tooltip.hide();
-		tooltipShown = false;
 	}
 	
 	$('#' + options.container).mouseleave(hideTooltip);
@@ -660,7 +628,7 @@ var SocialGraph = function(options){
 						node.data.mouseOver = true;
 						
 						document.body.style.cursor = 'pointer';
-						showTooltip(node.data);
+						showTooltip(node.data, event.clientX, event.clientY);
 					},
 					'mouseout': function (event, node) {
 						if (node.data.mouseOver != true) return;	// fix
@@ -671,7 +639,10 @@ var SocialGraph = function(options){
 						document.body.style.cursor = 'default';
 					},
 					'mousemove': function (event) {
-						showTooltip(node.data);
+						if (!tooltipShown)
+							showTooltip(node.data, event.clientX, event.clientY);
+						else
+							tooltip.pos(event);
 					},
 					'mousedown': function (event) {
 						hideTooltip();
@@ -748,165 +719,93 @@ var ZoomHistory = function () {
 	return that;
 };
 
-var Search = function (opts) {
-	var searchTerms = null;
-	
-	var that = {
-		getObjByLabel: function (type, label) {
-			var list = searchTerms[type];
-			
-			for (var i = 0; i < list.length; i++) {
-				if (list[i].label == label)
-					return list[i];
-			}
-			
-			return null;
-		},
-			
-		indexOfLabel: function (type, label) {
-			return that.indexOfAttr(type, label, 'label');
-		},
-		
-		indexOfAttr: function (type, val, attr) {
-			var prV = searchTerms[type];
-			for (var i = 0; i < prV.length; i++) {
-				if (prV[i][attr] == val)
-					return i;
-				
-				var labelV = prV[i][attr].split(',');
-				for (var j = 0; j < labelV.length; j++) {
-					if (labelV[j] == val)
-						return i;
-				}
-	    	}
-	    	return -1;
-		},
-		
-		containsLabel: function (type, label) {
-			return that.indexOfLabel(type, label) >= 0;
-		},
-		
-		addOrTerm: function (type, idx, data) {
-			if (that.containsLabel(type, data.label)) return;
-			
-			var list = searchTerms[type];
-			list[idx].label += ',' + data.label;
-			list[idx].value += '|' + data.value;
-		},
-		
-		removeTerm: function (type, data) {
-			var idx = that.indexOfLabel(type, data.label);
-			if (idx < 0) return;
-			
-			var list = searchTerms[type];
-			list[idx].label = list[idx].label.replace(new RegExp('^' + data.label + '|,' + data.label, 'g'), '');
-			list[idx].value = list[idx].value.replace(new RegExp('^' + data.value + '|\|' + data.value, 'g'), '');
-    		
-    		if (searchTerms[type][idx].label.length == 0)
-    			searchTerms[type].splice(idx, idx + 1);
-		},
-		
-		addToSearch: function (data) {
-			var array = searchTerms[data.type];
-			var label = data.label;
-			var value = data.value;
-			
-			if (data.type == 'product'|| data.type == 'issue') {
-				if (that.indexOfLabel(data.type, label) < 0)
-					array.push({type: data.type, label: label, value: value});
-			} else if (data.type == 'source') {
-				if (that.indexOfLabel(data.type, label) < 0)
-					array.push({type: data.type, label: label, value: value, tooltip: data.tooltip});
-			} else if (data.type == 'person') {
-				if (that.indexOfLabel(data.type, label) < 0)
-					array.push({type: data.type, label: label, value: value, uuid: data.uuid});
-			} else if (data.type == 'thread') {
-				if (that.indexOfLabel(data.type, label) < 0)
-					array.push({type: data.type, label: label, value: value, subtype: data.subtype});
-			}
-		},
-		
-		removeFromSearch: function (elem, data) {
-			var type = null;
-	  		if ($(elem).hasClass('keyword')) {
-	  			type = 'keyword';
-	  		} else if ($(elem).hasClass('person')) {
-	  			type = 'person';
-	  		} else if ($(elem).hasClass('concept')) {
-	  			type = 'concept';
-	  		} else if ($(elem).hasClass('source')) {
-	  			type = 'source';
-	  		} else if ($(elem).hasClass('product')) {
-	  			type = 'product';
-	  		} else if ($(elem).hasClass('issue')) {
-	  			type = 'issue';
-	  		} else if ($(elem).hasClass('thread')) {
-	  			type = 'thread';
-	  		}
-			
-	  		var label = data.label;
-	  		var array = searchTerms[type];
-	  		if (type == 'source' || type == 'product' || type == 'issue' || type == 'thread') {
-	  			var idx = that.indexOfLabel(type, label);
-	  			if (idx >= 0)
-	  				array.splice(idx, 1);
-	  		} else if (type == 'person') {
-	  			var idx = that.indexOfAttr(type, data.value, 'value');
-	  			if (idx >= 0)
-	  				array.splice(idx, 1);
-	  		}
-		},
-		
-		getSearchStr: function (type, attribute) {
-			var attr = attribute || 'value';
-			
-			var list = searchTerms[type];
-			var result = '';
-			for (var i = 0; i < list.length; i++) {
-				result += list[i][attr];
-				if (i < list.length - 1)
-					result += ',';
-			}
-			return result;
-		},
-		
-		getSearchStrWithoutVal: function (type, attribute) {
-			var list = searchTerms[type];
-			var result = '';
-			$.each(list, function (idx, item) {
-				if (item.value == null || item.value.indexOf('--manually--') == 0) {
-					result += item[attribute];
-					if (idx < list.length - 1)
-						result += ',';
-				}
-			});
-		},
-		
-		getTypeV: function (type) {
-			return searchTerms[type];
-		},
-	    
-	    init: function () {
-	    	searchTerms = {
-	    		'person': [],
-	    		'source': [],
-	    		'product': [],
-	    		'issue': [],
-	    		'thread': []
-	    	};
-	    }
-	};
-	
-	that.init();
-	
-	return that;
-};
-
-
 var AlertViz = function(options) { 
-    var generalSearch = Search();
-    var issueIdSearch = Search();
-    var personSearch = Search();
+	
+	// init search fields
+	var formatSelectionList = function (data, el) {
+    	if (data.type == 'source') {
+  			$(el).attr('title', data.tooltip);
+  			$(el).html($(el).html() + ' <span class="file_path">(' + data.path + ')</span>');
+  		}
+  		return el;
+    };
+    var generalSearch = AutoSuggest('other_text', 'suggest', {
+    	selectedItemProp: 'label',
+    	searchObjProps: 'label',
+    	selectedValuesProp: 'value',
+    	queryParam: 'Other',
+    	retrieveLimit: false,
+    	neverSubmit: true,
+    	startText: 'people, products, sources, components, issue IDs,...',
+    	asHtmlID: 'other_text',
+    	addByWrite: false,
+    	formatLabel: function (data) {
+    		if (data.type == 'person')
+    			return data.label.replace(/\s+\[AKA[\w\W]*\]/g, '');
+    		else return data.label;
+    	},
+    	selectionAdded: function(elem, data) {
+    		if (data.type == 'source')
+				$(elem).attr('title', data.tooltip);
+    		
+    		if (!settingManually)
+    			updateUrl();
+    	},
+	  	selectionRemoved: function(elem, data) {
+	  		updateUrl();
+	  		elem.remove();
+	  	},
+	  	formatList: formatSelectionList
+    });
+    var issueIdSearch = AutoSuggest('issue_id_text', 'suggest', {
+    	selectionLimit: 1,
+    	selectedItemProp: 'label',
+    	searchObjProps: 'label',
+    	selectedValuesProp: 'value',
+    	queryParam: 'Issues',
+    	retrieveLimit: false,
+    	neverSubmit: true,
+    	startText: 'issue ID,...',
+    	asHtmlID: 'issue_id_text',
+    	addByWrite: false,
+    	selectionAdded: function(elem, data) {
+    		if (!settingManually)
+    			updateUrl();
+    	},
+	  	selectionRemoved: function(elem, data) {
+	  		updateUrl();
+	  		
+	  		elem.remove();
+	  	},
+	  	formatList: formatSelectionList
+    });
+    var personSearch = AutoSuggest('person_text', 'suggest', {
+    	selectionLimit: 1,
+    	selectedItemProp: 'label',
+    	searchObjProps: 'label',
+    	selectedValuesProp: 'value',
+    	queryParam: 'People',
+    	retrieveLimit: false,
+    	neverSubmit: true,
+    	startText: 'people,...',
+    	asHtmlID: 'person_text',
+    	addByWrite: false,
+    	formatLabel: function (data) {
+    		if (data.type == 'person')
+    			return data.label.replace(/\s+\[AKA[\w\W]*\]/g, '');
+    	},
+    	selectionAdded: function (elem, data) {
+    		if (data.type == 'person')
+    			$(elem).html($(elem).html().replace(/\s+\[AKA[\w\W]*\]/g, ''));
+	    	if (!settingManually)
+	    		updateUrl();
+    	},
+	  	selectionRemoved: function (elem, data) {
+	  		updateUrl();
+	  		elem.remove();
+	  	},
+	  	formatList: formatSelectionList
+    });
     
     var itemsPerPage = 50;
     
@@ -931,29 +830,22 @@ var AlertViz = function(options) {
     	searchStatePerson: personSearch,
     	
     	addToSearchField: function (fieldId, data) {
-    		generalSearch.addToSearch(data);
-    		var selector = '#' + fieldId;
-    		
-    		if (fieldId == 'keyword_text') {
-    			var value = data.value;
-    			
-    			$(selector).val($(selector).val() + ' ' + value);
-    		} else if(fieldId == 'issue_id_text') {
-    			issueIdSearch.addToSearch(data);
-    			
-    			var label = data.label;
-    			$(selector).val(label + '--:--' + data.type + '|');
-    		} else {
-    			generalSearch.addToSearch(data);
-            	
-        		var label = data.label;
-        		if (data.type == 'source') 
-        			$(selector).val(label + '--:--' + data.type + '--:--' + data.tooltip + '|');
-        		else
-        			$(selector).val(label + '--:--' + data.type + '|');
+    		switch (fieldId) {
+    		case 'keyword_text':
+    			var currentVal = $('#keyword_text').val(); 
+    			$('#keyword_text').val(currentVal.length == 0 ? data.value : currentVal + ' ' + data.value);
+    			$('#keyword_text').change();
+    			break;
+    		case 'issue_id_text':
+    			issueIdSearch.add(data);
+    			break;
+    		case 'other_text':
+    			generalSearch.add(data);
+    			break;
+    		case 'person_text':
+    			personSearch.add(data);
+    			break;
     		}
-    		
-    		$(selector).change();
     	},
     	
     	cleanData: function () {
@@ -1254,20 +1146,39 @@ var AlertViz = function(options) {
     	
     	searchGeneral: function() {	
     		var keywords = $('#keyword_text').val();
-    		var peopleUris = generalSearch.getSearchStr('person');
-    		var peopleUuids = generalSearch.getSearchStrWithoutVal('person', 'uuid');
-    		var sources = generalSearch.getSearchStr('source');
-    		var products = generalSearch.getSearchStr('product');
-    		var issues = generalSearch.getSearchStr('issue');
-    		var threads = generalSearch.getTypeV('thread');
     		
+    		var peopleUris = [];
+    		var peopleUuids = [];
+    		var sources = [];
+    		var products = [];
+    		var issues = [];
     		var threadIds = [];
     		var itemIds = [];
-    		$.each(threads, function (idx, thread) {
-    			if (thread.subtype == 'thread')
-    				threadIds.push(thread.value);
-    			else
-    				itemIds.push(thread.value);
+    		
+    		var tags = generalSearch.getNodes();
+    		$.each(tags, function (idx, tag) {
+    			switch (tag.type) {
+    			case 'person':
+    				if (tag.value != null)
+    					peopleUris.push(tag.value);
+    				else
+    					peopleUuids.push(tag.uuid);
+    				break;
+    			case 'source':
+    				sources.push(tag.value);
+    				break;
+    			case 'product':
+    				products.push(tag.value);
+    				break;
+    			case 'issue':
+    				issues.push(tag.value);
+    				break;
+    			case 'thread':
+    				if (tag.subtype == 'thread')
+    					threadIds.push(tag.value);
+    				else
+    					itemIds.push(tag.value);
+    			}
     		});
     		
     		var from = $('#from_text').val();
@@ -1276,11 +1187,11 @@ var AlertViz = function(options) {
     		var queryOpts = {
     			type: 'generalSearch',
     			keywords: keywords,
-    			peopleUris: peopleUris,
-    			peopleUuids: peopleUuids,
-    			sources: sources,
-    			products: products,
-    			issues: issues,
+    			peopleUris: peopleUris.join(),
+    			peopleUuids: peopleUuids.join(),
+    			sources: sources.join(),
+    			products: products.join(),
+    			issues: issues.join(),
     			threadIds: threadIds.join(),
     			itemIds: itemIds.join(),
     			from: from,
@@ -1318,7 +1229,7 @@ var AlertViz = function(options) {
     	},
     	
     	searchIssueId: function () {
-    		var issue = issueIdSearch.getSearchStr('issue');
+    		var issue = issueIdSearch.getAttrStr();
     		
     		return that.searchIssueByQueryOpts({
 				type: 'duplicateIssue',
@@ -1391,7 +1302,7 @@ var AlertViz = function(options) {
     	},
     	
     	searchForDeveloper: function () {
-    		var people = personSearch.getSearchStr('person', 'uuid');
+    		var people = personSearch.getAttrStr('uuid');
     		
     		var queryOpts = {
     			type: 'suggestPeople',
@@ -1438,19 +1349,21 @@ var AlertViz = function(options) {
     		}
     	},
     	
-    	openPersonTab: function (e, person) {
+    	openGeneralTab: function (e, tag) {
     		var event = e || window.event;
-    		event.stopPropagation();
+			event.stopPropagation();
 			event.preventDefault();
-			
-			if (person != null) {
-				var config = {};
-				var general = {};
-				general.people = [person];
-				
-				config.gen = general;
-				openInNewTab(config);
-			}
+    		
+    		if (tag != null) {
+	    		var config = {};
+	    		
+	    		var general = {};
+	    		general.tags = [tag];
+	    		
+	    		config.gen = general;
+	    		openInNewTab(config);
+    		}
+    		return false;
     	},
     	
     	setRecommendedDevelopers: function (data) {
@@ -1462,7 +1375,7 @@ var AlertViz = function(options) {
     			
     			html += '<li class="tree_li">';
 				html += '<span class="leaf">' + name + '</span>';
-				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openPersonTab(event, {type: \'person\', label: \'' + name + '\', uuid: \'' + uuid + '\'});" />';
+				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event, {type: \'person\', label: \'' + name + '\', uuid: \'' + uuid + '\'});" />';
 				html += '</li>';
     		});
     		
@@ -1517,23 +1430,6 @@ var AlertViz = function(options) {
 			    else
 			    	$(this).addClass('content_open');
 			});
-    	},
-    	
-    	openThreadTab: function (e, thread) {
-    		var event = e || window.event;
-			event.stopPropagation();
-			event.preventDefault();
-			
-			if (thread != null) {
-	    		var config = {};
-	    		
-	    		var general = {};
-	    		general.threads = [thread];
-	    		
-	    		config.gen = general;
-	    		openInNewTab(config);
-    		}
-    		return false;
     	},
     	
     	setIssueDetails: function (data, selectedUri) {
@@ -1596,9 +1492,9 @@ var AlertViz = function(options) {
     				html += '<span class="leaf normal_weight">' + ref.description + '</span>';
     				
     				if (ref.threadId != null)
-    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openThreadTab(event,{type: \'thread\', label: \'Thread ID: ' + ref.threadId + '\', value: \'' + ref.threadId + '\', subtype: \'thread\'});" />';
+    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event,{type: \'thread\', label: \'Thread ID: ' + ref.threadId + '\', value: \'' + ref.threadId + '\', subtype: \'thread\'});" />';
     				else 
-    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openThreadTab(event,{type: \'thread\', label: \'Item ID: ' + ref.itemId + '\', value: \'' + ref.itemId + '\', subtype: \'commit\'});" />';
+    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event,{type: \'thread\', label: \'Item ID: ' + ref.itemId + '\', value: \'' + ref.itemId + '\', subtype: \'commit\'});" />';
     				html += '</li>';
     			});
     			html += '</ul>';
@@ -1621,23 +1517,6 @@ var AlertViz = function(options) {
 			});
     		
     		that.recommendDevelopers(data.id);
-    	},
-    	
-    	openCommitTab: function (e, commit) {
-    		var event = e || window.event;
-			event.stopPropagation();
-			event.preventDefault();
-    		
-    		if (commit != null) {
-	    		var config = {};
-	    		
-	    		var general = {};
-	    		general.commits = [commit];
-	    		
-	    		config.gen = general;
-	    		openInNewTab(config);
-    		}
-    		return false;
     	},
     	
     	setCommitDetails: function (data) {
@@ -1677,7 +1556,7 @@ var AlertViz = function(options) {
     				html += '<li class="tree_li">';
     				html += '<div class="toggle" title="' + file.fullName + '">';
     				html += '<span>' + file.name + ' (' + file.action + ')</span>';
-    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openCommitTab(event,{type: \'source\', label: \'' + file.name + '\', value: \'' + file.uri + '\', tooltip: \'' + file.fullName + '\'});" />';
+    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event,{type: \'source\', label: \'' + file.name + '\', value: \'' + file.uri + '\', tooltip: \'' + file.fullName + '\'});" />';
     				html += '</div>';
     				html += '<ul class="tree_ul">';
     				for (var moduleIdx = 0; moduleIdx < modules.length; moduleIdx++) {
@@ -1689,14 +1568,14 @@ var AlertViz = function(options) {
         					html += '<li class="tree_li">';
         					html += '<div class="toggle">';
         					html += '<span>' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
-        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openCommitTab(event, {type: \'source\', label: \'' + module.name + '\', value: \'' + module.uri + '\', tooltip: \'' + file.fullName + '\'});" />';
+        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event, {type: \'source\', label: \'' + module.name + '\', value: \'' + module.uri + '\', tooltip: \'' + file.fullName + '\'});" />';
         					html +='</div>';
     	    				html += '<ul class="tree_ul">';
     	    				for (var methodIdx = 0; methodIdx < methods.length; methodIdx++) {
     	    					var method = methods[methodIdx];
     	    					html += '<li class="tree_li">';
     	    					html += '<span class="leaf">' + method.methodName + ' (' + method.startLine + '-' + method.endLine + ')</span>';
-    	    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openCommitTab(event,{type: \'source\', label: \'' + method.methodName + '\', value: \'' + method.methodUri + '\', tooltip: \'' + file.fullName + '\'});" />';
+    	    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event,{type: \'source\', label: \'' + method.methodName + '\', value: \'' + method.methodUri + '\', tooltip: \'' + file.fullName + '\'});" />';
     	    					html += '</li>';
     	    				}
     	    				html += '</ul>';
@@ -1704,7 +1583,7 @@ var AlertViz = function(options) {
     					} else {
         					html += '<li class="tree_li">';
         					html += '<span class="leaf">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
-        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openCommitTab(event, {type: \'source\', label: \'' + module.name + '\', value: \'' + module.uri + '\', tooltip: \'' + file.fullName + '\'});" />';
+        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event, {type: \'source\', label: \'' + module.name + '\', value: \'' + module.uri + '\', tooltip: \'' + file.fullName + '\'});" />';
         					html += '</li>';
     					}
     				}
@@ -1713,7 +1592,7 @@ var AlertViz = function(options) {
     			} else {	// create leaf
     				html += '<li class="tree_li">';
     				html += '<span class="leaf">' + file.name + ' (' + file.action + ')</span>';
-    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openCommitTab(event,{type: \'source\', label: \'' + file.name + '\', value: \'' + file.uri + '\', tooltip: \'' + file.fullName + '\'});" />';
+    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event,{type: \'source\', label: \'' + file.name + '\', value: \'' + file.uri + '\', tooltip: \'' + file.fullName + '\'});" />';
     				html += '</li>';
     			}
     		}
@@ -2153,9 +2032,9 @@ var AlertViz = function(options) {
     		if (total != Number.POSITIVE_INFINITY)
     			navHtml += ' of ' + total;
     		if (currentPage > 1)
-    			navHtml = '<a onclick="viz.jumpPage(' + (info.offset - info.limit) + ', ' + info.limit + ')">&lt;&lt;</a> ' + navHtml;
+    			navHtml = '<img src="img/previous.png" onclick="viz.jumpPage(' + (info.offset - info.limit) + ', ' + info.limit + ')"></img>' + navHtml;
     		if (currentPage < nPages)
-    			navHtml += ' <a onclick="viz.jumpPage(' + (info.offset + info.limit) + ', ' + info.limit + ')">&gt;&gt;</a>';
+    			navHtml += ' <img src="img/next.png" onclick="viz.jumpPage(' + (info.offset + info.limit) + ', ' + info.limit + ')"></img>';
     		
     		$('#items-div').html(html);
     		$('#page_td').html(navHtml);
@@ -2204,47 +2083,6 @@ var AlertViz = function(options) {
     	updateUrl();
     });
     
-    var formatSelectionList = function (data, el) {
-    	if (data.type == 'source') {
-  			$(el).attr('title', data.tooltip);
-  			$(el).html($(el).html() + ' <span class="file_path">(' + data.path + ')</span>');
-  		} else if (data.type == 'person') {
-  			if (data.value == null && data.uuid != null)
-  				data.value = '--manually--' + data.label;
-  		}
-  		return el;
-    };
-    
-    $('#other_text').autoSuggest('suggest', {
-    	selectedItemProp: 'label',
-    	searchObjProps: 'label',
-    	selectedValuesProp: 'value',
-    	queryParam: 'Other',
-    	retrieveLimit: false,
-    	neverSubmit: true,
-    	startText: 'people, products, sources, components, issue IDs,...',
-    	asHtmlID: 'other_text',
-    	addByWrite: false,
-    	selectionAdded: function(elem, data) {
-    		if (data.type == 'source')
-				$(elem).attr('title', data.tooltip);
-    		if (data.type == 'person')
-    			$(elem).html($(elem).html().replace(/\s+\[AKA[\w\W]*\]/g, ''));
-    		
-    		if (!settingManually) {
-	    		generalSearch.addToSearch(data);
-	    		updateUrl();
-    		}
-    	},
-	  	selectionRemoved: function(elem, data) {
-	  		generalSearch.removeFromSearch(elem, data);
-	  		updateUrl();
-	  		
-	  		elem.remove();
-	  	},
-	  	formatList: formatSelectionList
-    });
-    
     function setRange() {
     	var fromDate = $('#from_text').datepicker('getDate');
     	var toDate = $('#to_text').datepicker('getDate');
@@ -2267,66 +2105,6 @@ var AlertViz = function(options) {
 		setRange();
 		updateUrl();
 	});
-    
-    // issue id search
-    $('#issue_id_text').autoSuggest('suggest', {
-    	selectionLimit: 1,
-    	selectedItemProp: 'label',
-    	searchObjProps: 'label',
-    	selectedValuesProp: 'value',
-    	queryParam: 'Issues',
-    	retrieveLimit: false,
-    	neverSubmit: true,
-    	startText: 'issue ID,...',
-    	asHtmlID: 'issue_id_text',
-    	addByWrite: false,
-    	selectionAdded: function(elem, data) {
-    		if (!settingManually) {
-	    		issueIdSearch.addToSearch(data);
-	    		updateUrl();
-    		}
-    	},
-	  	selectionRemoved: function(elem, data) {
-	  		issueIdSearch.removeFromSearch(elem, data);
-	  		updateUrl();
-	  		
-	  		elem.remove();
-	  	},
-	  	formatList: formatSelectionList
-    });
-    
-    $('#issue_id_text').blur(function (event) {
-    	updateUrl();
-    });
-    
-    // suggest people search
-    $('#person_text').autoSuggest('suggest', {
-    	selectionLimit: 1,
-    	selectedItemProp: 'label',
-    	searchObjProps: 'label',
-    	selectedValuesProp: 'value',
-    	queryParam: 'People',
-    	retrieveLimit: false,
-    	neverSubmit: true,
-    	startText: 'people,...',
-    	asHtmlID: 'person_text',
-    	addByWrite: false,
-    	selectionAdded: function (elem, data) {
-    		if (data.type == 'person')
-    			$(elem).html($(elem).html().replace(/\s+\[AKA[\w\W]*\]/g, ''));
-    		
-    		if (!settingManually) {
-	    		personSearch.addToSearch(data);
-	    		updateUrl();
-    		}
-    	},
-	  	selectionRemoved: function (elem, data) {
-	  		personSearch.removeFromSearch(elem, data);
-	  		updateUrl();
-	  		elem.remove();
-	  	},
-	  	formatList: formatSelectionList
-    });
     
     // tab handler
     jQuery.each($('#navigation').find('a'), function (i, a) {
