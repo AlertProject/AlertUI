@@ -39,6 +39,7 @@ var AutoSuggest = function (fieldId, data, options) {
  	var d_type = 'string';
 	var req_string = data;
  	
+	var x;
  	if(!opts.asHtmlID){
 		x = x+""+Math.floor(Math.random()*100); //this ensures there will be unique IDs on the page if autoSuggest() is called multiple times
 		var x_id = "as-input-"+x;
@@ -252,9 +253,13 @@ var AutoSuggest = function (fieldId, data, options) {
 					var active = $("li.active:first", results_holder);
 					if(active.length > 0){
 						if(direction == "down"){
-						start = active.next();
+							start = active.next();
+							if (start.length == 0)
+								start = lis.filter(':first');
 						} else {
 							start = active.prev();
+							if (start.length == 0)
+								start = lis.filter(":last");
 						}	
 					}
 					lis.removeClass("active");
