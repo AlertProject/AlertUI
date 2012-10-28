@@ -24,7 +24,11 @@ border-radius:8px;
 background-color: #B6DE8F;
 }
 .content_open{
-	background:#fff;
+	background:#eee;
+	-moz-border-radius:8px 8px 0px 0px !important;
+	-webkit-border-radius:8px 8px 0px 0px !important;
+	-khtml-border-radius:8px 8px 0px 0px !important;
+	border-radius:8px 8px 0px 0px !important;
 }
 .headings_date {
 	float: right;
@@ -95,10 +99,6 @@ p {
 	color:#333;
 	width:20%;
 }
-#resolution_desc{
-	-ms-word-break: break-all;
-    word-break: break-all;
-    -webkit-hyphens: auto;
-    -moz-hyphens: auto;
-    hyphens: auto;
+#item-accordion em{
+	font-weight:bold;
 }
