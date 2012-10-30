@@ -33,11 +33,6 @@ import org.w3c.dom.DOMException;
  */
 public class MessageUtils {
 	
-	private enum IdType {
-		ID,
-		URI
-	}
-	
 	private static final Logger log = LoggerFactory.getLogger(MessageUtils.class);
 	
 	private static final String KEUI_ITEM_SNIP_LEN = "200";
@@ -619,10 +614,10 @@ public class MessageUtils {
 		}
 	}
 	
-	private static String genKEUIIssueListMsg(List<?> identifiers, Integer offset, Integer limit, String requestId, IdType idType) throws DOMException, SOAPException, IOException {
+	private static String genKEUIIssueListMsg(List<?> identifiers, boolean includeResolutions, Properties props, Integer offset, Integer limit, String requestId) throws DOMException, SOAPException, IOException {
 		if (offset == null || limit == null) {
 			log.warn("Offset and limit parameters not specified, using default values...");
-			return genKEUIIssueListMsg(identifiers, 0, DEFAULT_LIMIT, requestId, idType);
+			return genKEUIIssueListMsg(identifiers, includeResolutions, props, 0, DEFAULT_LIMIT, requestId);
 		}
 		
 		SOAPMessage msg = getKEUIQueryTemplate("Query", "generalQuery", requestId);
@@ -633,30 +628,38 @@ public class MessageUtils {
 		SOAPElement conditions = args.addChildElement("conditions");
 		SOAPElement postTypes = conditions.addChildElement("postTypes");
 		
-		switch (idType) {
-		case ID:
-			SOAPElement bugIds = conditions.addChildElement("bugIds");
-			
-			// set the conditions
-			// generate a String of issueIDs
-			StringBuilder idBuilder = new StringBuilder();
-			for (Iterator<?> it = identifiers.iterator(); it.hasNext();) {
-				idBuilder.append(it.next());
-				if (it.hasNext())
-					idBuilder.append(",");
-			}
-			
-			bugIds.setTextContent(idBuilder.toString());
-			break;
-		case URI:
-			SOAPElement bugUris = conditions.addChildElement("bugUris");
-			
-			for (Iterator<?> it = identifiers.iterator(); it.hasNext();)
-				bugUris.addChildElement("bugUri").setTextContent(it.next().toString());
-			break;
+		// ids
+		SOAPElement bugIds = conditions.addChildElement("bugIds");
+		
+		// set the conditions
+		// generate a String of issueIDs
+		StringBuilder idBuilder = new StringBuilder();
+		for (Iterator<?> it = identifiers.iterator(); it.hasNext();) {
+			idBuilder.append(it.next());
+			if (it.hasNext())
+				idBuilder.append(",");
 		}
 		
+		bugIds.setTextContent(idBuilder.toString());
+
+		// post types
 		postTypes.setTextContent("issueDescriptions");
+		
+		if (includeResolutions) {
+			// status and resolution
+			List<String> resolutions = getResolutions(props);
+			List<String> statuses = getStatuses(props);
+			
+			if (resolutions.size() != availableResolutions.size()) {
+				String resolutionsStr = Utils.toCommaSepStr(resolutions);
+				conditions.addChildElement("issueResolution").setTextContent(resolutionsStr);
+			}
+			if (statuses.size() != availableStatuses.size()) {
+				String statusesStr = Utils.toCommaSepStr(statuses);
+				conditions.addChildElement("issueStatus").setTextContent(statusesStr);
+			}
+		}
+		 
 		
 		// set the parameters
 		SOAPElement params = query.addChildElement("params");
@@ -673,28 +676,41 @@ public class MessageUtils {
 		return new String(out.toByteArray());
 	}
 	
-	public static String genKEUIIssueListByIdMsg(List<Long> issueIds, Integer offset, Integer limit, String requestId) {
+	/**
+	 * Generates an issue id list message that can be sent to the KEUI component. The resolutions
+	 * are stored in the <code>Properties</code> object.
+	 * 
+	 * @param issueIds
+	 * @param props
+	 * @param offset
+	 * @param limit
+	 * @param requestId
+	 * @param includeResolutions
+	 * @return
+	 */
+	public static String genKEUIIssueListByIdMsg(List<Long> issueIds, Properties props, Integer offset, Integer limit, String requestId) {
 		try {
-			return genKEUIIssueListMsg(issueIds, offset, limit, requestId, IdType.ID);
+			return genKEUIIssueListMsg(issueIds, true, props, offset, limit, requestId);
 		} catch (Throwable t) {
 			throw new IllegalArgumentException("An unecpected exception occurred while generating KEUI get issues from IDs message!", t);
 		}
 	}
 	
 	/**
-	 * Generates a KEUI message to request issue short content from issue URIs.
+	 * Generates an issue id list message that can be sent to the KEUI component. The resolutions
+	 * and statuses are not sent.
 	 * 
-	 * @param issueUris
+	 * @param issueIds
 	 * @param offset
 	 * @param limit
 	 * @param requestId
 	 * @return
 	 */
-	public static String genKEUIIssueListByUriMsg(List<String> issueUris, Integer offset, Integer limit, String requestId) {
+	public static String genKEUIIssueListByIdMsg(List<Long> issueIds, Integer offset, Integer limit, String requestId) {
 		try {
-			return genKEUIIssueListMsg(issueUris, offset, limit, requestId, IdType.URI);
+			return genKEUIIssueListMsg(issueIds, false, new Properties(), offset, limit, requestId);
 		} catch (Throwable t) {
-			throw new IllegalArgumentException("An unecpected exception occurred while generating KEUI get issues from URIs message!", t);
+			throw new IllegalArgumentException("An unecpected exception occurred while generating KEUI get issues from IDs message!", t);
 		}
 	}
 	

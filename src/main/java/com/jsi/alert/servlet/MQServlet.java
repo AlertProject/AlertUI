@@ -24,7 +24,7 @@ import com.jsi.alert.mq.callback.MsgCallback;
 import com.jsi.alert.utils.Configuration;
 
 /**
- * An abstract <code>Servlet</code> which send a sync request to the KEUI component.
+ * An abstract <code>Servlet</code> which send an async request to the KEUI component.
  */
 public abstract class MQServlet extends HttpServlet {
 	   
@@ -100,7 +100,7 @@ public abstract class MQServlet extends HttpServlet {
     	consumerH.put(ComponentKey.RECOMMENDER_MODULE, provider.getRecommenderModuleConsumer());
     	
     	// init the listener
-    	listener = new MsgListener();
+    	listener = MsgListener.getInstance();
     	
     	for (MessageConsumer consumer : consumerH.values())
     		consumer.setMessageListener(listener);
@@ -111,56 +111,6 @@ public abstract class MQServlet extends HttpServlet {
     	Message msg = mqSession.createTextMessage(requestMsg);
     	producer.send(msg);
     }
-	
-	/**
-	 * Receives a message, with request ID matching the parameter, from the in topic.
-	 * 
-	 * @param requestID
-	 * @return The received message
-	 * @throws ServletException 
-	 * @throws JMSException 
-	 */
-	/*private String receiveMessage(String requestID, ComponentKey componentKey) throws ServletException, JMSException {
-		if (log.isDebugEnabled())
-			log.debug("Receiving response from the " + componentKey + " component...");
-		
-		MessageConsumer consumer = consumerH.get(componentKey);
-		
-		// loop until you get the response with the correct ID
-		String receivedID = null;
-		String responseMsg = null;
-		long beginTime = System.currentTimeMillis();
-		while (!requestID.equals(receivedID)) {
-			// check if KEUI is taking too long
-			if (System.currentTimeMillis() - beginTime > Configuration.REQUEST_TIMEOUT)
-				throw new ServletException(componentKey + " timed out, requestId: " + requestID);
-			
-			Message receivedMsg = consumer.receive(4000);
-			if (receivedMsg instanceof TextMessage) {
-				TextMessage received = (TextMessage) receivedMsg;
-				responseMsg = received.getText();
-				
-				// check the ID
-				Matcher matcher = REQUEST_ID_PATTERN.matcher(responseMsg);				
-				if (matcher.find()) {
-					String idTag = matcher.group(0);
-					
-					log.info("Received: " + idTag + ", target: " + requestID);
-					
-					if (REQUEST_ID_TAG.replace("\\d+", requestID).equals(idTag))
-						break;
-				}
-			}
-		}
-		
-		if (log.isDebugEnabled()) {
-			log.debug("Received response from the " + componentKey + " component!");
-			if (Configuration.LOG_EVENTS)
-				log.debug(responseMsg);
-		}
-		
-		return responseMsg;
-	}*/
 	
 	private void getMqResponse(String requestMsg, String requestId, MsgCallback callback, ComponentKey componentKey) throws JMSException, ServletException {
 		listener.addCallback(requestId, callback);

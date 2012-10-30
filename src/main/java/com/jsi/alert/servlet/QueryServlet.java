@@ -37,7 +37,7 @@ import com.jsi.alert.utils.MessageUtils;
 import com.jsi.alert.utils.Utils;
 
 /**
- * Servlet implementation class QueryServlet
+ * Servlet implementation class QueryServlet, processes all the query requests.
  */
 @WebServlet(name = "QueryServlet", urlPatterns = {"/query"}, asyncSupported = true)
 public class QueryServlet extends MQServlet {
@@ -136,6 +136,13 @@ public class QueryServlet extends MQServlet {
 		}
 	}
 
+	/**
+	 * Puts all the parameters in the <code>ServletRequest</code> into a 
+	 * <code>Properties</code> object.
+	 * 
+	 * @param request
+	 * @return
+	 */
 	private Properties createRequestProps(ServletRequest request) {
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		
@@ -149,6 +156,13 @@ public class QueryServlet extends MQServlet {
 		return props;
 	}
 
+	/**
+	 * Processes a people query request.
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
 	private void processPeopleRq(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		final AsyncContext context = request.startAsync();
 		
@@ -173,6 +187,13 @@ public class QueryServlet extends MQServlet {
 		});
 	}
 	
+	/**
+	 * Processes a keyword query request.
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
 	private void processKeywordRq(HttpServletRequest request, HttpServletResponse response)  throws Exception {
 		final AsyncContext context = request.startAsync();
 		
@@ -195,6 +216,13 @@ public class QueryServlet extends MQServlet {
 		});
 	}
 
+	/**
+	 * Processes a timeline query request.
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
 	private void processTimelineRq(HttpServletRequest request, HttpServletResponse response)  throws Exception {
 		final AsyncContext context = request.startAsync();
 		
@@ -217,7 +245,13 @@ public class QueryServlet extends MQServlet {
 		});
 	}
 
-	
+	/**
+	 * Processes an items query request.
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
 	private void processItemsRq(HttpServletRequest request, HttpServletResponse response)  throws Exception {
 		final AsyncContext context = request.startAsync();
 		
@@ -240,6 +274,13 @@ public class QueryServlet extends MQServlet {
 		});
 	}
 	
+	/**
+	 * Processes an issue details request.
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
 	private void processIssueDetailsRq(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		final AsyncContext context = request.startAsync();
 		
@@ -391,7 +432,7 @@ public class QueryServlet extends MQServlet {
 	 * @throws JMSException 
 	 * @throws SOAPException 
 	 */
-	private void processRelatedMyCodeRq(HttpServletRequest request, HttpServletResponse response) throws IOException, JMSException, SOAPException, ServletException {
+	private void processRelatedMyCodeRq(final HttpServletRequest request, HttpServletResponse response) throws IOException, JMSException, SOAPException, ServletException {
 		final AsyncContext context = request.startAsync();
 		
 		// first check if the user is authenticated
@@ -415,10 +456,11 @@ public class QueryServlet extends MQServlet {
 				@Override
 				public void onSuccess(String apiResponse) throws Exception {
 					List<Long> issueUris = MessageParser.parseAPIIssuesResponse(apiResponse);
-				
+					Properties props = createRequestProps(request);
+					
 					// now that I have the URIs, I have to call KEUI, to get the actual items
 					String requestId2 = Utils.genRequestID();
-					String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueUris, offset, limit, requestId2);
+					String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueUris, props, offset, limit, requestId2);
 				
 					getKEUIResponse(keuiRq, requestId2, new MsgCallbackImpl(context) {
 						@Override
@@ -455,7 +497,7 @@ public class QueryServlet extends MQServlet {
 	 * @throws JMSException 
 	 */
 	@SuppressWarnings("unchecked")
-	private void processSuggestForPeopleRq(HttpServletRequest request, HttpServletResponse response) throws IOException, JMSException, ServletException {
+	private void processSuggestForPeopleRq(final HttpServletRequest request, HttpServletResponse response) throws IOException, JMSException, ServletException {
 		final AsyncContext context = request.startAsync();
 		
 		final List<String> uuidList = Arrays.asList(new String[] {request.getParameter("person")});
@@ -471,7 +513,7 @@ public class QueryServlet extends MQServlet {
 			@Override
 			public void onSuccess(String recommenderIssueResp) throws Exception {
 				List<Long> issueIds = MessageParser.parseRecommenderIssueIdsMsg(recommenderIssueResp);
-			
+				
 				// now that I have the issueIDs I have to send them to the KEUI component
 				final String requestId2 = Utils.genRequestID();
 				String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueIds, offset, limit, requestId2);

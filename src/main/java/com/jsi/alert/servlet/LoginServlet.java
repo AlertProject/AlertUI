@@ -16,7 +16,8 @@ import com.jsi.alert.utils.Configuration;
 import com.jsi.alert.utils.Utils;
 
 /**
- * A <code>Servlet</code>
+ * A <code>Servlet</code>, which upon a request creates a <code>HttpSession</code> and stores
+ * the users email in it.
  */
 public class LoginServlet extends HttpServlet {
 

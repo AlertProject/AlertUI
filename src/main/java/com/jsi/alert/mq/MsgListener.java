@@ -18,19 +18,39 @@ import org.slf4j.LoggerFactory;
 import com.jsi.alert.mq.callback.MsgCallback;
 import com.jsi.alert.utils.Configuration;
 
+/**
+ * A Singleton listener on the MQ, that calls callback functions on receive.
+ *
+ */
 public class MsgListener implements MessageListener {
 	
 	private static final Logger log = LoggerFactory.getLogger(MsgListener.class);
+	
+	private static final MsgListener instance = new MsgListener();
 		
 	private static final String REQUEST_ID_TAG = "<ns1:eventId>\\d+</ns1:eventId>";
 	private static final Pattern REQUEST_ID_PATTERN = Pattern.compile(REQUEST_ID_TAG);
 
 	private Map<String, MsgCallback> callbackH;
 	
-	public MsgListener() {
+	/**
+	 * Returns this classes instance.
+	 * 
+	 * @return
+	 */
+	public static synchronized MsgListener getInstance() { return instance; }
+	
+	/**
+	 * Default constructor, initializes the <requestId, Callback> <code>Map</code>
+	 */
+	private MsgListener() {
 		callbackH = new HashMap<>();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
+	 */
 	@Override
 	public void onMessage(Message message) {
 		try {
@@ -66,10 +86,22 @@ public class MsgListener implements MessageListener {
 		}
 	}
 	
+	/**
+	 * Removes a callback from the <code>Map</code>
+	 * 
+	 * @param requestId
+	 * @return
+	 */
 	private synchronized MsgCallback removeCallback(String requestId) {
 		return callbackH.remove(requestId);
 	}
 	
+	/**
+	 * Adds the callback to the <code>Map</code> and sets a <code>Timer</code> to remove it
+	 * 
+	 * @param requestId
+	 * @param callback
+	 */
 	public synchronized void addCallback(final String requestId, MsgCallback callback) {
 		callbackH.put(requestId, callback);
 		

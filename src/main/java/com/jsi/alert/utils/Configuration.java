@@ -81,6 +81,13 @@ public class Configuration {
 			DEFAULT_USER_UUID = props.getProperty("user.loggedid.uuid");
 			DEFAULT_USER_NOTIFICATION_ID = props.containsKey("user.notification.id") ? props.getProperty("notifications.param.value") : null;
 			DEFAULT_USER_EMAIL = props.getProperty("user.loggedin.email");
+			
+			
+			// print to log
+			log.info("=================================================================================================================");
+			for (Object key : props.keySet())
+				log.info(String.format("%-50s%-50s", key.toString(), props.getProperty((String) key)));
+			log.info("=================================================================================================================");
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			throw new RuntimeException(e);
