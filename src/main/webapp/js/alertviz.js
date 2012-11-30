@@ -1389,16 +1389,6 @@ var AlertViz = function(options) {
     		var html = '';
     		
     		$.each(items, function (idx, item) {
-    			
-    			// get the recipients
-    			var recipientNameV = [];
-    			$.each(item.recipientIDs, function (recIdx, recipientId) {
-    				if (recipientId in people)
-    					recipientNameV.push(people[recipientId].name);
-    				else
-    					recipientNameV.push('Unknown');
-    			});
-    			
     			var senderName = (item.senderID in people ? people[item.senderID].name : 'Unknown');
     			
     			html += '<div class="details_section">';
@@ -1406,8 +1396,6 @@ var AlertViz = function(options) {
     			html += '<td class="title_desc">' + (type == 'post' ? 'Post' : 'Email') + ' by ';
     			html += '<span class="headings_author">';
     			html += senderName;
-    			if (recipientNameV.length > 0)
-    				html += ' to ' + recipientNameV.join();
     			html += '</span>';
     			html += '<span class="headings_date">' + (item.time == null ? '' : new Date(item.time).format(defaultDateFormat)) + '</span>';
     			html += '</td>';
@@ -1460,25 +1448,8 @@ var AlertViz = function(options) {
     		html += '<table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.description + '</div></td></tr></table></div>';
     		html += '</div>';
     		
-    		// comments
-    		var comments = data.comments;
-    		for (var i = 0; i < comments.length; i++) {
-    			var comment = comments[i];
-    			
-    			html += '<div class="details_section">';
-    			html += '<table class="heading' + (comment.commentUri == selectedUri ? ' content_open' : '')  + '"><tr>';
-
-    			html += '<td class="title_comm"><span class="headings_author">' + comment.person.name + '</span><span class="headings_date">' + new Date(comment.commentDate).format(defaultDateFormat) + '</span></td>';
-    			html += '</tr></table>';
-    			// content
-    			
-    			html += '<div class="content' + (comment.commentUri == selectedUri ? ' selected_issue' : '') + '">';
-    			html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
-    			html += comment.commentText + '</div>';
-    			html += '</div>';
-    		}
     		
-    		// related issues
+    		// recommended developers
     		// header
     		html += '<div class="details_section">';
     		html += '<table class="heading"><tr>';
@@ -1488,6 +1459,7 @@ var AlertViz = function(options) {
     		html += '<div class="content" id="suggest_dev_div"></div>';
     		html += '</div>';
     		
+    		// related issues
     		if (data.related != null && data.related.length > 0) {
     			var related = data.related;
     			
@@ -1506,7 +1478,7 @@ var AlertViz = function(options) {
     				
     				if (ref.threadId != null)
     					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event,{type: \'thread\', label: \'Thread ID: ' + ref.threadId + '\', value: \'' + ref.threadId + '\', subtype: \'thread\'});" />';
-    				else 
+    				else
     					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event,{type: \'thread\', label: \'Item ID: ' + ref.itemId + '\', value: \'' + ref.itemId + '\', subtype: \'commit\'});" />';
     				html += '</li>';
     			});
@@ -1516,6 +1488,23 @@ var AlertViz = function(options) {
         		html += '</div>';
     		}
     		
+    		// comments
+    		var comments = data.comments;
+    		for (var i = 0; i < comments.length; i++) {
+    			var comment = comments[i];
+    			
+    			html += '<div class="details_section">';
+    			html += '<table class="heading' + (comment.commentUri == selectedUri ? ' content_open' : '')  + '"><tr>';
+
+    			html += '<td class="title_comm"><span class="headings_author">' + comment.person.name + '</span><span class="headings_date">' + new Date(comment.commentDate).format(defaultDateFormat) + '</span></td>';
+    			html += '</tr></table>';
+    			// content
+    			
+    			html += '<div class="content' + (comment.commentUri == selectedUri ? ' selected_issue' : '') + '">';
+    			html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    			html += comment.commentText + '</div>';
+    			html += '</div>';
+    		}
     		
     		// insert html
     		$('#details_wrapper').html(html);
