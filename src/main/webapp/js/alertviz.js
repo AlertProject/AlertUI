@@ -181,7 +181,7 @@ function getCurrentState() {
 }
 
 function updateUrl(event) {
-	if (!settingManually) {
+	if (!settingManually && !$.browser.msie) {
 		var url = genCurrentUrl();
 		var state = getCurrentState();
 		

@@ -1,12 +1,8 @@
 - odstrani rdeci scroller. Naj bo kr navaden.
 
-Firefox problemi:
-- v project overview tabu ni vsebine. Problem samo v firefoxu.
 
 Internet explorer:
-- cekiraj ce internet explorer. Ce je, ne popravljaj urlja.
 - porihtaj izgled (tabi v isti vrstici)
-- v project overview tabu ni vsebine. Problem samo v firefoxu.
 
 •  notifications
 	•  align the green text to the left
@@ -16,11 +12,10 @@ checkboxes.
 XYZ".
 •  issue details
 	•  in the first box show more metadata about the issue
-
-User details:
-
-
 	
+- IE selected tab must be gray
+
+User details:	
 // LOGINS:
 afiestas@kde.org b2bff2d4
 lukas@kde.org 43dcb60f
