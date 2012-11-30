@@ -40,6 +40,21 @@ ul.as-selections {
 	-webkit-box-shadow: 0px 1px 1px #ccc;
 	-moz-box-shadow: 0px 1px 1px #ccc;
 }
+.text_date{
+	width:100px;
+}
+.cells{
+	min-width:82px;
+}
+#date_cell{
+	min-width:310px;
+}
+#popupbtn{
+	padding:0px 20px 0px 0px !important;
+}
+#issue_cell{
+	min-width:60px;
+}
 .text_issue{
 	list-style-type: none;
 	background-color: white;
