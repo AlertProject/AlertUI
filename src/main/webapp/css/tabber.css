@@ -1,7 +1,7 @@
 .tabberlive .tabbertabhide {
  visibility:hidden;
  position: absolute;
- left: -10000px;
+ top: -50000px;
  width: 606px;
 }
 ul.tabbernav

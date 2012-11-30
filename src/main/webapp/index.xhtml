@@ -214,7 +214,7 @@
 														<input type="text" id="from_text" class="text_date" onchange="updateUrl();"/>
 														<label for="to_text">and</label>
 														<input type="text" id="to_text" class="text_date" onchange="updateUrl();"/></td>
-													<td id="issue_cell"><input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();"/><label> Issues</label></td>
+													<td id="issue_cell"><input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();"/><label for="issues_check"> Issues</label></td>
 													<td id="popupbtn" style="padding-right: 28px;">
 														<button id="propertiesbtn" onclick="return false;">+</button>
 														<div id="propertiesdiv">
@@ -226,32 +226,32 @@
 																	<td><label><span>Resolution:</span></label></td>
 																</tr>
 																<tr>
-																	<td><input class="check" type="checkbox" id="gen_open_check" checked="checked" onchange="return updateUrl();" /><label> Open</label></td>
-																	<td><input class="check" type="checkbox" id="gen_none_check" checked="checked" onchange="return updateUrl();" /><label> None</label></td>
+																	<td><input class="check" type="checkbox" id="gen_open_check" checked="checked" onchange="return updateUrl();" /><label for="gen_open_check"> Open</label></td>
+																	<td><input class="check" type="checkbox" id="gen_none_check" checked="checked" onchange="return updateUrl();" /><label for="gen_none_check"> None</label></td>
 																</tr>
 																<tr>
-																	<td><input class="check" type="checkbox" id="gen_verified_check" checked="checked" onchange="return updateUrl();" /><label> Verified</label></td>
-																	<td><input class="check" type="checkbox" id="gen_fixed_check" checked="checked" onchange="return updateUrl();" /><label> Fixed</label></td>
+																	<td><input class="check" type="checkbox" id="gen_verified_check" checked="checked" onchange="return updateUrl();" /><label for="gen_verified_check"> Verified</label></td>
+																	<td><input class="check" type="checkbox" id="gen_fixed_check" checked="checked" onchange="return updateUrl();" /><label for="gen_fixed_check"> Fixed</label></td>
 																</tr>
 																<tr>
-																	<td><input class="check" type="checkbox" id="gen_assigned_check" checked="checked" onchange="return updateUrl();" /><label> Assigned</label></td>
-																	<td><input class="check" type="checkbox" id="gen_wont_check" checked="checked" onchange="return updateUrl();" /><label> Wont Fix</label></td>
+																	<td><input class="check" type="checkbox" id="gen_assigned_check" checked="checked" onchange="return updateUrl();" /><label for="gen_assigned_check"> Assigned</label></td>
+																	<td><input class="check" type="checkbox" id="gen_wont_check" checked="checked" onchange="return updateUrl();" /><label for="gen_wont_check"> Wont Fix</label></td>
 																</tr>
 																<tr>
-																	<td><input class="check" type="checkbox" id="gen_resolved_check" checked="checked" onchange="return updateUrl();" /><label> Resolved</label></td>
-																	<td><input class="check" type="checkbox" id="gen_invalid_check" checked="checked" onchange="return updateUrl();" /><label> Invalid</label></td>
+																	<td><input class="check" type="checkbox" id="gen_resolved_check" checked="checked" onchange="return updateUrl();" /><label for="gen_resolved_check"> Resolved</label></td>
+																	<td><input class="check" type="checkbox" id="gen_invalid_check" checked="checked" onchange="return updateUrl();" /><label for="gen_invalid_check"> Invalid</label></td>
 																</tr>
 																<tr>
-																	<td><input class="check" type="checkbox" id="gen_closed_check" checked="checked" onchange="return updateUrl();" /><label> Closed</label></td>
-																	<td><input class="check" type="checkbox" id="gen_duplicate_check" checked="checked" onchange="return updateUrl();" /><label> Duplicate</label></td>
-																</tr>
-																<tr>
-																	<td></td>
-																	<td><input class="check" type="checkbox" id="gen_works_check" checked="checked" onchange="return updateUrl();" /><label> WorksForMe</label></td>
+																	<td><input class="check" type="checkbox" id="gen_closed_check" checked="checked" onchange="return updateUrl();" /><label for="gen_closed_check"> Closed</label></td>
+																	<td><input class="check" type="checkbox" id="gen_duplicate_check" checked="checked" onchange="return updateUrl();" /><label for="gen_duplicate_check"> Duplicate</label></td>
 																</tr>
 																<tr>
 																	<td></td>
-																	<td><input class="check" type="checkbox" id="gen_unknown_check" checked="checked" onchange="return updateUrl();" /><label> Unknown</label></td>
+																	<td><input class="check" type="checkbox" id="gen_works_check" checked="checked" onchange="return updateUrl();" /><label for="gen_works_check"> WorksForMe</label></td>
+																</tr>
+																<tr>
+																	<td></td>
+																	<td><input class="check" type="checkbox" id="gen_unknown_check" checked="checked" onchange="return updateUrl();" /><label for="gen_unknown_check"> Unknown</label></td>
 																</tr>
 															</table>
 														</div>
@@ -261,10 +261,10 @@
 															-->
 														</script>
 													</td>
-													<td class="cells"><input class="check" type="checkbox" id="commits_check" checked="checked" onchange="updateUrl();"/><label> Commits</label></td>
-													<td class="cells"><input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();"/><label> Forums</label></td>
-													<td class="cells"><input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();"/><label> Mailing lists</label></td>
-													<td class="cells"><input class="check" type="checkbox" id="wikis_check" checked="checked" onchange="updateUrl();"/><label> Wiki</label></td>
+													<td class="cells"><input class="check" type="checkbox" id="commits_check" checked="checked" onchange="updateUrl();"/><label for="commits_check"> Commits</label></td>
+													<td class="cells"><input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();"/><label for="forums_check"> Forums</label></td>
+													<td class="cells"><input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();"/><label for="mailing_check"> Mailing lists</label></td>
+													<td class="cells"><input class="check" type="checkbox" id="wikis_check" checked="checked" onchange="updateUrl();"/><label for="wikis_check"> Wiki</label></td>
 													<td style="float:right;">
 														<table id="searchbtntbl" class="searchbtntbl">
 															<tr>
@@ -289,15 +289,15 @@
 												</tr>
 												<tr>
 													<td>
-														<input type="radio" id="relevance_sort" name="sort_radio" value="relevence" onchange="updateUrl(window.event);" checked="checked" /><label> Relevance</label>
+														<input type="radio" id="relevance_sort" name="sort_radio" value="relevence" onchange="updateUrl(window.event);" checked="checked" /><label for="relevance_sort"> Relevance</label>
 													</td>
 													<td>
-														<input type="radio" id="date_sort" name="sort_radio" value="date" onchange="updateUrl(window.event);" /><label> Date</label>
+														<input type="radio" id="date_sort" name="sort_radio" value="date" onchange="updateUrl(window.event);" /><label for="date_sort"> Date</label>
 													</td>
 												</tr>
 												<tr>
 													<td colspan="2">
-														<input class="checkbox" type="checkbox" id="use_or_check" onchange="updateUrl(window.event);" >&nbsp; Keywords are optional</input>
+														<input class="checkbox" type="checkbox" id="use_or_check" onchange="updateUrl(window.event);" /><label for="use_or_check"> Keywords are optional</label>
 													</td>
 												</tr>
 											</table>
@@ -316,21 +316,21 @@
 												</tr>
 												<tr id="customtr1">
 													<td class="customtd"><span>Resolution:</span></td><td></td>
-													<td><input class="check" type="checkbox" id="dup_none_check" checked="checked" onchange="updateUrl();" /><label> None</label></td>
-													<td><input class="check" type="checkbox" id="dup_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
-													<td><input class="check" type="checkbox" id="dup_wont_check" checked="checked" onchange="updateUrl();" /><label> WontFix</label></td>
-													<td><input class="check" type="checkbox" id="dup_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
-													<td><input class="check" type="checkbox" id="dup_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
-													<td><input class="check" type="checkbox" id="dup_works_check" checked="checked" onchange="updateUrl();" /><label> WorksForMe</label></td>
-													<td><input class="check" type="checkbox" id="dup_unknown_check" checked="checked" onchange="updateUrl();" /><label> Unknown</label></td>
+													<td><input class="check" type="checkbox" id="dup_none_check" checked="checked" onchange="updateUrl();" /><label for="dup_none_check"> None</label></td>
+													<td><input class="check" type="checkbox" id="dup_fixed_check" checked="checked" onchange="updateUrl();" /><label for="dup_fixed_check"> Fixed</label></td>
+													<td><input class="check" type="checkbox" id="dup_wont_check" checked="checked" onchange="updateUrl();" /><label for="dup_wont_check"> WontFix</label></td>
+													<td><input class="check" type="checkbox" id="dup_invalid_check" checked="checked" onchange="updateUrl();" /><label for="dup_invalid_check"> Invalid</label></td>
+													<td><input class="check" type="checkbox" id="dup_duplicate_check" checked="checked" onchange="updateUrl();" /><label for="dup_duplicate_check"> Duplicate</label></td>
+													<td><input class="check" type="checkbox" id="dup_works_check" checked="checked" onchange="updateUrl();" /><label for="dup_works_check"> WorksForMe</label></td>
+													<td><input class="check" type="checkbox" id="dup_unknown_check" checked="checked" onchange="updateUrl();" /><label for="dup_unknown_check"> Unknown</label></td>
 												</tr>
 												<tr>
 													<td class="customtd"><span>Status:</span></td><td></td>
-													<td><input class="check" type="checkbox" id="dup_open_check" checked="checked" onchange="updateUrl();" /><label> Open</label></td>
-													<td><input class="check" type="checkbox" id="dup_veririfed_check" checked="checked" onchange="updateUrl();" /><label> Verified</label></td>
-													<td><input class="check" type="checkbox" id="dup_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
-													<td><input class="check" type="checkbox" id="dup_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>
-													<td><input class="check" type="checkbox" id="dup_closed_check" checked="checked" onchange="updateUrl();" /><label> Closed</label></td>
+													<td><input class="check" type="checkbox" id="dup_open_check" checked="checked" onchange="updateUrl();" /><label for="dup_open_check"> Open</label></td>
+													<td><input class="check" type="checkbox" id="dup_veririfed_check" checked="checked" onchange="updateUrl();" /><label for="dup_veririfed_check"> Verified</label></td>
+													<td><input class="check" type="checkbox" id="dup_assigned_check" checked="checked" onchange="updateUrl();" /><label for="dup_assigned_check"> Assigned</label></td>
+													<td><input class="check" type="checkbox" id="dup_resolved_check" checked="checked" onchange="updateUrl();" /><label for="dup_resolved_check"> Resolved</label></td>
+													<td><input class="check" type="checkbox" id="dup_closed_check" checked="checked" onchange="updateUrl();" /><label for="dup_closed_check"> Closed</label></td>
 													<td></td>
 													<td style="padding: 10px;"><button id="issue_search" onclick="return viz.searchIssueId();">Search</button></td>
 												</tr>
@@ -342,21 +342,21 @@
 											<tbody>
 												<tr id="customtr1">
 													<td class="customtd"><span>Resolution:</span></td><td></td>
-													<td><input class="check" type="checkbox" id="my_none_check" checked="checked" onchange="updateUrl();" /><label> None</label></td>
-													<td><input class="check" type="checkbox" id="my_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
-													<td><input class="check" type="checkbox" id="my_wont_check" checked="checked" onchange="updateUrl();" /><label> WontFix</label></td>
-													<td><input class="check" type="checkbox" id="my_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
-													<td><input class="check" type="checkbox" id="my_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
-													<td><input class="check" type="checkbox" id="my_works_check" checked="checked" onchange="updateUrl();" /><label> WorksForMe</label></td>
-													<td><input class="check" type="checkbox" id="my_unknown_check" checked="checked" onchange="updateUrl();" /><label> Unknown</label></td>
+													<td><input class="check" type="checkbox" id="my_none_check" checked="checked" onchange="updateUrl();" /><label for="my_none_check"> None</label></td>
+													<td><input class="check" type="checkbox" id="my_fixed_check" checked="checked" onchange="updateUrl();" /><label for="my_fixed_check"> Fixed</label></td>
+													<td><input class="check" type="checkbox" id="my_wont_check" checked="checked" onchange="updateUrl();" /><label for="my_wont_check"> WontFix</label></td>
+													<td><input class="check" type="checkbox" id="my_invalid_check" checked="checked" onchange="updateUrl();" /><label for="my_invalid_check"> Invalid</label></td>
+													<td><input class="check" type="checkbox" id="my_duplicate_check" checked="checked" onchange="updateUrl();" /><label for="my_duplicate_check"> Duplicate</label></td>
+													<td><input class="check" type="checkbox" id="my_works_check" checked="checked" onchange="updateUrl();" /><label for="my_works_check"> WorksForMe</label></td>
+													<td><input class="check" type="checkbox" id="my_unknown_check" checked="checked" onchange="updateUrl();" /><label for="my_unknown_check"> Unknown</label></td>
 												</tr>
 												<tr>
 													<td class="customtd"><span>Status:</span></td><td></td>
-													<td><input class="check" type="checkbox" id="my_open_check" checked="checked" onchange="updateUrl();" /><label> Open</label></td>
-													<td><input class="check" type="checkbox" id="my_veririfed_check" checked="checked" onchange="updateUrl();" /><label> Verified</label></td>
-													<td><input class="check" type="checkbox" id="my_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
-													<td><input class="check" type="checkbox" id="my_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>
-													<td><input class="check" type="checkbox" id="my_closed_check" checked="checked" onchange="updateUrl();" /><label> Closed</label></td>
+													<td><input class="check" type="checkbox" id="my_open_check" checked="checked" onchange="updateUrl();" /><label for="my_open_check"> Open</label></td>
+													<td><input class="check" type="checkbox" id="my_veririfed_check" checked="checked" onchange="updateUrl();" /><label for="my_veririfed_check"> Verified</label></td>
+													<td><input class="check" type="checkbox" id="my_assigned_check" checked="checked" onchange="updateUrl();" /><label for="my_assigned_check"> Assigned</label></td>
+													<td><input class="check" type="checkbox" id="my_resolved_check" checked="checked" onchange="updateUrl();" /><label for="my_resolved_check"> Resolved</label></td>
+													<td><input class="check" type="checkbox" id="my_closed_check" checked="checked" onchange="updateUrl();" /><label for="my_closed_check"> Closed</label></td>
 													<td></td>
 													<td style="padding: 10px;"><button id="issue_search" onclick="return viz.searchRelated();">Search</button></td>
 												</tr>
