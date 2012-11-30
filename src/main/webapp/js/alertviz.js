@@ -1365,7 +1365,7 @@ var AlertViz = function(options) {
     	},
     	
     	setRecommendedDevelopers: function (data) {
-    		var html = '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    		var html = '<span class="expand_collapse"><img src="img/expand_all.png" class="expand_all" /><img src="img/collapse_all.png" class="collapse_all" /></span>';
     		html += '<ul>';
     		
     		$.each(data.people, function (idx, person) {
@@ -1403,7 +1403,7 @@ var AlertViz = function(options) {
     			
     			// content
     			html += '<div class="content' + (item.id == itemId ? ' selected_post' : '') + '">';
-    			html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span>';
+    			html += '<img src="img/expand_all.png" class="expand_all" /><img src="img/collapse_all.png" class="collapse_all" />';
     			html += item.content + '</div>';
     			
     			html += '</div>';
@@ -1444,7 +1444,7 @@ var AlertViz = function(options) {
     		html += '</tr></table>';
     		// content
     		html += '<div class="content' + (data.url == selectedUri ? ' selected_issue' : '') + '">';
-    		html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    		html += '<span class="expand_collapse"><img src="img/expand_all.png" class="expand_all"><img src="img/collapse_all.png" class="collapse_all" /></span>';
     		html += '<table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.description + '</div></td></tr></table></div>';
     		html += '</div>';
     		
@@ -1469,7 +1469,7 @@ var AlertViz = function(options) {
         		html += '</tr></table>';
     			
         		html += '<div class="content" id="suggest_dev_div">';
-        		html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+        		html += '<span class="expand_collapse"><img src="img/expand_all.png" class="expand_all" /><img src="img/collapse_all.png" class="collapse_all" /></span>';
         		
         		html += '<ul>';
     			$.each(related, function (idx, ref) {
@@ -1501,7 +1501,7 @@ var AlertViz = function(options) {
     			// content
     			
     			html += '<div class="content' + (comment.commentUri == selectedUri ? ' selected_issue' : '') + '">';
-    			html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    			html += '<span class="expand_collapse"><img src="img/expand_all.png" class="expand_all" /><img src="img/collapse_all.png" class="collapse_all" /></span>';
     			html += comment.commentText + '</div>';
     			html += '</div>';
     		}
@@ -1545,7 +1545,7 @@ var AlertViz = function(options) {
     		
     		// content
     		html += '<div class="content">';
-    		html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    		html += '<span class="expand_collapse"><img src="img/expand_all.png" class="expand_all" /><img src="img/collapse_all.png" class="collapse_all" /></span>';
     		html += '<table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.message + '<br /><span class="revision"><em>Revision:</em> ' + data.revisionTag + '</span></div></td></tr></table></div>';
     		html += '</div>';
     		
@@ -1556,7 +1556,7 @@ var AlertViz = function(options) {
     		html += '</tr></table>';
     		
     		html += '<div class="content" id="files_content">';
-    		html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    		html += '<span class="expand_collapse"><img src="img/expand_all.png" class="expand_all" /><img src="img/collapse_all.png" class="collapse_all" /></span>';
     		html += '<ul class="tree_ul">';
     		
     		// create file tree

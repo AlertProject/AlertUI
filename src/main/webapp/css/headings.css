@@ -40,6 +40,7 @@ background-color: #B6DE8F;
     text-shadow:1px 1px 1px #fff;
 	padding:5px;
     margin:3px 3px 5px 3px;
+    min-height: 25px;
 }
 .details_section{
 	background-color: #fff;
