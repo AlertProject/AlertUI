@@ -1403,7 +1403,7 @@ var AlertViz = function(options) {
     			
     			// content
     			html += '<div class="content' + (item.id == itemId ? ' selected_post' : '') + '">';
-    			html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    			html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span>';
     			html += item.content + '</div>';
     			
     			html += '</div>';
