@@ -1413,7 +1413,9 @@ var AlertViz = function(options) {
     			html += '</tr></table>';
     			
     			// content
-    			html += '<div class="content' + (item.id == itemId ? ' selected_post' : '') + '">' + item.content + '</div>';
+    			html += '<div class="content' + (item.id == itemId ? ' selected_post' : '') + '">';
+    			html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    			html += item.content + '</div>';
     			
     			html += '</div>';
     		});
@@ -1428,6 +1430,16 @@ var AlertViz = function(options) {
 			    else
 			    	$(this).addClass('content_open');
 			});
+    		$('.expand_all').click(function () {
+    			var headings = $('.heading');
+    			headings.next('.content').slideDown(500);
+    			headings.addClass('content_open');
+    		});
+    		$('.collapse_all').click(function () {
+    			var headings = $('.heading');
+    			headings.next('.content').slideUp(500);
+    			headings.removeClass('content_open');
+    		});
     	},
     	
     	setIssueDetails: function (data, selectedUri) {
@@ -1442,7 +1454,9 @@ var AlertViz = function(options) {
     		html += '</td>';
     		html += '</tr></table>';
     		// content
-    		html += '<div class="content' + (data.url == selectedUri ? ' selected_issue' : '') + '"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.description + '</div></td></tr></table></div>';
+    		html += '<div class="content' + (data.url == selectedUri ? ' selected_issue' : '') + '">';
+    		html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    		html += '<table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.description + '</div></td></tr></table></div>';
     		html += '</div>';
     		
     		// comments
@@ -1457,11 +1471,9 @@ var AlertViz = function(options) {
     			html += '</tr></table>';
     			// content
     			
-    			if (comment.commentUri == selectedUri)
-    				html += '<div class="content selected_issue">' + comment.commentText + '</div>';
-    			else
-    				html += '<div class="content">' + comment.commentText + '</div>';
-    			html += '</div>';
+    			html += '<div class="content' + (comment.commentUri == selectedUri ? ' selected_issue' : '') + '">';
+    			html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    			html += comment.commentText + '</div>';
     		}
     		
     		// related issues
@@ -1513,6 +1525,16 @@ var AlertViz = function(options) {
 			    else
 			    	$(this).addClass('content_open');
 			});
+    		$('.expand_all').click(function () {
+    			var headings = $('.heading');
+    			headings.next('.content').slideDown(500);
+    			headings.addClass('content_open');
+    		});
+    		$('.collapse_all').click(function () {
+    			var headings = $('.heading');
+    			headings.next('.content').slideUp(500);
+    			headings.removeClass('content_open');
+    		});
     		
     		that.recommendDevelopers(data.id);
     	},
@@ -1530,7 +1552,9 @@ var AlertViz = function(options) {
     		html += '</tr></table>';
     		
     		// content
-    		html += '<div class="content"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.message + '<br /><span class="revision"><em>Revision:</em> ' + data.revisionTag + '</span></div></td></tr></table></div>';
+    		html += '<div class="content">';
+    		html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    		html += '<table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.message + '<br /><span class="revision"><em>Revision:</em> ' + data.revisionTag + '</span></div></td></tr></table></div>';
     		html += '</div>';
     		
     		// files
@@ -1540,6 +1564,7 @@ var AlertViz = function(options) {
     		html += '</tr></table>';
     		
     		html += '<div class="content" id="files_content">';
+    		html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
     		html += '<ul class="tree_ul">';
     		
     		// create file tree
@@ -1609,6 +1634,16 @@ var AlertViz = function(options) {
 			    else
 			    	$(this).addClass('content_open');
 			});
+    		$('.expand_all').click(function () {
+    			var headings = $('.heading');
+    			headings.next('.content').slideDown(500);
+    			headings.addClass('content_open');
+    		});
+    		$('.collapse_all').click(function () {
+    			var headings = $('.heading');
+    			headings.next('.content').slideUp(500);
+    			headings.removeClass('content_open');
+    		});
     	},
     	
     	setItemDetails: function (data) {
