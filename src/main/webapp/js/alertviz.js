@@ -181,7 +181,7 @@ function getCurrentState() {
 }
 
 function updateUrl(event) {
-	if (!settingManually) {
+	if (!settingManually && !$.browser.msie) {
 		var url = genCurrentUrl();
 		var state = getCurrentState();
 		
@@ -1365,7 +1365,8 @@ var AlertViz = function(options) {
     	},
     	
     	setRecommendedDevelopers: function (data) {
-    		var html = '<ul>';
+    		var html = '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    		html += '<ul>';
     		
     		$.each(data.people, function (idx, person) {
     			var name = person.name;
@@ -1388,16 +1389,6 @@ var AlertViz = function(options) {
     		var html = '';
     		
     		$.each(items, function (idx, item) {
-    			
-    			// get the recipients
-    			var recipientNameV = [];
-    			$.each(item.recipientIDs, function (recIdx, recipientId) {
-    				if (recipientId in people)
-    					recipientNameV.push(people[recipientId].name);
-    				else
-    					recipientNameV.push('Unknown');
-    			});
-    			
     			var senderName = (item.senderID in people ? people[item.senderID].name : 'Unknown');
     			
     			html += '<div class="details_section">';
@@ -1405,15 +1396,15 @@ var AlertViz = function(options) {
     			html += '<td class="title_desc">' + (type == 'post' ? 'Post' : 'Email') + ' by ';
     			html += '<span class="headings_author">';
     			html += senderName;
-    			if (recipientNameV.length > 0)
-    				html += ' to ' + recipientNameV.join();
     			html += '</span>';
     			html += '<span class="headings_date">' + (item.time == null ? '' : new Date(item.time).format(defaultDateFormat)) + '</span>';
     			html += '</td>';
     			html += '</tr></table>';
     			
     			// content
-    			html += '<div class="content' + (item.id == itemId ? ' selected_post' : '') + '">' + item.content + '</div>';
+    			html += '<div class="content' + (item.id == itemId ? ' selected_post' : '') + '">';
+    			html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    			html += item.content + '</div>';
     			
     			html += '</div>';
     		});
@@ -1428,6 +1419,16 @@ var AlertViz = function(options) {
 			    else
 			    	$(this).addClass('content_open');
 			});
+    		$('.expand_all').click(function () {
+    			var headings = $('.heading');
+    			headings.next('.content').slideDown(500);
+    			headings.addClass('content_open');
+    		});
+    		$('.collapse_all').click(function () {
+    			var headings = $('.heading');
+    			headings.next('.content').slideUp(500);
+    			headings.removeClass('content_open');
+    		});
     	},
     	
     	setIssueDetails: function (data, selectedUri) {
@@ -1442,8 +1443,50 @@ var AlertViz = function(options) {
     		html += '</td>';
     		html += '</tr></table>';
     		// content
-    		html += '<div class="content' + (data.url == selectedUri ? ' selected_issue' : '') + '"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.description + '</div></td></tr></table></div>';
+    		html += '<div class="content' + (data.url == selectedUri ? ' selected_issue' : '') + '">';
+    		html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    		html += '<table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.description + '</div></td></tr></table></div>';
     		html += '</div>';
+    		
+    		
+    		// recommended developers
+    		// header
+    		html += '<div class="details_section">';
+    		html += '<table class="heading"><tr>';
+    		html += '<td class="title_desc">Recommended developers</td>';
+    		html += '</tr></table>';
+    		// content
+    		html += '<div class="content" id="suggest_dev_div"></div>';
+    		html += '</div>';
+    		
+    		// related issues
+    		if (data.related != null && data.related.length > 0) {
+    			var related = data.related;
+    			
+    			html += '<div class="details_section">';
+        		html += '<table class="heading"><tr>';
+        		html += '<td class="title_desc">Related Issues</td>';
+        		html += '</tr></table>';
+    			
+        		html += '<div class="content" id="suggest_dev_div">';
+        		html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+        		
+        		html += '<ul>';
+    			$.each(related, function (idx, ref) {
+    				html += '<li class="tree_li">';
+    				html += '<span class="leaf normal_weight">' + ref.description + '</span>';
+    				
+    				if (ref.threadId != null)
+    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event,{type: \'thread\', label: \'Thread ID: ' + ref.threadId + '\', value: \'' + ref.threadId + '\', subtype: \'thread\'});" />';
+    				else
+    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event,{type: \'thread\', label: \'Item ID: ' + ref.itemId + '\', value: \'' + ref.itemId + '\', subtype: \'commit\'});" />';
+    				html += '</li>';
+    			});
+    			html += '</ul>';
+    			
+    			html += '</div>';
+        		html += '</div>';
+    		}
     		
     		// comments
     		var comments = data.comments;
@@ -1457,50 +1500,11 @@ var AlertViz = function(options) {
     			html += '</tr></table>';
     			// content
     			
-    			if (comment.commentUri == selectedUri)
-    				html += '<div class="content selected_issue">' + comment.commentText + '</div>';
-    			else
-    				html += '<div class="content">' + comment.commentText + '</div>';
+    			html += '<div class="content' + (comment.commentUri == selectedUri ? ' selected_issue' : '') + '">';
+    			html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    			html += comment.commentText + '</div>';
     			html += '</div>';
     		}
-    		
-    		// related issues
-    		// header
-    		html += '<div class="details_section">';
-    		html += '<table class="heading"><tr>';
-    		html += '<td class="title_desc">Recommended developers</td>';
-    		html += '</tr></table>';
-    		// content
-    		html += '<div class="content" id="suggest_dev_div"></div>';
-    		html += '</div>';
-    		
-    		if (data.related != null && data.related.length > 0) {
-    			var related = data.related;
-    			
-    			html += '<div class="details_section">';
-        		html += '<table class="heading"><tr>';
-        		html += '<td class="title_desc">Related Issues</td>';
-        		html += '</tr></table>';
-    			
-        		html += '<div class="content" id="suggest_dev_div">';
-        		
-        		html += '<ul>';
-    			$.each(related, function (idx, ref) {
-    				html += '<li class="tree_li">';
-    				html += '<span class="leaf normal_weight">' + ref.description + '</span>';
-    				
-    				if (ref.threadId != null)
-    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event,{type: \'thread\', label: \'Thread ID: ' + ref.threadId + '\', value: \'' + ref.threadId + '\', subtype: \'thread\'});" />';
-    				else 
-    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.openGeneralTab(event,{type: \'thread\', label: \'Item ID: ' + ref.itemId + '\', value: \'' + ref.itemId + '\', subtype: \'commit\'});" />';
-    				html += '</li>';
-    			});
-    			html += '</ul>';
-    			
-    			html += '</div>';
-        		html += '</div>';
-    		}
-    		
     		
     		// insert html
     		$('#details_wrapper').html(html);
@@ -1513,6 +1517,16 @@ var AlertViz = function(options) {
 			    else
 			    	$(this).addClass('content_open');
 			});
+    		$('.expand_all').click(function () {
+    			var headings = $('.heading');
+    			headings.next('.content').slideDown(500);
+    			headings.addClass('content_open');
+    		});
+    		$('.collapse_all').click(function () {
+    			var headings = $('.heading');
+    			headings.next('.content').slideUp(500);
+    			headings.removeClass('content_open');
+    		});
     		
     		that.recommendDevelopers(data.id);
     	},
@@ -1530,7 +1544,9 @@ var AlertViz = function(options) {
     		html += '</tr></table>';
     		
     		// content
-    		html += '<div class="content"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.message + '<br /><span class="revision"><em>Revision:</em> ' + data.revisionTag + '</span></div></td></tr></table></div>';
+    		html += '<div class="content">';
+    		html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    		html += '<table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.message + '<br /><span class="revision"><em>Revision:</em> ' + data.revisionTag + '</span></div></td></tr></table></div>';
     		html += '</div>';
     		
     		// files
@@ -1540,6 +1556,7 @@ var AlertViz = function(options) {
     		html += '</tr></table>';
     		
     		html += '<div class="content" id="files_content">';
+    		html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
     		html += '<ul class="tree_ul">';
     		
     		// create file tree
@@ -1609,6 +1626,16 @@ var AlertViz = function(options) {
 			    else
 			    	$(this).addClass('content_open');
 			});
+    		$('.expand_all').click(function () {
+    			var headings = $('.heading');
+    			headings.next('.content').slideDown(500);
+    			headings.addClass('content_open');
+    		});
+    		$('.collapse_all').click(function () {
+    			var headings = $('.heading');
+    			headings.next('.content').slideUp(500);
+    			headings.removeClass('content_open');
+    		});
     	},
     	
     	setItemDetails: function (data) {

@@ -1,21 +1,21 @@
-- tooltips on opera
--Ko posiljas conditione za issueResolution nikoli ne vkljucis WontFix (tudi ce je checkbox obkljukan). To so vrednosti, ki jih dobim:
-	<issueResolution>Duplicate,Unknown,None,Invalid,WorksForMe,Fixed</issueResolution>
+- odstrani rdeci scroller. Naj bo kr navaden.
 
 
+Internet explorer:
+- porihtaj izgled (tabi v isti vrstici)
 
-
-/////////////////////////////////////////////////////////////////////////
-MISLIM, da dela, testiraj
-- exception pri commit details
-- paging pri suggest issues for a developer
-- tooltip bug, vcasih ne izgine
-- when manually added to a text box, no more selections allowed does not appear
-
-User details:
-
-
+•  notifications
+	•  align the green text to the left
+•  item type checkboxes. clicking the text should also check/uncheck
+•  "suggest issues for a developer". add the Status and resolution
+checkboxes. 
+XYZ".
+•  issue details
+	•  in the first box show more metadata about the issue
 	
+- IE selected tab must be gray
+
+User details:	
 // LOGINS:
 afiestas@kde.org b2bff2d4
 lukas@kde.org 43dcb60f
