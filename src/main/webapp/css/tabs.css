@@ -375,7 +375,7 @@
 .hidden {
 	display: none;
 }
-#browse_content.hidden, #subscribe_content.hidden {
+#browse_content.hidden, #subscribe_content.hidden, #overview_content.hidden {
 	display: block !important;
 	visibility: hidden;
 	position: absolute;
