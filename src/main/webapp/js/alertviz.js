@@ -1365,7 +1365,8 @@ var AlertViz = function(options) {
     	},
     	
     	setRecommendedDevelopers: function (data) {
-    		var html = '<ul>';
+    		var html = '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
+    		html += '<ul>';
     		
     		$.each(data.people, function (idx, person) {
     			var name = person.name;
@@ -1474,6 +1475,7 @@ var AlertViz = function(options) {
     			html += '<div class="content' + (comment.commentUri == selectedUri ? ' selected_issue' : '') + '">';
     			html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
     			html += comment.commentText + '</div>';
+    			html += '</div>';
     		}
     		
     		// related issues
@@ -1495,6 +1497,7 @@ var AlertViz = function(options) {
         		html += '</tr></table>';
     			
         		html += '<div class="content" id="suggest_dev_div">';
+        		html += '<span class="expand_collapse"><img src="img/collapse_all.png" class="collapse_all" /><img src="img/expand_all.png" class="expand_all"></span><br />';
         		
         		html += '<ul>';
     			$.each(related, function (idx, ref) {
