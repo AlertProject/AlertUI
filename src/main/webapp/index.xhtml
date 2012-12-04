@@ -50,6 +50,8 @@
 	<script type="application/javascript">
 		var viz;
 		$(document).ready(function() {
+			$('.tabber').tabbertab();
+
 			viz = AlertViz();
 			loadState();
 			
@@ -71,7 +73,7 @@
 	        });
 		});
 	</script>
-	<style type="text/css">.tabber{visibility: hidden;}</style>
+	<!--  style type="text/css">.tabber{visibility: hidden;}</style>-->
 </h:head>
 <body>
 	<div id="header-wrap">
