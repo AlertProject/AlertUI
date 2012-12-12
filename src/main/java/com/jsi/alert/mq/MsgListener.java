@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import com.jsi.alert.mq.callback.MsgCallback;
 import com.jsi.alert.utils.Configuration;
+import com.jsi.alert.utils.EventLogger;
+import com.jsi.alert.utils.EventLogger.EventType;
 
 /**
  * A Singleton listener on the MQ, that calls callback functions on receive.
@@ -69,7 +71,7 @@ public class MsgListener implements MessageListener {
 						if (log.isDebugEnabled()) {
 							log.debug("Received msg " + eventId + " dispatching...");
 							if (Configuration.LOG_EVENTS)
-								log.debug(text);
+								EventLogger.log(text, eventId, EventType.MQ_RESPONSE);
 						}
 						
 						try {

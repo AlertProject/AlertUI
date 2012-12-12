@@ -1,4 +1,4 @@
-package com.jsi.alert.servlet.callback;
+package com.jsi.alert.mq.callback.impl;
 
 import java.io.IOException;
 

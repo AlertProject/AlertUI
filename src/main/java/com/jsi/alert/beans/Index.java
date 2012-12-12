@@ -35,7 +35,6 @@ public class Index implements Serializable {
 	/**
 	 * Fetches the session and checks if the user is authenticated.
 	 */
-	@SuppressWarnings("unused")
 	@PostConstruct
 	private void init() {
 		FacesContext context = FacesContext.getCurrentInstance();

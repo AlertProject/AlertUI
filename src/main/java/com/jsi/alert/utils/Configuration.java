@@ -22,6 +22,7 @@ public class Configuration {
 	public static double RECOMMENDER_RANKING_ISSUE, RECOMMENDER_RANKING_MODULE, RECOMMENDER_RANKING_IDENTITY;
 	
 	public static boolean LOG_EVENTS;
+	public static String LOG_EVENT_PATH;
 	
 	public static String STARDOM_BASE_PATH;
 	public static String NOTIFICATION_URL, NOTIFICATION_PARAMETER;
@@ -57,7 +58,8 @@ public class Configuration {
 			RECOMMENDER_REQUEST_TOPIC_MODULE = props.getProperty("topic.recommender.request.module");
 			RECOMMENDER_RESPONSE_TOPIC_MODULE = props.getProperty("topic.recommender.response.module");
 			
-			LOG_EVENTS = Boolean.parseBoolean(props.getProperty("log_events"));
+			LOG_EVENTS = Boolean.parseBoolean(props.getProperty("events.log"));
+			LOG_EVENT_PATH = props.getProperty("events.log.path");
 			
 			// urls
 			STARDOM_BASE_PATH = props.getProperty("stardom.url.basepath");

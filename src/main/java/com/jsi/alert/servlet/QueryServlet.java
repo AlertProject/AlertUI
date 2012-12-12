@@ -27,10 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jsi.alert.beans.UserPrincipal;
+import com.jsi.alert.mq.callback.impl.MsgCallbackImpl;
 import com.jsi.alert.service.AuthenticatorService;
 import com.jsi.alert.service.UniversalService;
 import com.jsi.alert.service.UniversalService.RequestType;
-import com.jsi.alert.servlet.callback.MsgCallbackImpl;
 import com.jsi.alert.utils.Configuration;
 import com.jsi.alert.utils.MessageParser;
 import com.jsi.alert.utils.MessageUtils;

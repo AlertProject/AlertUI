@@ -22,6 +22,8 @@ import com.jsi.alert.mq.MsgListener;
 import com.jsi.alert.mq.MQSessionProvider.ComponentKey;
 import com.jsi.alert.mq.callback.MsgCallback;
 import com.jsi.alert.utils.Configuration;
+import com.jsi.alert.utils.EventLogger;
+import com.jsi.alert.utils.EventLogger.EventType;
 
 /**
  * An abstract <code>Servlet</code> which send an async request to the KEUI component.
@@ -119,7 +121,7 @@ public abstract class MQServlet extends HttpServlet {
 		if (log.isDebugEnabled()) {
     		log.debug("Sent message " + requestId + " to " + componentKey + " component...");
     		if (Configuration.LOG_EVENTS)
-    			log.debug(requestMsg);
+    			EventLogger.log(requestMsg, requestId, EventType.MQ_REQUEST);
     	}
 	}
 	

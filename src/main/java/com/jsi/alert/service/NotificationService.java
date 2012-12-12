@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import com.jsi.alert.model.Notification;
 import com.jsi.alert.service.UniversalService.RequestType;
 import com.jsi.alert.utils.Configuration;
+import com.jsi.alert.utils.EventLogger;
 import com.jsi.alert.utils.MessageParser;
+import com.jsi.alert.utils.EventLogger.EventType;
 
 public class NotificationService {
 
@@ -39,7 +41,7 @@ public class NotificationService {
 			if (log.isDebugEnabled()) {
 				log.debug("Notifications received...");
 				if (Configuration.LOG_EVENTS)
-					log.debug(response);
+					EventLogger.log(response, "", EventType.NOTIFICATION);
 			}
 			
 			if (response != null) {
