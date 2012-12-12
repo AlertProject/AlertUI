@@ -15,8 +15,8 @@ import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jsi.alert.config.Configuration;
 import com.jsi.alert.mq.callback.MsgCallback;
-import com.jsi.alert.utils.Configuration;
 import com.jsi.alert.utils.EventLogger;
 import com.jsi.alert.utils.EventLogger.EventType;
 

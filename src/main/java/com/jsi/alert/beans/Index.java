@@ -14,10 +14,10 @@ import javax.faces.context.PartialViewContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jsi.alert.config.Configuration;
 import com.jsi.alert.model.Notification;
 import com.jsi.alert.service.AuthenticatorService;
 import com.jsi.alert.service.NotificationService;
-import com.jsi.alert.utils.Configuration;
 import com.jsi.alert.utils.Utils;
 
 /**

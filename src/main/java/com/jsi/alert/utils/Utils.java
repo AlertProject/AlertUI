@@ -11,6 +11,8 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import com.jsi.alert.config.Configuration;
+
 /**
  * A utility class with various static methods.
  * 

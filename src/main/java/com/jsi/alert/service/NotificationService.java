@@ -10,9 +10,9 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jsi.alert.config.Configuration;
 import com.jsi.alert.model.Notification;
 import com.jsi.alert.service.UniversalService.RequestType;
-import com.jsi.alert.utils.Configuration;
 import com.jsi.alert.utils.EventLogger;
 import com.jsi.alert.utils.MessageParser;
 import com.jsi.alert.utils.EventLogger.EventType;

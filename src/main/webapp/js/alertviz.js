@@ -1439,6 +1439,7 @@ var AlertViz = function(options) {
     		html += '<td class="title_desc">Issue created by ';
     		html += '<span class="headings_author">' + (data.author == null ? 'Unknown' : data.author.name) + '</span>';
     		html += '<span class="headings_date">' + (data.dateOpened == null ? '' : new Date(data.dateOpened).format(defaultDateFormat)) + '</span>';
+    		html += '<br /><span class="headings_system">' + data.product.productid + ' ' + data.product.productVersion + ', ' + data.computerSystem.computerSystemPlatform + ' (' + data.computerSystem.computerSystemOS + ')</span>';
     		html += '<br /><span class="headings_status">' + data.resolution + ', ' + data.status + '</span>';
     		html += '</td>';
     		html += '</tr></table>';

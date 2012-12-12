@@ -16,7 +16,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jsi.alert.utils.Configuration;
+import com.jsi.alert.config.Configuration;
 
 /**
  * A singleton class which has a reference to the ActiveMQ session.

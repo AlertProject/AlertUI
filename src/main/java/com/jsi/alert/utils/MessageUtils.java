@@ -26,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
 
+import com.jsi.alert.config.Configuration;
+
 
 /**
  * A class which generates messages which are ment to be sent to the Message Broker. 
