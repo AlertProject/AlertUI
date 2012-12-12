@@ -1,5 +1,6 @@
 - odstrani rdeci scroller. Naj bo kr navaden.
 
+- naredi tabe na formi in v vizualizaciji iste barve
 
 Internet explorer:
 - porihtaj izgled (tabi v isti vrstici)
@@ -8,9 +9,6 @@ Internet explorer:
 	•  align the green text to the left
 •  "suggest issues for a developer". add the Status and resolution
 checkboxes. 
-XYZ".
-•  issue details
-	•  in the first box show more metadata about the issue
 	
 - IE selected tab must be gray
 
