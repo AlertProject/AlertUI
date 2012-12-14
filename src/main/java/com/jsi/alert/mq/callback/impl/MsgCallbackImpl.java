@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jsi.alert.config.Configuration;
 import com.jsi.alert.mq.callback.MsgCallback;
 
 public abstract class MsgCallbackImpl implements MsgCallback {
@@ -18,6 +19,7 @@ public abstract class MsgCallbackImpl implements MsgCallback {
 	
 	public MsgCallbackImpl(AsyncContext context) {
 		this.context = context;
+		context.setTimeout(Configuration.REQUEST_TIMEOUT + 3000);
 	}
 	
 	public void onFailure() {

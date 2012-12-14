@@ -568,7 +568,6 @@ public class QueryServlet extends MQServlet {
 	 */
 	private void processSuggestDevelopersRq(HttpServletRequest request, HttpServletResponse response) throws JMSException, ServletException, IOException {
 		final AsyncContext context = request.startAsync();
-		context.setTimeout(20000);	// TODO delete me
 		
 		Long issueId = Long.parseLong(request.getParameter("issueId"));		
 		

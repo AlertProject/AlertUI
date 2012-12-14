@@ -1,9 +1,9 @@
 package com.jsi.alert.mq;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +33,7 @@ public class MsgListener implements MessageListener {
 	private static final String REQUEST_ID_TAG = "<ns1:eventId>\\d+</ns1:eventId>";
 	private static final Pattern REQUEST_ID_PATTERN = Pattern.compile(REQUEST_ID_TAG);
 
-	private Map<String, MsgCallback> callbackH;
+	private Map<String, CallbackWrapper> callbackH;
 	
 	/**
 	 * Returns this classes instance.
@@ -47,6 +47,7 @@ public class MsgListener implements MessageListener {
 	 */
 	private MsgListener() {
 		callbackH = new HashMap<>();
+		new CleanupThread().start();
 	}
 	
 	/*
@@ -94,8 +95,11 @@ public class MsgListener implements MessageListener {
 	 * @param requestId
 	 * @return
 	 */
-	private synchronized MsgCallback removeCallback(String requestId) {
-		return callbackH.remove(requestId);
+	private MsgCallback removeCallback(String requestId) {
+		synchronized (callbackH) {
+			CallbackWrapper wrapper = callbackH.remove(requestId);
+			return wrapper != null ? wrapper.getCallback() : null;
+		}
 	}
 	
 	/**
@@ -104,21 +108,83 @@ public class MsgListener implements MessageListener {
 	 * @param requestId
 	 * @param callback
 	 */
-	public synchronized void addCallback(final String requestId, MsgCallback callback) {
-		callbackH.put(requestId, callback);
+	public void addCallback(final String requestId, MsgCallback callback) {
+		synchronized (callbackH) {
+			callbackH.put(requestId, new CallbackWrapper(callback));
+		}
+	}
+	
+	private Long getLastRefresh(String requestId) {
+		synchronized (callbackH) {
+			CallbackWrapper wrapper = callbackH.get(requestId);
+			return wrapper != null ? wrapper.getLastRefresh() : null;
+		}
+	}
+	
+	/**
+	 * A <code>Thread</code> which removes <code>MsgCallback</code>s from the callbackH.
+	 */
+	private class CleanupThread extends Thread {
 		
-		// create a timer, which will remove the callback
-		TimerTask removeTask = new TimerTask() {
-			@Override
-			public void run() {
-				MsgCallback removed = removeCallback(requestId);
-				if (removed != null) {
-					if (log.isWarnEnabled())
-						log.warn("Request " + requestId + " timed out, executing onFailure procedure...");
-					removed.onFailure();
+		public CleanupThread() {
+			setDaemon(true);
+		}
+		
+		@SuppressWarnings("static-access")
+		@Override
+		public void run() {
+			while (true) {
+				// iterate over all the callbacks and remove the ones whose requests timed out
+				// copy the key set to a list, to avoid multi threaded problems
+				List<String> requestIds = new ArrayList<>(callbackH.keySet());
+				for (String requestId : requestIds) {
+					Long lastRefresh = getLastRefresh(requestId);
+					
+					// check if the request has timed out, if it has => remove it
+					if (lastRefresh != null && System.currentTimeMillis() - lastRefresh > Configuration.REQUEST_TIMEOUT) {
+						MsgCallback removed = removeCallback(requestId);
+						
+						if (removed != null) {
+							if (log.isWarnEnabled())
+								log.warn("Request " + requestId + " timed out, executing onFailure procedure...");
+							removed.onFailure();
+						}
+					}
+				}
+				
+				try {
+					this.sleep(1000);
+				} catch (InterruptedException e) {
+					log.warn("The cleanup thread was interrupted, ignoring...");
 				}
 			}
-		};
-		new Timer(true).schedule(removeTask, Configuration.REQUEST_TIMEOUT);
+		}
+	}
+	
+	/**
+	 * A wrapper object for <code>MsgCallback</code> used to store the time it was added to
+	 * the callbackH.
+	 */
+	private class CallbackWrapper {
+		
+		private MsgCallback callback;
+		private long lastRefresh;
+		
+		public CallbackWrapper(MsgCallback callback) {
+			this.callback = callback;
+			refresh();
+		}
+		
+		public MsgCallback getCallback() {
+			return callback;
+		}
+		
+		public long getLastRefresh() {
+			return lastRefresh;
+		}
+		
+		public void refresh() {
+			lastRefresh = System.currentTimeMillis();
+		}
 	}
 }
