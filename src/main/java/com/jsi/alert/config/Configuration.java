@@ -1,6 +1,10 @@
 package com.jsi.alert.config;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -89,7 +93,16 @@ public class Configuration {
 			
 			// print to log
 			log.info("=================================================================================================================");
-			for (Object key : props.keySet())
+			List<Object> keys = new ArrayList<>(props.keySet());
+			
+			Collections.sort(keys, new Comparator<Object>() {
+				@Override
+				public int compare(Object o1, Object o2) {
+					return o1.toString().compareTo(o2.toString());
+				}
+			});
+			
+			for (Object key : keys)
 				log.info(String.format("%-50s%-50s", key.toString(), props.getProperty((String) key)));
 			log.info("=================================================================================================================");
 		} catch (IOException e) {
