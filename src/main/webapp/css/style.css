@@ -136,6 +136,7 @@ input.button {
     background:#93b876;
     float:left;
     position:relative;
+    background-color:#96c864;
     background:
         -webkit-gradient(
         linear,
@@ -159,12 +160,36 @@ input.button {
     	rgb(150,200,100)  55%,
     	rgb(182,222,143)  78%
     	);
-    filter:progid:DXImageTransform.Microsoft.gradient(
-    	GradientType=0,
-   		startColorstr=#b6de8f,
-    	endColorstr=#96c864
+}
+.zoom_btns:hover {
+	background:#b4b4b4;
+    color:#fff;
+    text-shadow:1px 1px 1px #333;
+    background:
+        -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.09, rgb(180,180,180)),
+        color-stop(0.55, rgb(180,180,180)),
+        color-stop(0.78, rgb(220,220,220))
+        );
+    background:
+        -moz-linear-gradient(
+        center bottom,
+        rgb(180,180,180) 9%,
+        rgb(180,180,180) 55%,
+        rgb(220,220,220) 78%
+        );
+    background-image: 
+    	-o-linear-gradient(
+    	90deg,
+    	rgb(180,180,180)  9%,
+    	rgb(180,180,180)  55%,
+    	rgb(220,220,220)  78%
     	);
 }
+
 .expand_all{
 	margin:0px 0px 0px 5px;
 	float:right;
