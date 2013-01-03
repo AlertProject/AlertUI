@@ -322,12 +322,12 @@
         color-stop(0.55, rgb(180,180,180)),
         color-stop(0.78, rgb(220,220,220))
         );
-    background:
+background:
         -moz-linear-gradient(
         center bottom,
-        rgb(150,150,150) 9%,
-        rgb(150,150,150) 55%,
-        rgb(200,200,200) 78%
+        rgb(180,180,180) 9%,
+        rgb(180,180,180) 55%,
+        rgb(220,220,220) 78%
         );
     background-image: 
     	-o-linear-gradient(

@@ -132,12 +132,12 @@ background:
         color-stop(0.78, rgb(220,220,220))
         );
 background:
-    -moz-linear-gradient(
-    center bottom,
-    rgb(150,150,150) 9%,
-    rgb(150,150,150) 55%,
-    rgb(200,200,200) 78%
-    );
+        -moz-linear-gradient(
+        center bottom,
+        rgb(180,180,180) 9%,
+        rgb(180,180,180) 55%,
+        rgb(220,220,220) 78%
+        );
 background-image: 
 	-o-linear-gradient(
 	90deg,
@@ -161,12 +161,12 @@ background:
         color-stop(0.78, rgb(220,220,220))
         );
 background:
-    -moz-linear-gradient(
-    center bottom,
-    rgb(150,150,150) 9%,
-    rgb(150,150,150) 55%,
-    rgb(200,200,200) 78%
-    );
+        -moz-linear-gradient(
+        center bottom,
+        rgb(180,180,180) 9%,
+        rgb(180,180,180) 55%,
+        rgb(220,220,220) 78%
+        );
 background-image: 
 	-o-linear-gradient(
 	90deg,
@@ -196,13 +196,13 @@ background:
     rgb(150,150,150) 55%,
     rgb(200,200,200) 78%
     );
-background-image: 
-	-o-linear-gradient(
-	90deg,
-	rgb(150,150,150)  9%,
-	rgb(150,150,150)  55%,
-	rgb(200,200,200)  78%
-	);
+background:
+        -moz-linear-gradient(
+        center bottom,
+        rgb(180,180,180) 9%,
+        rgb(180,180,180) 55%,
+        rgb(220,220,220) 78%
+        );
 filter:progid:DXImageTransform.Microsoft.gradient(
 	GradientType=0,
 	startColorstr=#c8c8c8,
