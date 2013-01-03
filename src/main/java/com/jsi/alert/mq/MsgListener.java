@@ -136,7 +136,10 @@ public class MsgListener implements MessageListener {
 			while (true) {
 				// iterate over all the callbacks and remove the ones whose requests timed out
 				// copy the key set to a list, to avoid multi threaded problems
-				List<String> requestIds = new ArrayList<>(callbackH.keySet());
+				List<String> requestIds;
+				synchronized (callbackH) {
+					requestIds = new ArrayList<>(callbackH.keySet());
+				}
 				for (String requestId : requestIds) {
 					Long lastRefresh = getLastRefresh(requestId);
 					
