@@ -67,11 +67,6 @@
     	rgb(150,200,100)  55%,
     	rgb(182,222,143)  78%
     	);
-    filter:progid:DXImageTransform.Microsoft.gradient(
-    	GradientType=0,
-   		startColorstr=#b6de8f,
-    	endColorstr=#96c864
-    	);
 }
 #navigation ul{
     list-style:none;
@@ -93,7 +88,6 @@
     text-decoration:none;
     line-height:42px;
     padding:0px 28px;
-    background:#f0f0f0;
     text-shadow:1px 1px 1px #666;
     background:
         -webkit-gradient(
@@ -118,15 +112,10 @@
     	rgb(150,200,100)  55%,
     	rgb(182,222,143)  78%
     	);
-    filter:progid:DXImageTransform.Microsoft.gradient(
-    	GradientType=0,
-   		startColorstr=#b6de8f,
-    	endColorstr=#96c864
-    	);
 }
 #navigation ul li a:hover,
 #navigation ul li.selected a{
-    background:b4b4b4;
+    background:#b4b4b4;
     color:#fff;
     text-shadow:1px 1px 1px #333;
     background:
@@ -151,11 +140,6 @@
     	rgb(180,180,180)  9%,
     	rgb(180,180,180)  55%,
     	rgb(220,220,220)  78%
-    	);
-    filter:progid:DXImageTransform.Microsoft.gradient(
-    	GradientType=0,
-   		startColorstr=#dcdcdc,
-    	endColorstr=#b4b4b4
     	);
 }
 #steps form fieldset{
