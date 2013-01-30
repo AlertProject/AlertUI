@@ -28,6 +28,7 @@ public class EventLogger {
 	public static void log(String event, String eventId, EventType type) {
 		if (log.isDebugEnabled())
 			log.debug("Logging event...");
+		if (event == null) return;
 		
 		try {
 			String filePath = Configuration.LOG_EVENT_PATH;

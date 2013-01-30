@@ -455,12 +455,12 @@ public class QueryServlet extends MQServlet {
 			getAPIResponse(apiRq, requestId1, new MsgCallbackImpl(context) {
 				@Override
 				public void onSuccess(String apiResponse) throws Exception {
-					List<Long> issueUris = MessageParser.parseAPIIssuesResponse(apiResponse);
+					List<Long> issueIds = MessageParser.parseAPIIssuesResponse(apiResponse);
 					Properties props = createRequestProps(request);
 					
 					// now that I have the URIs, I have to call KEUI, to get the actual items
 					String requestId2 = Utils.genRequestID();
-					String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueUris, props, offset, limit, requestId2);
+					String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueIds, props, offset, limit, requestId2);
 				
 					getKEUIResponse(keuiRq, requestId2, new MsgCallbackImpl(context) {
 						@Override
@@ -513,10 +513,11 @@ public class QueryServlet extends MQServlet {
 			@Override
 			public void onSuccess(String recommenderIssueResp) throws Exception {
 				List<Long> issueIds = MessageParser.parseRecommenderIssueIdsMsg(recommenderIssueResp);
+				Properties props = createRequestProps(request);
 				
 				// now that I have the issueIDs I have to send them to the KEUI component
 				final String requestId2 = Utils.genRequestID();
-				String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueIds, offset, limit, requestId2);
+				String keuiRq = MessageUtils.genKEUIIssueListByIdMsg(issueIds, props, offset, limit, requestId2);
 			
 				getKEUIResponse(keuiRq, requestId2, new MsgCallbackImpl(context) {
 					@Override

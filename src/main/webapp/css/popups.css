@@ -197,6 +197,7 @@
 	text-shadow: 1px 1px 1px white !important;
 }
 .notification a {
+	padding-left: 0px !important;
 	font: bold 12px/20px Arial, Helvetica, sans-serif !important;
 	font-weight: bold !important;
 	color: #7BA857 !important;

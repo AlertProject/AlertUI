@@ -317,7 +317,7 @@
 												<tr>
 													<td colspan="9"><input type="text" id="issue_id_text" class="text_issue"/></td>
 												</tr>
-												<tr id="customtr1">
+												<tr class="customtr1">
 													<td class="customtd"><span>Resolution:</span></td><td></td>
 													<td><input class="check" type="checkbox" id="dup_none_check" checked="checked" onchange="updateUrl();" /><label for="dup_none_check"> None</label></td>
 													<td><input class="check" type="checkbox" id="dup_fixed_check" checked="checked" onchange="updateUrl();" /><label for="dup_fixed_check"> Fixed</label></td>
@@ -343,7 +343,7 @@
 									<fieldset class="step" id="step2">
 										<table>
 											<tbody>
-												<tr id="customtr1">
+												<tr class="customtr1">
 													<td class="customtd"><span>Resolution:</span></td><td></td>
 													<td><input class="check" type="checkbox" id="my_none_check" checked="checked" onchange="updateUrl();" /><label for="my_none_check"> None</label></td>
 													<td><input class="check" type="checkbox" id="my_fixed_check" checked="checked" onchange="updateUrl();" /><label for="my_fixed_check"> Fixed</label></td>
@@ -370,7 +370,26 @@
 										<table>
 											<tbody>
 												<tr style="line-hight:12px;">
-													<td style="width:100%;"><input id="person_text" name="other"/></td>
+													<td colspan="9" style="width:100%;"><input id="person_text" name="other"/></td>
+												</tr>
+												<tr class="customtr1">
+													<td class="customtd"><span>Resolution:</span></td><td></td>
+													<td><input class="check" type="checkbox" id="for_none_check" checked="checked" onchange="updateUrl();" /><label for="for_none_check"> None</label></td>
+													<td><input class="check" type="checkbox" id="for_fixed_check" checked="checked" onchange="updateUrl();" /><label for="for_fixed_check"> Fixed</label></td>
+													<td><input class="check" type="checkbox" id="for_wont_check" checked="checked" onchange="updateUrl();" /><label for="for_wont_check"> WontFix</label></td>
+													<td><input class="check" type="checkbox" id="for_invalid_check" checked="checked" onchange="updateUrl();" /><label for="for_invalid_check"> Invalid</label></td>
+													<td><input class="check" type="checkbox" id="for_duplicate_check" checked="checked" onchange="updateUrl();" /><label for="for_duplicate_check"> Duplicate</label></td>
+													<td><input class="check" type="checkbox" id="for_works_check" checked="checked" onchange="updateUrl();" /><label for="for_works_check"> WorksForMe</label></td>
+													<td><input class="check" type="checkbox" id="for_unknown_check" checked="checked" onchange="updateUrl();" /><label for="for_unknown_check"> Unknown</label></td>
+												</tr>
+												<tr>
+													<td class="customtd"><span>Status:</span></td><td></td>
+													<td><input class="check" type="checkbox" id="for_open_check" checked="checked" onchange="updateUrl();" /><label for="for_open_check"> Open</label></td>
+													<td><input class="check" type="checkbox" id="for_veririfed_check" checked="checked" onchange="updateUrl();" /><label for="for_veririfed_check"> Verified</label></td>
+													<td><input class="check" type="checkbox" id="for_assigned_check" checked="checked" onchange="updateUrl();" /><label for="for_assigned_check"> Assigned</label></td>
+													<td><input class="check" type="checkbox" id="for_resolved_check" checked="checked" onchange="updateUrl();" /><label for="for_resolved_check"> Resolved</label></td>
+													<td><input class="check" type="checkbox" id="for_closed_check" checked="checked" onchange="updateUrl();" /><label for="for_closed_check"> Closed</label></td>
+													<td></td>
 													<td style="padding: 10px;"><button onclick="return viz.searchForDeveloper();">Search</button></td>
 												</tr>
 											</tbody>

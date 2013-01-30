@@ -171,6 +171,32 @@ function getCurrentState() {
 	var peoplePerson = searchPerson.getNodes('person');
 	if (peoplePerson.length > 0) personState.person = peoplePerson[0];
 	
+	var forNoneChk = $('#for_none_check').attr('checked') == 'checked';
+	var forFixedChk = $('#for_fixed_check').attr('checked') == 'checked';
+	var forWontChk = $('#for_wont_check').attr('checked') == 'checked';
+	var forInvalidChk = $('#for_invalid_check').attr('checked') == 'checked';
+	var forDuplicateChk = $('#for_duplicate_check').attr('checked') == 'checked';
+	var forWorksChk = $('#for_works_check').attr('checked') == 'checked';
+	var forUnknownChk = $('#for_unknown_check').attr('checked') == 'checked';
+	var forOpenChk = $('#for_open_check').attr('checked') == 'checked';
+	var forVerifiedChk = $('#for_veririfed_check').attr('checked') == 'checked';
+	var forAssignedChk = $('#for_assigned_check').attr('checked') == 'checked';
+	var forResolvedChk = $('#for_resolved_check').attr('checked') == 'checked';
+	var forClosedChk = $('#for_closed_check').attr('checked') == 'checked';
+	
+	if (!forNoneChk) personState.n = false;
+	if (!forFixedChk) personState.f = false;
+	if (!forWontChk) personState.w = false;
+	if (!forInvalidChk) personState.i = false;
+	if (!forDuplicateChk) personState.d = false;
+	if (!forWorksChk) personState.wo = false;
+	if (!forUnknownChk) personState.u = false;
+	if (!forOpenChk) personState.o = false;
+	if (!forVerifiedChk) personState.v = false;
+	if (!forAssignedChk) personState.a = false;
+	if (!forResolvedChk) personState.r = false;
+	if (!forClosedChk) personState.c = false;
+	
 	// construct result
 	if (Object.getOwnPropertyNames(general).length > 0) result.gen = general;
 	if (Object.getOwnPropertyNames(duplicate).length > 0) result.dupl = duplicate;
@@ -375,8 +401,13 @@ function loadState() {
 	}
 	
 	if (personState != null) {
-		var person = personState.person;
-		viz.addToSearchField('person_text', person);
+		for (var attribute in personState) {
+			if (attribute == 'person') {
+				var person = personState.person;
+				viz.addToSearchField('person_text', person);
+			} else if (issueChks[attribute])
+				uncheckByAttr(attribute, 'for_');
+		}
 	}
 	
 	$('#navigation').find('a')[tab].click();
@@ -1305,6 +1336,18 @@ var AlertViz = function(options) {
     		var queryOpts = {
     			type: 'suggestPeople',
     			person: people,
+    			NoneChk: $('#for_none_check').attr('checked') == 'checked',
+    			FixedChk: $('#for_fixed_check').attr('checked') == 'checked',
+    			WontFixChk: $('#for_wont_check').attr('checked') == 'checked',
+    			InvalidChk: $('#for_invalid_check').attr('checked') == 'checked',
+    			DuplicateChk: $('#for_duplicate_check').attr('checked') == 'checked',
+    			WorksForMeChk: $('#for_works_check').attr('checked') == 'checked',
+    			UnknownChk: $('#for_unknown_check').attr('checked') == 'checked',
+    			OpenChk: $('#for_open_check').attr('checked') == 'checked',
+    			VerifiedChk: $('#for_veririfed_check').attr('checked') == 'checked',
+    			AssignedChk: $('#for_assigned_check').attr('checked') == 'checked',
+    			ResolvedChk: $('#for_resolved_check').attr('checked') == 'checked',
+    			ClosedChk: $('#for_closed_check').attr('checked') == 'checked',
     			offset: 0,
             	limit: itemsPerPage
     		};
@@ -2074,10 +2117,12 @@ var AlertViz = function(options) {
     		
     		if (selectFirst != false) {
 	    		// search for the first item, if modules are present, the first item is second in the list
-	    		if (data.modules != null && data.modules.length > 0)
-	    			$('.item-wrapper')[1].click();
-	    		else
-	    			$('.item-wrapper')[0].click();
+	    		if (data.items.length > 0) {
+	    			if (data.modules != null && data.modules.length > 0)
+		    			$('.item-wrapper')[1].click();
+		    		else
+		    			$('.item-wrapper')[0].click();
+	    		}
     		}
     	},
 
