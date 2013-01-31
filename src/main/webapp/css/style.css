@@ -16,13 +16,13 @@ body {
 	left: 0px;
 	right: 0px;
 	overflow:hidden;
-	scrollbar-face-color: #c00;
+	/*scrollbar-face-color: #c00;
 	scrollbar-arrow-color: #c00;
 	scrollbar-track-color: white;
 	scrollbar-shadow-color: white;
 	scrollbar-highlight-color: white;
 	scrollbar-3dlight-color:  white;
-	scrollbar-darkshadow-Color:  white;
+	scrollbar-darkshadow-Color:  white;*/
 }
 a:link, a:visited { 
 	text-decoration: none;
@@ -405,7 +405,7 @@ input.button {
 	width: 100% !important;
 	height: 460px !important;
 }
-::-webkit-scrollbar,
+/*::-webkit-scrollbar,
 ::-moz-scrollbar,
 ::-ms-scrollbar{
     width: 8px;
@@ -436,7 +436,7 @@ input.button {
 }
 ::-webkit-scrollbar-thumb:window-inactive {
 	background: rgba(255,0,0,0.4); 
-}
+}*/
 .loading {
 	background-image:url('../img/loading.gif');
 	background-repeat: no-repeat;
